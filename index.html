@@ -1,36 +1,75 @@
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>따뜻한 포옹</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=MaruBuri:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
   <style>
     :root{
-      --bg1:#2f241d;
-      --bg2:#5c4331;
-      --warm:#f4d8b6;
-      --cream:#fff6ea;
-      --card:#fffaf3;
-      --brown:#6b4a36;
-      --brown2:#8b6a52;
-      --soft:#f7efe5;
-      --danger:#c86b5a;
-      --good:#ddb983;
+      --bg-1:#f4eadc;
+      --bg-2:#e8d8c4;
+      --bg-3:#dcc5a8;
+
+      --paper:#fffaf4;
+      --paper-2:rgba(255,250,244,0.72);
+      --paper-3:rgba(255,248,240,0.92);
+
+      --brown-1:#5e4030;
+      --brown-2:#7a5640;
+      --brown-3:#9c7457;
+      --brown-4:#b98f6f;
+
+      --line:rgba(120,84,58,0.08);
+      --shadow:0 18px 40px rgba(103,72,48,0.12);
+      --shadow-soft:0 10px 24px rgba(103,72,48,0.09);
+
+      --tag-bg:#f1dec7;
+      --tag-text:#7d5942;
+
+      --accent:#efcfab;
+      --accent-2:#e9bf8d;
+      --accent-3:#f7e7d2;
+
+      --danger:#d88b7c;
+      --good:#d9b98b;
     }
 
     *{
       box-sizing:border-box;
     }
 
-    body{
+    html, body{
       margin:0;
-      font-family:"Arial","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
-      min-height:100vh;
-      color:#4f3729;
+      min-height:100%;
+    }
+
+    body{
+      font-family:"Noto Sans KR", sans-serif;
+      color:var(--brown-1);
       background:
-        radial-gradient(circle at 20% 20%, rgba(255,210,140,.25), transparent 20%),
-        radial-gradient(circle at 80% 15%, rgba(255,230,170,.18), transparent 18%),
-        linear-gradient(180deg,var(--bg2),var(--bg1));
+        radial-gradient(circle at 15% 18%, rgba(255,240,214,.95) 0%, rgba(255,240,214,0) 24%),
+        radial-gradient(circle at 84% 12%, rgba(255,223,174,.85) 0%, rgba(255,223,174,0) 20%),
+        radial-gradient(circle at 78% 72%, rgba(255,236,208,.55) 0%, rgba(255,236,208,0) 18%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 52%, var(--bg-3) 100%);
       overflow:hidden;
+      position:relative;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.14;
+      background-image:
+        radial-gradient(rgba(120,84,58,.28) 0.45px, transparent 0.45px);
+      background-size:8px 8px;
+      mix-blend-mode:multiply;
     }
 
     a{
@@ -39,15 +78,19 @@
     }
 
     .frame{
-      width:min(1100px,96vw);
-      height:min(94vh,920px);
-      margin:3vh auto;
-      border-radius:32px;
-      background:linear-gradient(180deg, rgba(255,246,234,.96), rgba(245,229,207,.97));
-      box-shadow:0 24px 70px rgba(0,0,0,.28);
-      border:1px solid rgba(255,255,255,.35);
+      width:min(1180px, 96vw);
+      height:min(95vh, 940px);
+      margin:2.5vh auto;
+      border-radius:36px;
       position:relative;
       overflow:hidden;
+      background:
+        linear-gradient(180deg, rgba(255,251,246,.82), rgba(250,242,232,.88));
+      border:1px solid rgba(255,255,255,.45);
+      box-shadow:
+        0 30px 80px rgba(95,67,46,.18),
+        inset 0 1px 0 rgba(255,255,255,.6);
+      backdrop-filter: blur(12px);
     }
 
     .frame::before{
@@ -56,60 +99,68 @@
       inset:0;
       pointer-events:none;
       background:
-        radial-gradient(circle at 85% 12%, rgba(255,203,105,.42), transparent 14%),
-        radial-gradient(circle at 90% 18%, rgba(255,230,168,.35), transparent 18%);
+        radial-gradient(circle at 88% 12%, rgba(255,211,135,.34), transparent 18%),
+        radial-gradient(circle at 92% 20%, rgba(255,238,201,.26), transparent 20%),
+        radial-gradient(circle at 12% 10%, rgba(255,250,240,.46), transparent 16%);
     }
 
     .audioWrap{
       position:absolute;
-      top:16px;
-      right:16px;
+      top:18px;
+      right:18px;
       z-index:5;
       display:flex;
       flex-direction:column;
       align-items:flex-end;
-      gap:8px;
+      gap:10px;
     }
 
     #musicStatus{
       font-size:13px;
-      color:#7a5a46;
-      background:rgba(255,250,243,.88);
-      padding:8px 10px;
-      border-radius:14px;
-      box-shadow:0 6px 14px rgba(0,0,0,.08);
-      max-width:240px;
+      line-height:1.35;
+      color:var(--brown-3);
+      background:rgba(255,248,241,.94);
+      padding:12px 14px;
+      border-radius:18px;
+      box-shadow:var(--shadow-soft);
+      border:1px solid rgba(255,255,255,.5);
+      max-width:300px;
       text-align:right;
     }
 
     #bgm{
-      width:220px;
+      width:245px;
+      border-radius:999px;
+      filter:sepia(.12) saturate(.9);
     }
 
     header{
+      padding:22px 24px 8px;
       text-align:center;
-      font-size:36px;
+      font-family:"MaruBuri", serif;
+      font-size:34px;
       font-weight:700;
-      padding:26px 24px 8px;
-      color:#65442f;
+      letter-spacing:-0.02em;
+      color:var(--brown-1);
       position:relative;
       z-index:2;
     }
 
     .sub{
       text-align:center;
-      color:#8b6a52;
-      font-size:18px;
-      margin-bottom:6px;
-      padding:0 20px;
+      color:var(--brown-3);
+      font-size:17px;
+      line-height:1.5;
+      padding:0 24px;
+      margin-bottom:4px;
       position:relative;
       z-index:2;
     }
 
-    #home,#rooms,#appView{
+    #home, #rooms, #appView{
       position:relative;
       z-index:2;
-      height:calc(100% - 90px);
+      height:calc(100% - 88px);
     }
 
     #home{
@@ -117,44 +168,51 @@
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:16px;
-      padding:24px;
+      gap:18px;
+      padding:28px;
       text-align:center;
     }
 
     .heroBear{
-      font-size:132px;
+      font-size:124px;
       line-height:1;
-      animation:idle 2.8s ease-in-out infinite;
-      filter:drop-shadow(0 10px 20px rgba(0,0,0,.12));
+      animation:idle 3.2s ease-in-out infinite;
+      filter:drop-shadow(0 14px 28px rgba(99,69,47,.12));
     }
 
     .heroNote{
-      background:rgba(255,250,243,.9);
-      border-radius:999px;
-      padding:12px 18px;
-      font-size:20px;
-      color:#7b5a45;
-      box-shadow:0 10px 25px rgba(97,62,34,.10);
       max-width:780px;
+      padding:16px 22px;
+      border-radius:999px;
+      background:rgba(255,250,243,.84);
+      border:1px solid rgba(255,255,255,.5);
+      box-shadow:var(--shadow-soft);
+      font-size:19px;
+      color:var(--brown-2);
+      line-height:1.65;
     }
 
     button{
       border:none;
-      border-radius:999px;
-      background:linear-gradient(180deg,#f7d7b3,#efc695);
-      color:#61412c;
-      font-size:18px;
-      font-weight:700;
-      padding:13px 22px;
       cursor:pointer;
-      box-shadow:0 10px 20px rgba(95,60,34,.16);
-      transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+      font-family:inherit;
+      font-size:17px;
+      font-weight:700;
+      color:var(--brown-1);
+      background:linear-gradient(180deg, #f8dcc0, #efc392);
+      border-radius:999px;
+      padding:13px 22px;
+      box-shadow:
+        0 10px 22px rgba(115,79,52,.14),
+        inset 0 1px 0 rgba(255,255,255,.55);
+      transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease;
     }
 
     button:hover{
-      transform:translateY(-2px) scale(1.02);
-      box-shadow:0 14px 28px rgba(95,60,34,.2);
+      transform:translateY(-2px);
+      box-shadow:
+        0 14px 26px rgba(115,79,52,.18),
+        inset 0 1px 0 rgba(255,255,255,.55);
     }
 
     button:disabled{
@@ -165,19 +223,19 @@
     }
 
     .softBtn{
-      background:linear-gradient(180deg,#f9ece0,#f2d8bc);
+      background:linear-gradient(180deg,#fbefe2,#f3dcc1);
       font-size:15px;
-      padding:10px 14px;
+      padding:10px 15px;
     }
 
     .dangerBtn{
-      background:linear-gradient(180deg,#efc0b8,#df8e7f);
+      background:linear-gradient(180deg,#f0c2ba,#de8e7f);
       color:#fffaf5;
     }
 
     #rooms{
       display:none;
-      padding:18px 22px 26px;
+      padding:20px 26px 28px;
       overflow:auto;
     }
 
@@ -185,101 +243,161 @@
       display:flex;
       justify-content:space-between;
       align-items:center;
-      gap:12px;
-      margin-bottom:10px;
+      gap:14px;
+      margin-bottom:16px;
       flex-wrap:wrap;
     }
 
     .userChip{
-      background:rgba(255,250,243,.95);
+      background:rgba(255,249,243,.94);
+      border:1px solid rgba(255,255,255,.55);
       border-radius:999px;
-      padding:10px 16px;
-      color:#6d4d39;
+      padding:12px 18px;
+      color:var(--brown-2);
       font-weight:700;
-      box-shadow:0 8px 18px rgba(76,48,28,.10);
+      box-shadow:var(--shadow-soft);
+    }
+
+    .roomList{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:18px;
+      padding-bottom:12px;
     }
 
     .room{
       display:flex;
       justify-content:space-between;
       align-items:center;
-      gap:14px;
-      background:rgba(255,250,243,.95);
-      border:1px solid rgba(145,108,78,.10);
-      border-radius:28px;
-      margin:14px 0;
-      padding:22px;
-      box-shadow:0 10px 24px rgba(76,48,28,.10);
+      gap:18px;
+      padding:24px 24px;
+      border-radius:30px;
+      background:linear-gradient(180deg, rgba(255,250,245,.9), rgba(255,246,240,.78));
+      border:1px solid rgba(255,255,255,.52);
+      box-shadow:
+        0 18px 34px rgba(107,74,51,.10),
+        inset 0 1px 0 rgba(255,255,255,.56);
       cursor:pointer;
-      transition:transform .15s ease, box-shadow .15s ease;
+      transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .room::before{
+      content:"";
+      position:absolute;
+      inset:auto auto -30px -20px;
+      width:180px;
+      height:90px;
+      border-radius:999px;
+      background:radial-gradient(circle, rgba(255,233,203,.42), transparent 70%);
+      pointer-events:none;
     }
 
     .room:hover{
-      transform:translateY(-2px);
-      box-shadow:0 16px 28px rgba(76,48,28,.14);
+      transform:translateY(-4px);
+      box-shadow:
+        0 24px 42px rgba(107,74,51,.14),
+        inset 0 1px 0 rgba(255,255,255,.56);
+      border-color:rgba(240,210,180,.7);
+    }
+
+    .roomLeft{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      min-width:0;
+    }
+
+    .roomIcon{
+      width:68px;
+      height:68px;
+      min-width:68px;
+      border-radius:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:33px;
+      background:linear-gradient(180deg, #fbefe1, #f4dcc0);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.65),
+        0 10px 22px rgba(113,77,51,.10);
+    }
+
+    .roomText{
+      min-width:0;
     }
 
     .roomName{
-      font-size:26px;
+      font-family:"MaruBuri", serif;
+      font-size:31px;
       font-weight:700;
-      color:#65452f;
+      line-height:1.2;
+      color:var(--brown-1);
+      margin-bottom:6px;
+      letter-spacing:-0.02em;
     }
 
     .roomMeta{
-      font-size:15px;
-      color:#96755d;
-      margin-top:4px;
-      line-height:1.5;
+      font-size:18px;
+      color:var(--brown-3);
+      line-height:1.55;
+      word-break:keep-all;
     }
 
     .roomTag{
-      background:#f2dfc7;
-      color:#78563f;
-      padding:8px 14px;
+      background:linear-gradient(180deg, #f3e3cf, #ead1b2);
+      color:var(--tag-text);
+      padding:10px 16px;
       border-radius:999px;
-      font-size:15px;
+      font-size:16px;
       white-space:nowrap;
+      font-weight:700;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
     }
 
     #appView{
       display:none;
-      grid-template-columns: 300px 1fr;
+      grid-template-columns: 320px 1fr;
       gap:0;
     }
 
     .sidePanel{
-      background:rgba(255,249,241,.65);
-      border-right:1px solid rgba(145,108,78,.12);
-      padding:16px;
+      background:rgba(255,249,241,.42);
+      border-right:1px solid rgba(145,108,78,.10);
+      padding:18px;
       overflow:auto;
+      backdrop-filter: blur(8px);
     }
 
     .panelCard{
-      background:rgba(255,250,243,.95);
-      border-radius:24px;
-      padding:16px;
-      box-shadow:0 10px 22px rgba(76,48,28,.08);
+      background:linear-gradient(180deg, rgba(255,250,244,.92), rgba(255,246,239,.82));
+      border-radius:26px;
+      padding:18px;
+      box-shadow:var(--shadow-soft);
+      border:1px solid rgba(255,255,255,.48);
       margin-bottom:14px;
     }
 
     .panelTitle{
-      font-size:18px;
+      font-family:"MaruBuri", serif;
+      font-size:19px;
       font-weight:700;
-      color:#644531;
+      color:var(--brown-1);
       margin-bottom:10px;
     }
 
     .statLine{
       font-size:15px;
-      color:#7c5d47;
+      color:var(--brown-3);
       margin:8px 0;
-      line-height:1.5;
+      line-height:1.6;
     }
 
     .warmCount{
-      font-size:30px;
+      font-size:31px;
       font-weight:700;
-      color:#5f402d;
+      color:var(--brown-1);
     }
 
     .emotionList{
@@ -290,11 +408,12 @@
     }
 
     .emotionChip{
-      background:#f3dfc6;
-      color:#75543f;
+      background:linear-gradient(180deg,#f5e6d3,#efd9be);
+      color:var(--brown-2);
       border-radius:999px;
       padding:8px 12px;
-      font-size:14px;
+      font-size:13px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.45);
     }
 
     .mainPanel{
@@ -308,34 +427,36 @@
       display:flex;
       align-items:center;
       gap:12px;
-      padding:14px 16px 12px;
-      border-bottom:1px solid rgba(145,108,78,.10);
-      background:rgba(255,250,243,.35);
+      padding:16px 18px 14px;
+      border-bottom:1px solid rgba(145,108,78,.08);
+      background:rgba(255,250,243,.34);
+      backdrop-filter: blur(6px);
       flex-wrap:wrap;
     }
 
     .chatBearMini{
-      width:54px;
-      height:54px;
-      border-radius:18px;
+      width:58px;
+      height:58px;
+      border-radius:20px;
       display:flex;
       align-items:center;
       justify-content:center;
       font-size:30px;
-      background:#f5ede3;
-      box-shadow:0 8px 18px rgba(0,0,0,.12);
+      background:linear-gradient(180deg,#faf0e4,#f2dbc0);
+      box-shadow:var(--shadow-soft);
     }
 
     .chatTitle{
+      font-family:"MaruBuri", serif;
       font-size:24px;
       font-weight:700;
-      color:#61412c;
+      color:var(--brown-1);
     }
 
     .chatDesc{
       font-size:15px;
-      color:#8c6d56;
-      line-height:1.45;
+      color:var(--brown-3);
+      line-height:1.5;
     }
 
     .topAction{
@@ -349,34 +470,36 @@
       display:flex;
       gap:8px;
       flex-wrap:wrap;
-      padding:12px 16px 4px;
+      padding:12px 16px 6px;
     }
 
     .presenceChip{
-      background:#f1e2cf;
-      color:#72523d;
+      background:linear-gradient(180deg,#f6e8d7,#efd8bc);
+      color:var(--brown-2);
       border-radius:999px;
       padding:8px 12px;
-      font-size:14px;
+      font-size:13px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.42);
     }
 
     #messages{
       flex:1;
       overflow:auto;
-      padding:14px 16px 8px;
+      padding:14px 18px 10px;
       display:flex;
       flex-direction:column;
-      gap:12px;
+      gap:13px;
     }
 
     .systemMsg{
       align-self:center;
       background:rgba(255,250,243,.9);
-      color:#7d5d47;
-      padding:10px 14px;
+      color:var(--brown-3);
+      padding:10px 15px;
       border-radius:999px;
       font-size:14px;
-      box-shadow:0 8px 18px rgba(0,0,0,.06);
+      box-shadow:0 8px 18px rgba(0,0,0,.05);
+      border:1px solid rgba(255,255,255,.45);
     }
 
     .msgWrap{
@@ -398,29 +521,30 @@
 
     .nick{
       font-size:13px;
-      color:#8c6d56;
+      color:var(--brown-3);
       padding:0 8px;
     }
 
     .msg{
-      padding:14px 18px;
+      padding:15px 18px;
       border-radius:24px;
-      font-size:17px;
-      line-height:1.5;
-      box-shadow:0 6px 18px rgba(76,48,28,.08);
+      font-size:16px;
+      line-height:1.6;
+      box-shadow:0 8px 18px rgba(76,48,28,.07);
       word-break:keep-all;
       white-space:pre-wrap;
+      border:1px solid rgba(255,255,255,.42);
     }
 
     .me .msg{
-      background:linear-gradient(180deg,#f5d3ad,#edc08c);
-      color:#5f402d;
+      background:linear-gradient(180deg,#f7dcc0,#efc79b);
+      color:var(--brown-1);
       border-bottom-right-radius:10px;
     }
 
     .other .msg{
-      background:rgba(255,251,245,.98);
-      color:#664935;
+      background:rgba(255,251,246,.95);
+      color:var(--brown-1);
       border-bottom-left-radius:10px;
     }
 
@@ -433,8 +557,8 @@
     }
 
     .miniBadge{
-      background:#f3e0c8;
-      color:#7c5a45;
+      background:linear-gradient(180deg,#f5e4d0,#eed7bc);
+      color:var(--brown-2);
       padding:5px 10px;
       border-radius:999px;
       font-size:12px;
@@ -449,59 +573,58 @@
 
     .hugMini{
       border:none;
-      background:#f8efe3;
+      background:rgba(255,249,242,.95);
       border-radius:999px;
       padding:8px 12px;
       font-size:13px;
-      color:#6a4b38;
+      color:var(--brown-2);
       cursor:pointer;
-      box-shadow:0 4px 12px rgba(0,0,0,.05);
+      box-shadow:0 4px 10px rgba(0,0,0,.04);
     }
 
     .hugMini:hover{
       transform:none;
-      box-shadow:0 6px 14px rgba(0,0,0,.08);
+      box-shadow:0 6px 14px rgba(0,0,0,.06);
     }
 
     .reportBtn{
       font-size:12px;
       padding:7px 11px;
-      background:linear-gradient(180deg,#f8e4df,#efc1b8);
-      color:#7d463c;
-      box-shadow:0 4px 12px rgba(0,0,0,.05);
+      background:linear-gradient(180deg,#f8e6e1,#efc7bf);
+      color:#874d43;
     }
 
     .inputArea{
-      border-top:1px solid rgba(145,108,78,.10);
+      border-top:1px solid rgba(145,108,78,.08);
       padding:14px 16px 16px;
-      background:rgba(255,250,243,.35);
+      background:rgba(255,250,243,.36);
+      backdrop-filter: blur(6px);
     }
 
     .roleSelect{
       display:none;
     }
 
-    .rolePill{
-      background:#f2dfc7;
-      color:#78563f;
-      border-radius:999px;
-      padding:8px 12px;
-      font-size:13px;
-    }
-
     #msg{
       width:100%;
       border:none;
       outline:none;
-      background:#fff9f3;
-      padding:14px 16px;
-      border-radius:20px;
+      background:rgba(255,251,246,.95);
+      padding:15px 16px;
+      border-radius:22px;
       font-size:16px;
-      color:#5f402d;
-      box-shadow:inset 0 2px 8px rgba(0,0,0,.05);
+      color:var(--brown-1);
+      box-shadow:
+        inset 0 2px 8px rgba(0,0,0,.04),
+        0 4px 12px rgba(95,60,34,.03);
       resize:none;
-      min-height:86px;
+      min-height:88px;
       max-height:130px;
+      font-family:inherit;
+    }
+
+    #msg::placeholder{
+      color:#b18a6a;
     }
 
     .inputBottom{
@@ -514,7 +637,7 @@
     }
 
     .charCount{
-      color:#8d6d57;
+      color:var(--brown-3);
       font-size:14px;
     }
 
@@ -527,31 +650,34 @@
     .helpGrid{
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:12px;
-      padding:12px 16px 18px;
+      gap:14px;
+      padding:14px 18px 20px;
       overflow:auto;
     }
 
     .helpCard{
-      background:rgba(255,250,243,.96);
-      border-radius:24px;
-      padding:18px;
-      box-shadow:0 10px 24px rgba(76,48,28,.08);
+      background:linear-gradient(180deg, rgba(255,250,243,.95), rgba(255,244,235,.84));
+      border-radius:26px;
+      padding:20px;
+      box-shadow:var(--shadow-soft);
+      border:1px solid rgba(255,255,255,.5);
       display:flex;
       flex-direction:column;
       gap:10px;
     }
 
     .helpName{
+      font-family:"MaruBuri", serif;
       font-size:22px;
       font-weight:700;
-      color:#62422f;
+      color:var(--brown-1);
+      line-height:1.35;
     }
 
     .helpDesc{
       font-size:15px;
-      line-height:1.6;
-      color:#7f604b;
+      line-height:1.65;
+      color:var(--brown-3);
     }
 
     .helpButtons{
@@ -567,20 +693,21 @@
       display:none;
       align-items:center;
       justify-content:center;
-      background:rgba(47,36,29,.26);
-      backdrop-filter:blur(2px);
+      background:rgba(71,49,37,.22);
+      backdrop-filter:blur(5px);
       z-index:60;
       padding:16px;
     }
 
     .modalCard{
       width:min(540px,92vw);
-      background:linear-gradient(180deg,#fffaf4,#f7e8d5);
-      border-radius:30px;
-      padding:24px;
-      box-shadow:0 20px 60px rgba(0,0,0,.25);
-      color:#644531;
+      background:linear-gradient(180deg,#fffaf4,#f8ead8);
+      border-radius:32px;
+      padding:26px;
+      box-shadow:0 20px 60px rgba(0,0,0,.22);
+      color:var(--brown-1);
       text-align:center;
+      border:1px solid rgba(255,255,255,.5);
     }
 
     .modalEmoji{
@@ -591,6 +718,7 @@
     }
 
     .modalTitle{
+      font-family:"MaruBuri", serif;
       font-size:28px;
       font-weight:700;
       margin-bottom:8px;
@@ -598,8 +726,8 @@
 
     .modalText{
       font-size:17px;
-      line-height:1.65;
-      color:#7a5a46;
+      line-height:1.7;
+      color:var(--brown-3);
       white-space:pre-wrap;
     }
 
@@ -615,15 +743,16 @@
       position:fixed;
       left:50%;
       transform:translateX(-50%);
-      bottom:30px;
-      background:rgba(255,250,243,.98);
-      color:#6b4a36;
+      bottom:28px;
+      background:rgba(255,250,243,.97);
+      color:var(--brown-1);
       padding:14px 20px;
-      border-radius:20px;
-      box-shadow:0 10px 24px rgba(0,0,0,.14);
+      border-radius:18px;
+      box-shadow:0 12px 30px rgba(0,0,0,.14);
+      border:1px solid rgba(255,255,255,.5);
       display:none;
       z-index:80;
-      font-size:16px;
+      font-size:15px;
       max-width:min(92vw,580px);
       text-align:center;
     }
@@ -648,11 +777,11 @@
     }
 
     @keyframes idle{
-      0%,100%{transform:translateY(0)}
-      50%{transform:translateY(-8px)}
+      0%,100%{ transform:translateY(0); }
+      50%{ transform:translateY(-8px); }
     }
 
-    @media (max-width:900px){
+    @media (max-width:980px){
       #appView{
         grid-template-columns:1fr;
       }
@@ -660,12 +789,27 @@
       .sidePanel{
         display:none;
       }
+
+      .roomName{
+        font-size:28px;
+      }
+
+      .roomMeta{
+        font-size:17px;
+      }
     }
 
-    @media (max-width:700px){
+    @media (max-width:760px){
+      .frame{
+        width:100vw;
+        height:100vh;
+        margin:0;
+        border-radius:0;
+      }
+
       header{
-        font-size:28px;
-        padding-top:22px;
+        font-size:30px;
+        padding-top:18px;
       }
 
       .sub{
@@ -678,14 +822,41 @@
 
       .heroNote{
         font-size:16px;
+        border-radius:28px;
+      }
+
+      .roomsTop{
+        margin-bottom:14px;
+      }
+
+      .room{
+        padding:18px;
+        border-radius:24px;
+      }
+
+      .roomLeft{
+        align-items:flex-start;
+      }
+
+      .roomIcon{
+        width:58px;
+        height:58px;
+        min-width:58px;
+        font-size:28px;
+        border-radius:20px;
       }
 
       .roomName{
-        font-size:22px;
+        font-size:24px;
       }
 
-      .msgWrap{
-        max-width:92%;
+      .roomMeta{
+        font-size:15px;
+      }
+
+      .roomTag{
+        font-size:14px;
+        padding:9px 13px;
       }
 
       #bgm{
@@ -706,6 +877,31 @@
 
       .modalTitle{
         font-size:24px;
+      }
+
+      .msgWrap{
+        max-width:92%;
+      }
+    }
+
+    @media (max-width:560px){
+      .audioWrap{
+        position:static;
+        align-items:center;
+        padding:12px 14px 0;
+      }
+
+      header{
+        padding-top:10px;
+      }
+
+      .room{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .roomTag{
+        align-self:flex-end;
       }
     }
   </style>
@@ -737,28 +933,39 @@
         <button id="regenNickBtn" class="softBtn" type="button">닉네임 바꾸기</button>
       </div>
 
-      <div class="room" data-room="friend">
-        <div>
-          <div class="roomName">친구의 방</div>
-          <div class="roomMeta">동등한 입장에서 짧은 고민과 따뜻한 허그를 주고받는 공간</div>
+      <div class="roomList">
+        <div class="room" data-room="friend">
+          <div class="roomLeft">
+            <div class="roomIcon">🫂</div>
+            <div class="roomText">
+              <div class="roomName">친구의 방</div>
+              <div class="roomMeta">동등한 입장에서 짧은 고민과 따뜻한 허그를 주고받는 공간</div>
+            </div>
+          </div>
+          <div class="roomTag">공감</div>
         </div>
-        <div class="roomTag">공감</div>
-      </div>
 
-      <div class="room" data-room="comfort">
-        <div>
-          <div class="roomName">포근한 방</div>
-          <div class="roomMeta">말보다 다정한 반응이 먼저 오는 공간</div>
+        <div class="room" data-room="comfort">
+          <div class="roomLeft">
+            <div class="roomIcon">🧸</div>
+            <div class="roomText">
+              <div class="roomName">포근한 방</div>
+              <div class="roomMeta">말보다 다정한 반응이 먼저 와서 마음을 감싸주는 공간</div>
+            </div>
+          </div>
+          <div class="roomTag">보호</div>
         </div>
-        <div class="roomTag">보호</div>
-      </div>
 
-      <div class="room" data-room="help">
-        <div>
-          <div class="roomName">도움연결 방</div>
-          <div class="roomMeta">혼자 감당하기 어려운 상황일 때 공식 기관과 연결되는 공간</div>
+        <div class="room" data-room="help">
+          <div class="roomLeft">
+            <div class="roomIcon">🆘</div>
+            <div class="roomText">
+              <div class="roomName">도움연결 방</div>
+              <div class="roomMeta">혼자 감당하기 어려운 상황일 때 공식 기관과 연결되는 공간</div>
+            </div>
+          </div>
+          <div class="roomTag">연결</div>
         </div>
-        <div class="roomTag">연결</div>
       </div>
     </section>
 
@@ -896,7 +1103,7 @@
     const roomConfig = {
       friend: {
         title: "친구의 방",
-        emoji: "🤎",
+        emoji: "🫂",
         desc: "동등한 입장에서 고민과 허그를 나누는 공간이에요.",
         roles: [],
         welcome: "친구의 방에 들어왔어요.",
@@ -1126,7 +1333,9 @@
       }
 
       simulatePresenceEnter(info);
-      msgInput.focus();
+      if(roomKey !== "help"){
+        msgInput.focus();
+      }
     }
 
     function renderPresence(info){
@@ -1408,7 +1617,7 @@
       updateCharCount();
     }
 
-    function autoWarmReaction(messageId, originalText){
+    function autoWarmReaction(messageId){
       if(currentRoom === "help") return;
 
       const available = currentRoom === "comfort"
@@ -1477,7 +1686,7 @@
       }
     }
 
-    function reportMessage(messageId){
+    function reportMessage(){
       state.reports += 1;
       saveState();
 
