@@ -10,12 +10,58 @@ import {
   Users,
   Sparkles,
   RefreshCw,
+  WifiOff,
+  Flag,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
+
+import { initializeApp } from "firebase/app";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+  runTransaction,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+
+/**
+ * 새 파일입니다. 기존 로컬 프로토타입은 그대로 두고,
+ * 이 파일은 Firebase 실시간 버전으로 따로 분리했습니다.
+ *
+ * 사용 전 준비
+ * 1. npm install firebase
+ * 2. 아래 FIREBASE_CONFIG 교체
+ * 3. Firestore 활성화
+ */
+
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
+};
+
+const firebaseApp = initializeApp(FIREBASE_CONFIG);
+const db = getFirestore(firebaseApp);
+
+const LOCAL_KEY = "warm-hug-firebase-user-v1";
 
 const NICKNAMES = [
   "둥글레차",
@@ -40,10 +86,9 @@ const ROOM_CONFIG = {
     tag: "공감",
     description: "동등한 입장에서 짧은 고민과 따뜻한 허그를 주고받는 공간",
     detail: "최대 4명 · 고민 50자 · 판단/조언 금지 · 허그 중심",
-    welcome:
-      "친구의 방에 왔어요. 입장 순서대로 마음을 적고, 포옹으로 응답할 수 있어요.",
-    simulatedUsers: ["보리차", "홍차", "녹차"],
+    welcome: "친구의 방에 왔어요. 입장 순서대로 마음을 적고, 포옹으로 응답할 수 있어요.",
     interactive: true,
+    maxParticipants: 4,
   },
   comfort: {
     key: "comfort",
@@ -52,10 +97,9 @@ const ROOM_CONFIG = {
     tag: "보호",
     description: "말보다 먼저 포근함이 도착하는 공간",
     detail: "큰 곰 · 토닥임 · 하트 · 안심 반응 중심",
-    welcome:
-      "포근한 방에 왔어요. 말이 적어도 괜찮아요. 여기서는 부드러운 반응이 먼저 와요.",
-    simulatedUsers: ["하얀곰", "갈색곰"],
+    welcome: "포근한 방에 왔어요. 말이 적어도 괜찮아요. 여기서는 부드러운 반응이 먼저 와요.",
     interactive: true,
+    maxParticipants: 3,
   },
   help: {
     key: "help",
@@ -64,10 +108,9 @@ const ROOM_CONFIG = {
     tag: "연결",
     description: "혼자 감당하기 어려운 상황에서 공식 기관과 연결되는 공간",
     detail: "1366 · 117 · 112 · 119 공식 연결",
-    welcome:
-      "도움연결 방에 왔어요. 지금 상황에 맞는 공식 기관으로 바로 이어질 수 있어요.",
-    simulatedUsers: [],
+    welcome: "도움연결 방에 왔어요. 지금 상황에 맞는 공식 기관으로 바로 이어질 수 있어요.",
     interactive: false,
+    maxParticipants: 1,
   },
 };
 
@@ -78,7 +121,6 @@ const HUG_TYPES = [
     label: "괜찮아질 거예요",
     title: "포근한 반응이 도착했어요",
     message: "괜찮아질 거예요. 여기서는 잠깐 기대어도 괜찮아요.",
-    style: "bg-amber-50",
   },
   {
     id: "support",
@@ -86,7 +128,6 @@ const HUG_TYPES = [
     label: "잘 될 거예요",
     title: "누군가 당신을 응원하고 있어요",
     message: "잘 될 거예요. 지금까지도 충분히 잘 버텨왔어요.",
-    style: "bg-yellow-50",
   },
   {
     id: "rest",
@@ -94,7 +135,6 @@ const HUG_TYPES = [
     label: "많이 아팠죠? 이제 괜찮아요",
     title: "잠깐 쉬어도 괜찮아요",
     message: "많이 아팠죠? 이제 잠깐 여기서 쉬어요.",
-    style: "bg-orange-50",
   },
   {
     id: "help",
@@ -102,7 +142,6 @@ const HUG_TYPES = [
     label: "도움이 필요해보여요",
     title: "전문기관 연결을 제안할게요",
     message: "혼자 감당하기 힘들어 보여요. 공식 도움기관으로 연결해볼까요?",
-    style: "bg-rose-50",
     suggestHelp: true,
   },
 ];
@@ -130,30 +169,8 @@ const HELP_LINKS = [
   },
 ];
 
-const BLOCKED_PATTERNS = [
-  /죽어/,
-  /병신/,
-  /멍청/,
-  /꺼져/,
-  /시?발/,
-  /좆/,
-  /개새/,
-  /염병/,
-  /놈아/,
-];
-
-const THREAT_PATTERNS = [
-  /죽고\s?싶/,
-  /자살/,
-  /살려줘/,
-  /폭행/,
-  /학대/,
-  /스토킹/,
-  /성폭행/,
-  /납치/,
-  /칼/,
-  /도와줘/,
-];
+const BLOCKED_PATTERNS = [/죽어/, /병신/, /멍청/, /꺼져/, /시?발/, /좆/, /개새/, /염병/, /놈아/];
+const THREAT_PATTERNS = [/죽고\s?싶/, /자살/, /살려줘/, /폭행/, /학대/, /스토킹/, /성폭행/, /납치/, /칼/, /도와줘/];
 
 const EMOTION_MAP = {
   불안: ["불안", "무서", "떨려", "긴장"],
@@ -164,26 +181,23 @@ const EMOTION_MAP = {
   위로필요: ["안아", "위로", "포옹", "괜찮"],
 };
 
-const STORAGE_KEY = "warm-hug-react-prototype-v2";
-
 function randomNickname(exclude?: string) {
   const pool = NICKNAMES.filter((n) => n !== exclude);
   return pool[Math.floor(Math.random() * pool.length)] || NICKNAMES[0];
 }
 
-function loadState() {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
+function getLocalUser() {
+  if (typeof window === "undefined") return { userId: "local-dev", nickname: "둥글레차" };
+  const raw = localStorage.getItem(LOCAL_KEY);
+  if (raw) return JSON.parse(raw);
+  const next = { userId: crypto.randomUUID(), nickname: randomNickname() };
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(next));
+  return next;
 }
 
-function saveState(state: any) {
+function setLocalUser(user: { userId: string; nickname: string }) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(user));
 }
 
 function detectEmotion(text: string) {
@@ -201,72 +215,293 @@ function containsThreat(text: string) {
   return THREAT_PATTERNS.some((p) => p.test(text));
 }
 
-function nextPenalty(level: number) {
-  const minutes = [0, 5, 10, 20, 40];
-  return minutes[Math.min(level, minutes.length - 1)];
+function penaltyMinutes(escapeCount: number) {
+  const mapping = [0, 5, 10, 20, 40];
+  return mapping[Math.min(escapeCount, mapping.length - 1)];
 }
 
-function buildSystemIntro(roomKey: keyof typeof ROOM_CONFIG, presence: Record<string, string[]>) {
-  return [
-    {
-      id: crypto.randomUUID(),
-      type: "system",
-      text: ROOM_CONFIG[roomKey].welcome,
-    },
-    ...presence[roomKey].map((name) => ({
-      id: crypto.randomUUID(),
-      type: "system",
-      text: `${name}님 입장하셨습니다.`,
-    })),
-  ];
+function tsToMillis(value: any) {
+  if (!value) return 0;
+  if (typeof value.toMillis === "function") return value.toMillis();
+  return 0;
 }
 
-function initialState() {
-  const nickname = randomNickname();
-
-  return {
-    nickname,
-    currentView: "home",
-    currentRoom: null as null | keyof typeof ROOM_CONFIG,
-    draft: "",
-    lockedUntil: 0,
-    stats: {
-      todayHugs: 0,
-      weekWarmth: 0,
-      reports: 0,
+async function ensureUserProfile(user: { userId: string; nickname: string }) {
+  const ref = doc(db, "userProfiles", user.userId);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    await setDoc(ref, {
+      nickname: user.nickname,
+      reportCount: 0,
+      suspensionLevel: 0,
       escapeCount: 0,
-    },
-    emotions: [] as string[],
-    moderation: {
-      totalReports: 0,
-      strikesByAuthor: {} as Record<string, number>,
-      suspendedAuthors: {} as Record<string, { until: number | null; permanent: boolean }>,
-    },
-    rooms: {
-      friend: [] as any[],
-      comfort: [] as any[],
-      help: [] as any[],
-    },
-    presence: {
-      friend: [nickname, ...ROOM_CONFIG.friend.simulatedUsers],
-      comfort: [nickname, ...ROOM_CONFIG.comfort.simulatedUsers],
-      help: [nickname],
-    },
-  };
+      suspendedUntil: null,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+  } else if (snap.data().nickname !== user.nickname) {
+    await updateDoc(ref, {
+      nickname: user.nickname,
+      updatedAt: serverTimestamp(),
+    });
+  }
 }
 
-export default function WarmHugAppPrototype() {
-  const persisted = useMemo(() => loadState(), []);
-  const [app, setApp] = useState(persisted || initialState());
-  const [modal, setModal] = useState<any>(null);
+async function getUserProfile(userId: string) {
+  const snap = await getDoc(doc(db, "userProfiles", userId));
+  return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+}
+
+async function createRoom(typeKey: keyof typeof ROOM_CONFIG) {
+  const cfg = ROOM_CONFIG[typeKey];
+  const roomRef = await addDoc(collection(db, "rooms"), {
+    type: cfg.key,
+    title: cfg.title,
+    status: "waiting",
+    maxParticipants: cfg.maxParticipants,
+    turnIndex: 1,
+    createdAt: serverTimestamp(),
+  });
+  return roomRef.id;
+}
+
+async function findOrCreateJoinableRoom(typeKey: keyof typeof ROOM_CONFIG) {
+  const q = query(
+    collection(db, "rooms"),
+    where("type", "==", typeKey),
+    where("status", "in", ["waiting", "active"]),
+    orderBy("createdAt", "asc"),
+    limit(10)
+  );
+  const snap = await getDocs(q);
+
+  for (const roomDoc of snap.docs) {
+    const participantSnap = await getDocs(collection(db, "rooms", roomDoc.id, "participants"));
+    const active = participantSnap.docs.map((d) => d.data()).filter((p) => p.isOnline !== false);
+    if (active.length < roomDoc.data().maxParticipants) return roomDoc.id;
+  }
+
+  return createRoom(typeKey);
+}
+
+async function joinRoom(args: { roomId: string; typeKey: keyof typeof ROOM_CONFIG; user: { userId: string; nickname: string } }) {
+  const { roomId, user, typeKey } = args;
+  const roomRef = doc(db, "rooms", roomId);
+  const participantRef = doc(db, "rooms", roomId, "participants", user.userId);
+  const profileRef = doc(db, "userProfiles", user.userId);
+
+  await runTransaction(db, async (tx) => {
+    const roomSnap = await tx.get(roomRef);
+    if (!roomSnap.exists()) throw new Error("방을 찾을 수 없습니다.");
+
+    const profileSnap = await tx.get(profileRef);
+    if (profileSnap.exists()) {
+      const suspendedUntil = tsToMillis(profileSnap.data().suspendedUntil);
+      if (suspendedUntil && suspendedUntil > Date.now()) {
+        throw new Error("현재 이용이 제한되어 있습니다.");
+      }
+    }
+
+    const participantsSnap = await getDocs(collection(db, "rooms", roomId, "participants"));
+    const active = participantsSnap.docs.map((d) => d.data()).filter((p) => p.isOnline !== false);
+    if (active.length >= roomSnap.data().maxParticipants) throw new Error("방이 가득 찼습니다.");
+
+    tx.set(
+      participantRef,
+      {
+        nickname: user.nickname,
+        isOnline: true,
+        joinedAt: serverTimestamp(),
+        lastSeenAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+
+    tx.update(roomRef, { status: "active" });
+  });
+
+  const messagesRef = collection(db, "rooms", roomId, "messages");
+  const firstMessageCheck = await getDocs(query(messagesRef, limit(1)));
+  if (firstMessageCheck.empty) {
+    await addDoc(messagesRef, {
+      type: "system",
+      text: ROOM_CONFIG[typeKey].welcome,
+      createdAt: serverTimestamp(),
+    });
+  }
+
+  await addDoc(messagesRef, {
+    type: "system",
+    text: `${user.nickname}님 입장하셨습니다.`,
+    createdAt: serverTimestamp(),
+  });
+}
+
+async function leaveRoom(args: { roomId: string; userId: string }) {
+  const { roomId, userId } = args;
+  const participantRef = doc(db, "rooms", roomId, "participants", userId);
+  const profile = await getUserProfile(userId);
+  const nextEscapeCount = (profile?.escapeCount || 0) + 1;
+  const waitUntil = new Date(Date.now() + penaltyMinutes(nextEscapeCount) * 60 * 1000);
+
+  await updateDoc(participantRef, {
+    isOnline: false,
+    lastSeenAt: serverTimestamp(),
+    waitUntil,
+  });
+
+  await updateDoc(doc(db, "userProfiles", userId), {
+    escapeCount: nextEscapeCount,
+    updatedAt: serverTimestamp(),
+  });
+
+  await addDoc(collection(db, "rooms", roomId, "messages"), {
+    type: "system",
+    text: "잘 가요. 조심해서 가요.",
+    createdAt: serverTimestamp(),
+  });
+}
+
+async function touchPresence(roomId: string, userId: string) {
+  await updateDoc(doc(db, "rooms", roomId, "participants", userId), {
+    isOnline: true,
+    lastSeenAt: serverTimestamp(),
+  });
+}
+
+async function createMessage(args: { roomId: string; user: { userId: string; nickname: string }; text: string }) {
+  const { roomId, user, text } = args;
+  const roomRef = doc(db, "rooms", roomId);
+  const messagesRef = collection(db, "rooms", roomId, "messages");
+
+  await runTransaction(db, async (tx) => {
+    const roomSnap = await tx.get(roomRef);
+    if (!roomSnap.exists()) throw new Error("방을 찾을 수 없습니다.");
+    const turn = roomSnap.data().turnIndex || 1;
+    const messageRef = doc(messagesRef);
+
+    tx.set(messageRef, {
+      type: "post",
+      authorId: user.userId,
+      authorNickname: user.nickname,
+      text,
+      turn,
+      status: "visible",
+      createdAt: serverTimestamp(),
+    });
+
+    tx.update(roomRef, { turnIndex: turn + 1 });
+  });
+}
+
+async function createReaction(args: {
+  roomId: string;
+  messageId: string;
+  user: { userId: string; nickname: string };
+  type: (typeof HUG_TYPES)[number];
+  auto?: boolean;
+}) {
+  const { roomId, messageId, user, type, auto = false } = args;
+  await addDoc(collection(db, "rooms", roomId, "reactions"), {
+    messageId,
+    fromParticipantId: auto ? "system-auto" : user.userId,
+    fromNickname: auto ? "포근한 곰" : user.nickname,
+    typeId: type.id,
+    typeEmoji: type.emoji,
+    typeLabel: type.label,
+    auto,
+    createdAt: serverTimestamp(),
+  });
+}
+
+async function createReport(args: { roomId: string; messageId: string; reporterId: string }) {
+  const { roomId, messageId, reporterId } = args;
+  const profile = await getUserProfile(reporterId);
+  const nextCount = (profile?.reportCount || 0) + 1;
+
+  await addDoc(collection(db, "moderation", "reports", "items"), {
+    roomId,
+    messageId,
+    reporterId,
+    reason: "user_report",
+    createdAt: serverTimestamp(),
+  });
+
+  const payload: Record<string, any> = {
+    reportCount: nextCount,
+    updatedAt: serverTimestamp(),
+  };
+
+  if (nextCount >= 5) {
+    payload.suspensionLevel = 3;
+    payload.suspendedUntil = new Date(Date.now() + 3650 * 24 * 60 * 60 * 1000);
+  } else if (nextCount >= 3) {
+    payload.suspensionLevel = 2;
+    payload.suspendedUntil = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  } else if (nextCount >= 1) {
+    payload.suspensionLevel = 1;
+  }
+
+  await updateDoc(doc(db, "userProfiles", reporterId), payload);
+}
+
+function useRoomData(roomId: string | null) {
+  const [messages, setMessages] = useState<any[]>([]);
+  const [participants, setParticipants] = useState<any[]>([]);
+  const [reactions, setReactions] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!roomId) return;
+
+    const unsubMessages = onSnapshot(
+      query(collection(db, "rooms", roomId, "messages"), orderBy("createdAt", "asc")),
+      (snap) => setMessages(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
+    );
+
+    const unsubParticipants = onSnapshot(
+      query(collection(db, "rooms", roomId, "participants"), orderBy("joinedAt", "asc")),
+      (snap) => setParticipants(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
+    );
+
+    const unsubReactions = onSnapshot(
+      query(collection(db, "rooms", roomId, "reactions"), orderBy("createdAt", "asc")),
+      (snap) => setReactions(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
+    );
+
+    return () => {
+      unsubMessages();
+      unsubParticipants();
+      unsubReactions();
+    };
+  }, [roomId]);
+
+  return { messages, participants, reactions };
+}
+
+export default function WarmHugFirebaseRealtime() {
+  const baseUser = useMemo(() => getLocalUser(), []);
+  const [user, setUser] = useState(baseUser);
+  const [profile, setProfile] = useState<any>(null);
+  const [view, setView] = useState<"home" | "rooms" | "room">("home");
+  const [roomType, setRoomType] = useState<keyof typeof ROOM_CONFIG | null>(null);
+  const [roomId, setRoomId] = useState<string | null>(null);
+  const [draft, setDraft] = useState("");
   const [notice, setNotice] = useState("포근한 공간에 오신 걸 환영해요.");
+  const [modal, setModal] = useState<any>(null);
   const [hearts, setHearts] = useState<any[]>([]);
+  const [joining, setJoining] = useState(false);
+  const [stats, setStats] = useState({ todayHugs: 0, weekWarmth: 0 });
+  const [emotions, setEmotions] = useState<string[]>([]);
+  const autoReactionGuard = useRef(new Set<string>());
   const timersRef = useRef<any[]>([]);
   const listRef = useRef<HTMLDivElement | null>(null);
 
+  const roomData = useRoomData(roomId);
+  const currentRoom = roomType ? ROOM_CONFIG[roomType] : null;
+
   useEffect(() => {
-    saveState(app);
-  }, [app]);
+    ensureUserProfile(user).then(() => getUserProfile(user.userId).then(setProfile));
+  }, [user]);
 
   useEffect(() => {
     if (!notice) return;
@@ -275,23 +510,56 @@ export default function WarmHugAppPrototype() {
   }, [notice]);
 
   useEffect(() => {
-    if (listRef.current) {
-      listRef.current.scrollTop = listRef.current.scrollHeight;
-    }
-  }, [app.rooms, app.currentRoom]);
+    if (listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight;
+  }, [roomData.messages, roomData.reactions]);
 
   useEffect(() => {
-    return () => {
-      timersRef.current.forEach((t) => clearTimeout(t));
-    };
+    if (!roomId) return;
+    const interval = setInterval(() => {
+      touchPresence(roomId, user.userId).catch(() => {});
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [roomId, user.userId]);
+
+  useEffect(() => {
+    if (!roomId || !roomType || !currentRoom?.interactive) return;
+    const visiblePosts = roomData.messages.filter((m) => m.type === "post" && m.status !== "hidden");
+
+    visiblePosts.forEach((message) => {
+      if (autoReactionGuard.current.has(message.id)) return;
+      autoReactionGuard.current.add(message.id);
+      const alreadyReacted = roomData.reactions.some((r) => r.messageId === message.id);
+      if (alreadyReacted) return;
+
+      const choices = roomType === "comfort"
+        ? HUG_TYPES.filter((h) => h.id !== "help" && h.id !== "support")
+        : HUG_TYPES.filter((h) => h.id !== "help");
+
+      const pick = choices[Math.floor(Math.random() * choices.length)];
+      const delay = 2800 + Math.floor(Math.random() * 1400);
+      const t = setTimeout(() => {
+        createReaction({ roomId, messageId: message.id, user, type: pick, auto: true }).catch(() => {});
+      }, delay);
+      timersRef.current.push(t);
+    });
+  }, [roomId, roomType, currentRoom, roomData.messages, roomData.reactions, user]);
+
+  useEffect(() => {
+    return () => timersRef.current.forEach((t) => clearTimeout(t));
   }, []);
 
-  const room = app.currentRoom ? ROOM_CONFIG[app.currentRoom] : null;
-  const messages = room ? app.rooms[room.key] : [];
+  const mergedMessages = useMemo(() => {
+    return roomData.messages.map((message) => {
+      const reactions = roomData.reactions.filter((r) => r.messageId === message.id);
+      const summary = reactions.length
+        ? `${reactions[reactions.length - 1].typeEmoji} ${reactions[reactions.length - 1].typeLabel}`
+        : "아직 받은 포옹 없음";
+      return { ...message, reactionSummary: summary };
+    });
+  }, [roomData.messages, roomData.reactions]);
 
-  const updateApp = (updater: any) => {
-    setApp((prev: any) => (typeof updater === "function" ? updater(prev) : updater));
-  };
+  const onlineParticipants = roomData.participants.filter((p) => p.isOnline !== false);
+  const nextPenalty = penaltyMinutes(profile?.escapeCount || 0);
 
   const sparkHearts = (count = 8) => {
     const batch = Array.from({ length: count }).map((_, idx) => ({
@@ -300,392 +568,136 @@ export default function WarmHugAppPrototype() {
       icon: ["🤎", "💛", "🧡", "🤍", "🫂"][Math.floor(Math.random() * 5)],
       duration: 1.5 + Math.random() * 1.4,
     }));
-
     setHearts((prev) => [...prev, ...batch]);
-
     const t = setTimeout(() => {
       setHearts((prev) => prev.filter((h) => !batch.some((b) => b.id === h.id)));
     }, 2500);
-
     timersRef.current.push(t);
   };
 
-  const goRooms = () => {
-    updateApp((prev: any) => ({ ...prev, currentView: "rooms", currentRoom: null }));
-  };
-
-  const getRemainingLockMinutes = () => {
-    const diff = app.lockedUntil - Date.now();
-    return diff > 0 ? Math.ceil(diff / 60000) : 0;
-  };
-
-  const enterRoom = (key: keyof typeof ROOM_CONFIG) => {
-    const remaining = getRemainingLockMinutes();
-    if (remaining > 0) {
-      setModal({
-        emoji: "⏳",
-        title: "잠깐 쉬는 시간이 필요해요",
-        text: `중도 이탈이 누적되어 ${remaining}분 뒤에 다시 입장할 수 있어요.`,
-        actions: [{ label: "확인", onClick: () => setModal(null) }],
-      });
-      return;
-    }
-
-    updateApp((prev: any) => {
-      const existing = prev.rooms[key];
-      const nextRooms = { ...prev.rooms };
-
-      if (existing.length === 0) {
-        nextRooms[key] = buildSystemIntro(key, prev.presence);
-      }
-
-      return {
-        ...prev,
-        currentView: "room",
-        currentRoom: key,
-        draft: "",
-        rooms: nextRooms,
-      };
-    });
-  };
-
-  const regenerateNickname = () => {
-    updateApp((prev: any) => {
-      const nickname = randomNickname(prev.nickname);
-      return {
-        ...prev,
-        nickname,
-        presence: {
-          ...prev.presence,
-          friend: [nickname, ...ROOM_CONFIG.friend.simulatedUsers],
-          comfort: [nickname, ...ROOM_CONFIG.comfort.simulatedUsers],
-          help: [nickname],
-        },
-      };
-    });
+  const regenerateNickname = async () => {
+    const next = { ...user, nickname: randomNickname(user.nickname) };
+    setUser(next);
+    setLocalUser(next);
+    await ensureUserProfile(next);
+    setProfile(await getUserProfile(next.userId));
     setNotice("닉네임을 새로 바꿨어요.");
   };
 
-  const openSquirrelModal = () => {
-    setModal({
-      emoji: "🐿️",
-      title: "조금 더 따뜻하게 말해볼까요?",
-      text: "괜찮아괜찮아. 나쁜 말은 하지 말자. 이 공간은 상처 주는 말을 쉬게 하는 곳이에요.",
-      actions: [{ label: "다시 쓰기", onClick: () => setModal(null) }],
-    });
+  const openRoom = async (typeKey: keyof typeof ROOM_CONFIG) => {
+    setJoining(true);
+    try {
+      const nextRoomId = await findOrCreateJoinableRoom(typeKey);
+      await joinRoom({ roomId: nextRoomId, typeKey, user });
+      setRoomType(typeKey);
+      setRoomId(nextRoomId);
+      setView("room");
+      setDraft("");
+      setNotice(`${ROOM_CONFIG[typeKey].title}에 들어왔어요.`);
+    } catch (error: any) {
+      setNotice(error?.message || "방에 들어가지 못했어요.");
+    } finally {
+      setJoining(false);
+    }
   };
 
-  const openHelpSuggestModal = () => {
-    setModal({
-      emoji: "🆘",
-      title: "도움이 필요해 보여요",
-      text: "혼자 감당하기 어려운 상황처럼 보여요. 공식 도움기관으로 연결할까요?",
-      actions: [
-        {
-          label: "예, 연결할게요",
-          onClick: () => {
-            setModal(null);
-            enterRoom("help");
-          },
-        },
-        {
-          label: "아니오",
-          onClick: () => {
-            setModal(null);
-            setNotice("필요할 때 언제든 도움연결 방으로 갈 수 있어요.");
-          },
-        },
-      ],
-    });
-  };
-
-  const scheduleAutoReaction = (roomKey: keyof typeof ROOM_CONFIG, messageId: string) => {
-    const delay = 2800 + Math.floor(Math.random() * 1400);
-    const choices =
-      roomKey === "comfort"
-        ? HUG_TYPES.filter((h) => h.id !== "help" && h.id !== "support")
-        : HUG_TYPES.filter((h) => h.id !== "help");
-
-    const pick = choices[Math.floor(Math.random() * choices.length)];
-
-    const t = setTimeout(() => {
-      applyReaction(roomKey, messageId, pick, true);
-    }, delay);
-
-    timersRef.current.push(t);
-  };
-
-  const submitPost = () => {
-    const text = app.draft.trim();
-    if (!text) return;
-
+  const submitPost = async () => {
+    const text = draft.trim();
+    if (!text || !roomId) return;
     if (text.length > 50) {
       setNotice("고민은 50자 이내로 적어주세요.");
       return;
     }
-
     if (containsBlocked(text)) {
-      openSquirrelModal();
+      setModal({
+        emoji: "🐿️",
+        title: "조금 더 따뜻하게 말해볼까요?",
+        text: "괜찮아괜찮아. 나쁜 말은 하지 말자. 이 공간은 상처 주는 말을 쉬게 하는 곳이에요.",
+        actions: [{ label: "다시 쓰기", onClick: () => setModal(null) }],
+      });
       return;
     }
 
-    const item = {
-      id: crypto.randomUUID(),
-      type: "post",
-      author: app.nickname,
-      text,
-      createdAt: Date.now(),
-      hugs: [],
-      shortReply: null,
-      reportCount: 0,
-      reportedBy: [],
-      hidden: false,
-      turn: app.rooms[app.currentRoom].filter((m: any) => m.type === "post").length + 1,
-    };
-
-    updateApp((prev: any) => ({
-      ...prev,
-      draft: "",
-      emotions: [detectEmotion(text), ...prev.emotions].slice(0, 8),
-      rooms: {
-        ...prev.rooms,
-        [prev.currentRoom]: [...prev.rooms[prev.currentRoom], item],
-      },
-    }));
+    await createMessage({ roomId, user, text });
+    setDraft("");
+    setEmotions((prev) => [detectEmotion(text), ...prev].slice(0, 8));
 
     if (containsThreat(text)) {
-      const t = setTimeout(openHelpSuggestModal, 700);
+      const t = setTimeout(() => {
+        setModal({
+          emoji: "🆘",
+          title: "도움이 필요해 보여요",
+          text: "혼자 감당하기 어려운 상황처럼 보여요. 공식 도움기관으로 연결할까요?",
+          actions: [
+            { label: "예, 연결할게요", onClick: () => { setModal(null); openRoom("help"); } },
+            { label: "아니오", onClick: () => { setModal(null); setNotice("필요할 때 언제든 도움연결 방으로 갈 수 있어요."); } },
+          ],
+        });
+      }, 700);
       timersRef.current.push(t);
     }
-
-    scheduleAutoReaction(app.currentRoom, item.id);
   };
 
-  const applyReaction = (
-    roomKey: keyof typeof ROOM_CONFIG,
-    messageId: string,
-    type: (typeof HUG_TYPES)[number],
-    auto = false
-  ) => {
-    let didAdd = false;
-
-    updateApp((prev: any) => {
-      const roomMessages = prev.rooms[roomKey].map((msg: any) => {
-        if (msg.id !== messageId || msg.type !== "post" || msg.hidden) return msg;
-
-        const already = msg.hugs.some((hug: any) => hug.id === type.id && hug.auto === auto);
-        if (already) return msg;
-
-        didAdd = true;
-
-        return {
-          ...msg,
-          hugs: [...msg.hugs, { id: type.id, label: type.label, emoji: type.emoji, auto }],
-          shortReply: `${type.emoji} ${type.label}`,
-        };
-      });
-
-      return {
-        ...prev,
-        stats: didAdd
-          ? {
-              ...prev.stats,
-              todayHugs: prev.stats.todayHugs + 1,
-              weekWarmth: prev.stats.weekWarmth + 1,
-            }
-          : prev.stats,
-        rooms: {
-          ...prev.rooms,
-          [roomKey]: roomMessages,
-        },
-      };
-    });
-
-    if (!didAdd) return;
-
+  const reactToMessage = async (messageId: string, type: (typeof HUG_TYPES)[number]) => {
+    if (!roomId) return;
+    await createReaction({ roomId, messageId, user, type, auto: false });
+    setStats((prev) => ({ todayHugs: prev.todayHugs + 1, weekWarmth: prev.weekWarmth + 1 }));
     sparkHearts(type.id === "help" ? 6 : 8);
-
     setModal({
       emoji: type.emoji,
-      title: auto ? type.title : "따뜻한 포옹이 도착했어요",
+      title: "따뜻한 포옹이 도착했어요",
       text: type.message,
       actions: type.suggestHelp
         ? [
-            {
-              label: "도움연결 방으로",
-              onClick: () => {
-                setModal(null);
-                enterRoom("help");
-              },
-            },
+            { label: "도움연결 방으로", onClick: () => { setModal(null); openRoom("help"); } },
             { label: "닫기", onClick: () => setModal(null) },
           ]
         : [{ label: "고마워요", onClick: () => setModal(null) }],
     });
   };
 
-  const reportPost = (roomKey: keyof typeof ROOM_CONFIG, messageId: string) => {
-    let reportResult: null | {
-      reportCount: number;
-      strikeCount: number;
-      suspendedUntil: number | null;
-      permanent: boolean;
-    } = null;
-
-    updateApp((prev: any) => {
-      const roomMessages = [...prev.rooms[roomKey]];
-      const targetIndex = roomMessages.findIndex((msg: any) => msg.id === messageId && msg.type === "post");
-
-      if (targetIndex === -1) return prev;
-
-      const target = roomMessages[targetIndex];
-
-      if (target.reportedBy.includes(prev.nickname)) {
-        setNotice("이미 이 글을 신고했어요.");
-        return prev;
-      }
-
-      const nextReportCount = target.reportCount + 1;
-      const nextReportedBy = [...target.reportedBy, prev.nickname];
-      const nextHidden = nextReportCount >= 3;
-
-      const nextTarget = {
-        ...target,
-        reportCount: nextReportCount,
-        reportedBy: nextReportedBy,
-        hidden: nextHidden,
-      };
-
-      roomMessages[targetIndex] = nextTarget;
-
-      const currentStrike = prev.moderation.strikesByAuthor[target.author] || 0;
-      const nextStrike = currentStrike + 1;
-
-      let suspendedUntil: number | null = null;
-      let permanent = false;
-
-      if (nextStrike >= 5) {
-        permanent = true;
-      } else if (nextStrike >= 3) {
-        suspendedUntil = Date.now() + 24 * 60 * 60 * 1000;
-      }
-
-      reportResult = {
-        reportCount: nextReportCount,
-        strikeCount: nextStrike,
-        suspendedUntil,
-        permanent,
-      };
-
-      return {
-        ...prev,
-        stats: {
-          ...prev.stats,
-          reports: prev.stats.reports + 1,
-        },
-        moderation: {
-          totalReports: prev.moderation.totalReports + 1,
-          strikesByAuthor: {
-            ...prev.moderation.strikesByAuthor,
-            [target.author]: nextStrike,
-          },
-          suspendedAuthors: {
-            ...prev.moderation.suspendedAuthors,
-            [target.author]: {
-              until: suspendedUntil,
-              permanent,
-            },
-          },
-        },
-        rooms: {
-          ...prev.rooms,
-          [roomKey]: roomMessages,
-        },
-      };
-    });
-
-    if (!reportResult) return;
-
-    const parts = [
-      `신고가 접수되었어요.`,
-      `이 글 신고 수: ${reportResult.reportCount}회`,
-      `작성자 누적 제재 카운트: ${reportResult.strikeCount}회`,
-    ];
-
-    if (reportResult.permanent) {
-      parts.push("작성자는 영구정지 상태예요.");
-    } else if (reportResult.suspendedUntil) {
-      parts.push("작성자는 24시간 정지 상태예요.");
-    } else if (reportResult.strikeCount === 1) {
-      parts.push("1회 경고가 적용되었어요.");
-    }
-
-    if (reportResult.reportCount >= 3) {
-      parts.push("해당 글은 숨김 처리되었어요.");
-    }
-
+  const reportPost = async (messageId: string) => {
+    if (!roomId) return;
+    await createReport({ roomId, messageId, reporterId: user.userId });
+    setProfile(await getUserProfile(user.userId));
     setModal({
       emoji: "🚨",
       title: "신고가 접수되었어요",
-      text: parts.join("\n"),
+      text: "권장 방식: 신고 1회 경고 · 3회 24시간 정지 · 5회 영구정지",
       actions: [{ label: "확인", onClick: () => setModal(null) }],
     });
   };
 
-  const clearRoom = () => {
-    updateApp((prev: any) => ({
-      ...prev,
-      rooms: {
-        ...prev.rooms,
-        [prev.currentRoom]: buildSystemIntro(prev.currentRoom, prev.presence),
-      },
-    }));
+  const clearRoom = async () => {
+    if (!roomId || !currentRoom) return;
+    const snap = await getDocs(collection(db, "rooms", roomId, "messages"));
+    await Promise.all(snap.docs.map((d) => deleteDoc(doc(db, "rooms", roomId, "messages", d.id))));
+    await addDoc(collection(db, "rooms", roomId, "messages"), {
+      type: "system",
+      text: currentRoom.welcome,
+      createdAt: serverTimestamp(),
+    });
     setNotice("이 방의 대화를 지웠어요.");
   };
 
-  const leaveRoom = () => {
-    updateApp((prev: any) => {
-      const nextEscapeCount = prev.stats.escapeCount + 1;
-      const penaltyMinutes = nextPenalty(nextEscapeCount);
-      const lockedUntil = penaltyMinutes > 0 ? Date.now() + penaltyMinutes * 60 * 1000 : 0;
-
-      return {
-        ...prev,
-        lockedUntil,
-        stats: {
-          ...prev.stats,
-          escapeCount: nextEscapeCount,
-        },
-        currentView: "rooms",
-        currentRoom: null,
-      };
-    });
-
-    const nextPenaltyMinutes = nextPenalty(app.stats.escapeCount + 1);
-
+  const leaveCurrentRoom = async () => {
+    if (!roomId) return;
+    await leaveRoom({ roomId, userId: user.userId });
+    setRoomId(null);
+    setRoomType(null);
+    setView("rooms");
+    setProfile(await getUserProfile(user.userId));
     setModal({
       emoji: "🧸",
       title: "잘 가요",
-      text:
-        nextPenaltyMinutes > 0
-          ? `조심해서 가요. 다음 입장은 ${nextPenaltyMinutes}분 뒤에 가능해요.`
-          : "조심해서 가요. 언제든 다시 쉬러 와도 괜찮아요.",
+      text: "조심해서 가요. 언제든 다시 쉬러 와도 괜찮아요.",
       actions: [{ label: "방 목록으로", onClick: () => setModal(null) }],
     });
   };
 
   const selfHug = () => {
-    updateApp((prev: any) => ({
-      ...prev,
-      stats: {
-        ...prev.stats,
-        todayHugs: prev.stats.todayHugs + 1,
-        weekWarmth: prev.stats.weekWarmth + 1,
-      },
-    }));
-
+    setStats((prev) => ({ todayHugs: prev.todayHugs + 1, weekWarmth: prev.weekWarmth + 1 }));
     sparkHearts(9);
-
     setModal({
       emoji: "🫂",
       title: "나에게도 포옹",
@@ -694,90 +706,52 @@ export default function WarmHugAppPrototype() {
     });
   };
 
-  const currentPenalty = nextPenalty(app.stats.escapeCount);
-  const remainingLockMinutes = getRemainingLockMinutes();
-
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_20%_20%,rgba(255,210,140,.25),transparent_20%),radial-gradient(circle_at_80%_15%,rgba(255,230,170,.18),transparent_18%),linear-gradient(180deg,#5c4331,#2f241d)] p-3 text-stone-800 md:p-6">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_20%_20%,rgba(255,210,140,.25),transparent_20%),radial-gradient(circle_at_80%_15%,rgba(255,230,170,.18),transparent_18%),linear-gradient(180deg,#5c4331,#2f241d)] p-3 md:p-6 text-stone-800">
       <div className="mx-auto grid min-h-[92vh] max-w-7xl overflow-hidden rounded-[2rem] border border-white/30 bg-[linear-gradient(180deg,rgba(255,246,234,.96),rgba(245,229,207,.97))] shadow-2xl">
         <header className="relative px-5 pt-8 text-center">
-          <div className="text-3xl font-bold tracking-tight text-stone-700 md:text-4xl">
-            따뜻한 포옹
-          </div>
-          <p className="mx-auto mt-2 max-w-3xl text-sm text-stone-500 md:text-base">
-            평가 없이, 비교 없이, 다정함만 머무는 정서적 쉼터
-          </p>
+          <div className="text-3xl font-bold tracking-tight text-stone-700 md:text-4xl">따뜻한 포옹</div>
+          <p className="mx-auto mt-2 max-w-3xl text-sm text-stone-500 md:text-base">평가 없이, 비교 없이, 다정함만 머무는 정서적 쉼터 · Firebase 실시간 버전</p>
         </header>
 
-        {app.currentView === "home" && (
+        {view === "home" && (
           <section className="flex flex-1 flex-col items-center justify-center px-6 py-10 text-center">
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ repeat: Infinity, duration: 2.8 }}
-              className="text-8xl md:text-[9rem]"
-            >
-              🧸
-            </motion.div>
-
-            <div className="mt-4 max-w-3xl rounded-full bg-white/70 px-6 py-4 text-base text-stone-600 shadow-lg md:text-xl">
-              여기서는 괜찮아요. 조언보다 온기, 판단보다 포옹이 먼저 오는 공간이에요.
-            </div>
-
-            <Button className="mt-6 rounded-full px-8 py-6 text-lg" onClick={goRooms}>
-              시작하기
-            </Button>
+            <motion.div animate={{ y: [0, -8, 0] }} transition={{ repeat: Infinity, duration: 2.8 }} className="text-8xl md:text-[9rem]">🧸</motion.div>
+            <div className="mt-4 max-w-3xl rounded-full bg-white/70 px-6 py-4 text-base text-stone-600 shadow-lg md:text-xl">여기서는 괜찮아요. 조언보다 온기, 판단보다 포옹이 먼저 오는 공간이에요.</div>
+            <Button className="mt-6 rounded-full px-8 py-6 text-lg" onClick={() => setView("rooms")}>시작하기</Button>
           </section>
         )}
 
-        {app.currentView === "rooms" && (
+        {view === "rooms" && (
           <section className="flex-1 overflow-auto px-5 pb-6 pt-3 md:px-6">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <Badge className="rounded-full bg-white/80 px-4 py-2 text-sm text-stone-700 shadow">
-                나의 닉네임: {app.nickname}
-              </Badge>
+              <Badge className="rounded-full bg-white/80 px-4 py-2 text-sm text-stone-700 shadow">나의 닉네임: {user.nickname}</Badge>
+              <Button variant="secondary" className="rounded-full" onClick={regenerateNickname}><RefreshCw className="mr-2 h-4 w-4" />닉네임 바꾸기</Button>
+            </div>
 
-              <div className="flex flex-wrap gap-2">
-                {remainingLockMinutes > 0 && (
-                  <Badge className="rounded-full bg-rose-100 px-4 py-2 text-rose-700 shadow">
-                    재입장 대기 {remainingLockMinutes}분
-                  </Badge>
-                )}
-
-                <Button
-                  variant="secondary"
-                  className="rounded-full"
-                  onClick={regenerateNickname}
-                >
-                  <RefreshCw className="mr-2 h-4 w-4" /> 닉네임 바꾸기
-                </Button>
-              </div>
+            <div className="mb-4 grid gap-3 md:grid-cols-3">
+              <Card className="rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardContent className="pt-6 text-sm text-stone-600"><div className="text-2xl font-bold text-stone-700">{stats.todayHugs} 🫂</div><div className="mt-1">오늘 받은 포옹</div></CardContent></Card>
+              <Card className="rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardContent className="pt-6 text-sm text-stone-600"><div className="text-2xl font-bold text-stone-700">{profile?.reportCount || 0}</div><div className="mt-1">누적 신고 횟수</div></CardContent></Card>
+              <Card className="rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardContent className="pt-6 text-sm text-stone-600"><div className="text-2xl font-bold text-stone-700">{nextPenalty}분</div><div className="mt-1">현재 이탈 기준 대기 시간</div></CardContent></Card>
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
               {Object.values(ROOM_CONFIG).map((r) => (
                 <motion.div key={r.key} whileHover={{ y: -4 }} whileTap={{ scale: 0.99 }}>
-                  <Card
-                    className={`h-full rounded-[1.75rem] border-0 shadow-lg ${
-                      remainingLockMinutes > 0 ? "cursor-not-allowed opacity-70" : "cursor-pointer"
-                    } bg-white/85`}
-                    onClick={() => enterRoom(r.key as keyof typeof ROOM_CONFIG)}
-                  >
+                  <Card className="h-full rounded-[1.75rem] border-0 bg-white/85 shadow-lg">
                     <CardHeader>
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <CardTitle className="text-2xl text-stone-700">{r.title}</CardTitle>
-                          <p className="mt-2 text-sm leading-6 text-stone-500">
-                            {r.description}
-                          </p>
+                          <p className="mt-2 text-sm leading-6 text-stone-500">{r.description}</p>
                           <p className="mt-1 text-sm leading-6 text-stone-400">{r.detail}</p>
                         </div>
-                        <Badge className="rounded-full bg-amber-100 text-stone-700">
-                          {r.tag}
-                        </Badge>
+                        <Badge className="rounded-full bg-amber-100 text-stone-700">{r.tag}</Badge>
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-5xl">{r.icon}</div>
+                      <div className="mb-4 text-5xl">{r.icon}</div>
+                      <Button className="w-full rounded-full" disabled={joining} onClick={() => openRoom(r.key as keyof typeof ROOM_CONFIG)}>{joining ? "입장 중..." : `${r.title} 들어가기`}</Button>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -786,255 +760,51 @@ export default function WarmHugAppPrototype() {
           </section>
         )}
 
-        {app.currentView === "room" && room && (
+        {view === "room" && currentRoom && (
           <section className="grid min-h-0 flex-1 md:grid-cols-[300px_1fr]">
             <aside className="hidden overflow-auto border-r border-stone-200/70 bg-white/40 p-4 md:block">
-              <Card className="mb-4 rounded-[1.5rem] border-0 bg-white/90 shadow-md">
-                <CardHeader>
-                  <CardTitle className="text-lg">오늘 받은 포옹</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-stone-700">
-                    {app.stats.todayHugs} 🫂
-                  </div>
-                  <div className="mt-2 text-sm text-stone-500">
-                    이번 주 받은 따뜻함 {app.stats.weekWarmth} hugs
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="mb-4 rounded-[1.5rem] border-0 bg-white/90 shadow-md">
-                <CardHeader>
-                  <CardTitle className="text-lg">감정 기록</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-sm text-stone-600">
-                    오늘의 마음: {app.emotions[0] || "아직 기록이 없어요."}
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {[...new Set(app.emotions)].slice(0, 6).map((emotion) => (
-                      <Badge
-                        key={emotion}
-                        className="rounded-full bg-amber-100 text-stone-700"
-                      >
-                        {emotion}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="mb-4 rounded-[1.5rem] border-0 bg-white/90 shadow-md">
-                <CardHeader>
-                  <CardTitle className="text-lg">방 규칙</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 text-sm text-stone-600">
-                  <div>조언, 훈수, 판단, 논쟁 금지</div>
-                  <div>고민 글은 50자 이내</div>
-                  <div>상처 주는 말 자동 차단</div>
-                  <div>위기 상황은 기관 연결 우선</div>
-                </CardContent>
-              </Card>
-
-              <Card className="rounded-[1.5rem] border-0 bg-white/90 shadow-md">
-                <CardHeader>
-                  <CardTitle className="text-lg">중도 이탈 페널티</CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-stone-600">
-                  <div>현재 누적 이탈: {app.stats.escapeCount}회</div>
-                  <div className="mt-2">다음 대기 시간: {currentPenalty}분</div>
-                  <Progress
-                    className="mt-3"
-                    value={Math.min((app.stats.escapeCount / 4) * 100, 100)}
-                  />
-                </CardContent>
-              </Card>
+              <Card className="mb-4 rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardHeader><CardTitle className="text-lg">실시간 상태</CardTitle></CardHeader><CardContent className="space-y-2 text-sm text-stone-600"><div>Room ID: {roomId}</div><div>현재 인원: {onlineParticipants.length} / {currentRoom.maxParticipants}</div><div>다음 대기 시간: {nextPenalty}분</div></CardContent></Card>
+              <Card className="mb-4 rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardHeader><CardTitle className="text-lg">감정 기록</CardTitle></CardHeader><CardContent><div className="text-sm text-stone-600">오늘의 마음: {emotions[0] || "아직 기록이 없어요."}</div><div className="mt-3 flex flex-wrap gap-2">{[...new Set(emotions)].slice(0, 6).map((emotion) => <Badge key={emotion} className="rounded-full bg-amber-100 text-stone-700">{emotion}</Badge>)}</div></CardContent></Card>
+              <Card className="mb-4 rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardHeader><CardTitle className="text-lg">방 규칙</CardTitle></CardHeader><CardContent className="space-y-2 text-sm text-stone-600"><div>조언, 훈수, 판단, 논쟁 금지</div><div>고민 글은 50자 이내</div><div>상처 주는 말 자동 차단</div><div>위기 상황은 기관 연결 우선</div></CardContent></Card>
+              <Card className="rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardHeader><CardTitle className="text-lg">신고/제재</CardTitle></CardHeader><CardContent className="space-y-2 text-sm text-stone-600"><div>1회: 경고</div><div>3회: 24시간 정지</div><div>5회: 영구 정지</div><Progress className="mt-3" value={Math.min(((profile?.reportCount || 0) / 5) * 100, 100)} /></CardContent></Card>
             </aside>
 
             <main className="flex min-h-0 flex-col">
               <div className="flex flex-wrap items-center gap-3 border-b border-stone-200/70 bg-white/30 px-4 py-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-3xl shadow">
-                  {room.icon}
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-stone-700">{room.title}</div>
-                  <div className="text-sm text-stone-500">{room.description}</div>
-                </div>
-                <div className="ml-auto flex flex-wrap gap-2">
-                  <Button variant="secondary" className="rounded-full" onClick={clearRoom}>
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    대화 지우기
-                  </Button>
-                  <Button variant="secondary" className="rounded-full" onClick={leaveRoom}>
-                    <DoorOpen className="mr-2 h-4 w-4" />
-                    방 나가기
-                  </Button>
-                  <Button variant="secondary" className="rounded-full" onClick={goRooms}>
-                    방 목록
-                  </Button>
-                </div>
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-3xl shadow">{currentRoom.icon}</div>
+                <div><div className="text-2xl font-bold text-stone-700">{currentRoom.title}</div><div className="text-sm text-stone-500">{currentRoom.description}</div></div>
+                <div className="ml-auto flex flex-wrap gap-2"><Button variant="secondary" className="rounded-full" onClick={clearRoom}><Trash2 className="mr-2 h-4 w-4" />대화 지우기</Button><Button variant="secondary" className="rounded-full" onClick={leaveCurrentRoom}><DoorOpen className="mr-2 h-4 w-4" />방 나가기</Button><Button variant="secondary" className="rounded-full" onClick={() => setView("rooms")}>방 목록</Button></div>
               </div>
 
               <div className="flex flex-wrap gap-2 px-4 py-3">
-                {app.presence[room.key].map((name: string, idx: number) => (
-                  <Badge
-                    key={name}
-                    className="rounded-full bg-amber-100 px-3 py-1 text-stone-700"
-                  >
-                    {idx + 1} {name}
-                  </Badge>
-                ))}
+                {onlineParticipants.map((participant, idx) => <Badge key={participant.id} className="rounded-full bg-amber-100 px-3 py-1 text-stone-700">{idx + 1} {participant.nickname}</Badge>)}
+                <Badge className="rounded-full bg-white text-stone-600"><WifiOff className="mr-1 h-3 w-3" />5초 유예 연결 복귀</Badge>
               </div>
 
               <div ref={listRef} className="min-h-0 flex-1 space-y-3 overflow-auto px-4 pb-4">
-                {messages.map((msg: any) =>
-                  msg.type === "system" ? (
-                    <div
-                      key={msg.id}
-                      className="mx-auto w-fit rounded-full bg-white/90 px-4 py-2 text-sm text-stone-500 shadow"
-                    >
-                      {msg.text}
+                {mergedMessages.map((msg) => msg.type === "system" ? (
+                  <div key={msg.id} className="mx-auto w-fit rounded-full bg-white/90 px-4 py-2 text-sm text-stone-500 shadow">{msg.text}</div>
+                ) : (
+                  <div key={msg.id} className={`flex ${msg.authorId === user.userId ? "justify-end" : "justify-start"}`}>
+                    <div className="max-w-[88%] md:max-w-[78%]">
+                      <div className={`mb-1 px-2 text-xs text-stone-500 ${msg.authorId === user.userId ? "text-right" : "text-left"}`}>{msg.authorNickname}</div>
+                      <div className={`rounded-[1.6rem] px-4 py-3 shadow ${msg.authorId === user.userId ? "rounded-br-md bg-amber-200 text-stone-700" : "rounded-bl-md bg-white text-stone-700"}`}><div className="whitespace-pre-wrap break-keep text-[15px] leading-7 md:text-base">{msg.text}</div></div>
+                      <div className={`mt-2 flex flex-wrap items-center gap-2 px-2 ${msg.authorId === user.userId ? "justify-end" : "justify-start"}`}><Badge className="rounded-full bg-stone-100 text-stone-600">{msg.turn || "-"}번째 고민</Badge><Badge className="rounded-full bg-stone-100 text-stone-600">{msg.reactionSummary}</Badge></div>
+                      {currentRoom.interactive && <div className={`mt-2 flex flex-wrap gap-2 px-2 ${msg.authorId === user.userId ? "justify-end" : "justify-start"}`}>{HUG_TYPES.map((type) => <button key={type.id} onClick={() => reactToMessage(msg.id, type)} className="rounded-full bg-white px-3 py-2 text-xs text-stone-700 shadow transition hover:-translate-y-0.5">{type.emoji} {type.label}</button>)}<button onClick={() => reportPost(msg.id)} className="rounded-full bg-rose-100 px-3 py-2 text-xs text-rose-700 shadow"><Flag className="mr-1 inline h-3 w-3" />신고</button></div>}
                     </div>
-                  ) : msg.hidden ? (
-                    <div key={msg.id} className="mx-auto w-fit rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-600 shadow">
-                      신고 누적으로 가려진 글이에요.
-                    </div>
-                  ) : (
-                    <div
-                      key={msg.id}
-                      className={`flex ${msg.author === app.nickname ? "justify-end" : "justify-start"}`}
-                    >
-                      <div className="max-w-[88%] md:max-w-[78%]">
-                        <div
-                          className={`mb-1 px-2 text-xs text-stone-500 ${
-                            msg.author === app.nickname ? "text-right" : "text-left"
-                          }`}
-                        >
-                          {msg.author}
-                        </div>
-
-                        <div
-                          className={`rounded-[1.6rem] px-4 py-3 shadow ${
-                            msg.author === app.nickname
-                              ? "rounded-br-md bg-amber-200 text-stone-700"
-                              : "rounded-bl-md bg-white text-stone-700"
-                          }`}
-                        >
-                          <div className="whitespace-pre-wrap break-keep text-[15px] leading-7 md:text-base">
-                            {msg.text}
-                          </div>
-                        </div>
-
-                        <div
-                          className={`mt-2 flex flex-wrap items-center gap-2 px-2 ${
-                            msg.author === app.nickname ? "justify-end" : "justify-start"
-                          }`}
-                        >
-                          <Badge className="rounded-full bg-stone-100 text-stone-600">
-                            {msg.turn}번째 고민
-                          </Badge>
-                          <Badge className="rounded-full bg-stone-100 text-stone-600">
-                            {msg.shortReply || "아직 받은 포옹 없음"}
-                          </Badge>
-                          <Badge className="rounded-full bg-stone-100 text-stone-600">
-                            신고 {msg.reportCount}회
-                          </Badge>
-                        </div>
-
-                        {room.interactive && (
-                          <div
-                            className={`mt-2 flex flex-wrap gap-2 px-2 ${
-                              msg.author === app.nickname ? "justify-end" : "justify-start"
-                            }`}
-                          >
-                            {HUG_TYPES.map((type) => (
-                              <button
-                                key={type.id}
-                                onClick={() => applyReaction(room.key, msg.id, type, false)}
-                                className={`rounded-full px-3 py-2 text-xs text-stone-700 shadow transition hover:-translate-y-0.5 ${type.style}`}
-                              >
-                                {type.emoji} {type.label}
-                              </button>
-                            ))}
-
-                            <button
-                              onClick={() => reportPost(room.key, msg.id)}
-                              className="rounded-full bg-rose-100 px-3 py-2 text-xs text-rose-700 shadow"
-                            >
-                              신고
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )
-                )}
+                  </div>
+                ))}
               </div>
 
-              {room.interactive ? (
+              {currentRoom.interactive ? (
                 <div className="border-t border-stone-200/70 bg-white/30 px-4 py-4">
-                  <div className="mb-3 flex flex-wrap gap-2 text-xs text-stone-500">
-                    <Badge className="rounded-full bg-amber-100 text-stone-700">
-                      <Users className="mr-1 h-3 w-3" />
-                      공감 중심
-                    </Badge>
-                    <Badge className="rounded-full bg-amber-100 text-stone-700">
-                      <Sparkles className="mr-1 h-3 w-3" />
-                      비평 없음
-                    </Badge>
-                    <Badge className="rounded-full bg-amber-100 text-stone-700">
-                      <ShieldAlert className="mr-1 h-3 w-3" />
-                      공격 자동 차단
-                    </Badge>
-                  </div>
-
-                  <Textarea
-                    value={app.draft}
-                    onChange={(e) =>
-                      updateApp((prev: any) => ({
-                        ...prev,
-                        draft: e.target.value.slice(0, 50),
-                      }))
-                    }
-                    placeholder="마음을 50자 이내로 적어보세요..."
-                    className="min-h-[96px] rounded-2xl border-0 bg-white shadow-inner"
-                  />
-
-                  <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                    <div className="text-sm text-stone-500">{app.draft.length} / 50</div>
-                    <div className="flex flex-wrap gap-2">
-                      <Button variant="secondary" className="rounded-full" onClick={selfHug}>
-                        <Heart className="mr-2 h-4 w-4" />
-                        나에게 포옹
-                      </Button>
-                      <Button className="rounded-full" onClick={submitPost}>
-                        <Send className="mr-2 h-4 w-4" />
-                        고민 올리기
-                      </Button>
-                    </div>
-                  </div>
+                  <div className="mb-3 flex flex-wrap gap-2 text-xs text-stone-500"><Badge className="rounded-full bg-amber-100 text-stone-700"><Users className="mr-1 h-3 w-3" />실시간 동기화</Badge><Badge className="rounded-full bg-amber-100 text-stone-700"><Sparkles className="mr-1 h-3 w-3" />비평 없음</Badge><Badge className="rounded-full bg-amber-100 text-stone-700"><ShieldAlert className="mr-1 h-3 w-3" />공격 자동 차단</Badge></div>
+                  <Textarea value={draft} onChange={(e) => setDraft(e.target.value.slice(0, 50))} placeholder="마음을 50자 이내로 적어보세요..." className="min-h-[96px] rounded-2xl border-0 bg-white shadow-inner" />
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-3"><div className="text-sm text-stone-500">{draft.length} / 50</div><div className="flex flex-wrap gap-2"><Button variant="secondary" className="rounded-full" onClick={selfHug}><Heart className="mr-2 h-4 w-4" />나에게 포옹</Button><Button className="rounded-full" onClick={submitPost}><Send className="mr-2 h-4 w-4" />고민 올리기</Button></div></div>
                 </div>
               ) : (
                 <div className="grid gap-4 overflow-auto border-t border-stone-200/70 bg-white/25 p-4 md:grid-cols-2">
-                  {HELP_LINKS.map((link) => (
-                    <Card
-                      key={link.name}
-                      className="rounded-[1.5rem] border-0 bg-white/90 shadow-md"
-                    >
-                      <CardHeader>
-                        <CardTitle className="text-xl text-stone-700">{link.name}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="mb-4 text-sm leading-6 text-stone-500">{link.desc}</p>
-                        <a href={link.href} target="_blank" rel="noreferrer">
-                          <Button className="rounded-full">
-                            <LifeBuoy className="mr-2 h-4 w-4" />
-                            공식 연결 열기
-                          </Button>
-                        </a>
-                      </CardContent>
-                    </Card>
-                  ))}
+                  {HELP_LINKS.map((link) => <Card key={link.name} className="rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardHeader><CardTitle className="text-xl text-stone-700">{link.name}</CardTitle></CardHeader><CardContent><p className="mb-4 text-sm leading-6 text-stone-500">{link.desc}</p><a href={link.href} target="_blank" rel="noreferrer"><Button className="rounded-full"><LifeBuoy className="mr-2 h-4 w-4" />공식 연결 열기</Button></a></CardContent></Card>)}
                 </div>
               )}
             </main>
@@ -1043,68 +813,14 @@ export default function WarmHugAppPrototype() {
       </div>
 
       <AnimatePresence>
-        {modal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 p-4 backdrop-blur-sm"
-            onClick={() => setModal(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0, y: 10 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.96, opacity: 0 }}
-              className="w-full max-w-lg rounded-[2rem] bg-[linear-gradient(180deg,#fffaf4,#f7e8d5)] p-6 text-center shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="text-7xl">{modal.emoji}</div>
-              <div className="mt-3 text-2xl font-bold text-stone-700">{modal.title}</div>
-              <div className="mt-3 whitespace-pre-wrap leading-7 text-stone-500">
-                {modal.text}
-              </div>
-              <div className="mt-5 flex flex-wrap justify-center gap-2">
-                {modal.actions?.map((action: any) => (
-                  <Button
-                    key={action.label}
-                    className="rounded-full"
-                    variant="secondary"
-                    onClick={action.onClick}
-                  >
-                    {action.label}
-                  </Button>
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
+        {modal && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 p-4 backdrop-blur-sm" onClick={() => setModal(null)}><motion.div initial={{ scale: 0.92, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.96, opacity: 0 }} className="w-full max-w-lg rounded-[2rem] bg-[linear-gradient(180deg,#fffaf4,#f7e8d5)] p-6 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}><div className="text-7xl">{modal.emoji}</div><div className="mt-3 text-2xl font-bold text-stone-700">{modal.title}</div><div className="mt-3 whitespace-pre-wrap text-stone-500 leading-7">{modal.text}</div><div className="mt-5 flex flex-wrap justify-center gap-2">{modal.actions?.map((action: any) => <Button key={action.label} className="rounded-full" variant="secondary" onClick={action.onClick}>{action.label}</Button>)}</div></motion.div></motion.div>}
       </AnimatePresence>
 
       <AnimatePresence>
-        {notice && (
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2 rounded-full bg-white/95 px-5 py-3 text-sm text-stone-700 shadow-xl"
-          >
-            {notice}
-          </motion.div>
-        )}
+        {notice && <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2 rounded-full bg-white/95 px-5 py-3 text-sm text-stone-700 shadow-xl">{notice}</motion.div>}
       </AnimatePresence>
 
-      {hearts.map((heart) => (
-        <motion.div
-          key={heart.id}
-          initial={{ opacity: 1, y: 0, scale: 1 }}
-          animate={{ opacity: 0, y: -170, scale: 1.2 }}
-          transition={{ duration: heart.duration, ease: "linear" }}
-          className="pointer-events-none fixed bottom-24 z-30 text-2xl"
-          style={{ left: `${heart.left}%` }}
-        >
-          {heart.icon}
-        </motion.div>
-      ))}
+      {hearts.map((heart) => <motion.div key={heart.id} initial={{ opacity: 1, y: 0, scale: 1 }} animate={{ opacity: 0, y: -170, scale: 1.2 }} transition={{ duration: heart.duration, ease: "linear" }} className="pointer-events-none fixed bottom-24 z-30 text-2xl" style={{ left: `${heart.left}%` }}>{heart.icon}</motion.div>)}
     </div>
   );
 }
