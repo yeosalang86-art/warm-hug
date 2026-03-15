@@ -56,8 +56,9 @@
         radial-gradient(circle at 84% 12%, rgba(255,223,174,.85) 0%, rgba(255,223,174,0) 20%),
         radial-gradient(circle at 78% 72%, rgba(255,236,208,.55) 0%, rgba(255,236,208,0) 18%),
         linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 52%, var(--bg-3) 100%);
-      overflow:hidden;
+      overflow:auto;
       position:relative;
+      -webkit-overflow-scrolling: touch;
     }
 
     body::before{
@@ -79,7 +80,7 @@
 
     .frame{
       width:min(1180px, 96vw);
-      height:min(95vh, 940px);
+      min-height:min(95vh, 940px);
       margin:2.5vh auto;
       border-radius:36px;
       position:relative;
@@ -160,7 +161,7 @@
     #home, #rooms, #appView{
       position:relative;
       z-index:2;
-      height:calc(100% - 88px);
+      min-height:calc(100vh - 120px);
     }
 
     #home{
@@ -236,7 +237,7 @@
     #rooms{
       display:none;
       padding:20px 26px 28px;
-      overflow:auto;
+      overflow:visible;
     }
 
     .roomsTop{
@@ -360,6 +361,7 @@
       display:none;
       grid-template-columns: 320px 1fr;
       gap:0;
+      min-height:calc(100vh - 120px);
     }
 
     .sidePanel{
@@ -420,6 +422,7 @@
       display:flex;
       flex-direction:column;
       min-width:0;
+      min-height:0;
       height:100%;
     }
 
@@ -484,11 +487,13 @@
 
     #messages{
       flex:1;
+      min-height:320px;
       overflow:auto;
       padding:14px 18px 10px;
       display:flex;
       flex-direction:column;
       gap:13px;
+      -webkit-overflow-scrolling: touch;
     }
 
     .systemMsg{
@@ -507,6 +512,9 @@
       flex-direction:column;
       gap:6px;
       max-width:78%;
+      user-select:none;
+      -webkit-user-select:none;
+      -webkit-touch-callout:none;
     }
 
     .msgWrap.me{
@@ -534,6 +542,13 @@
       word-break:keep-all;
       white-space:pre-wrap;
       border:1px solid rgba(255,255,255,.42);
+      position:relative;
+      touch-action:manipulation;
+    }
+
+    .msgWrap.longpressing .msg{
+      transform:scale(0.99);
+      opacity:0.92;
     }
 
     .me .msg{
@@ -585,13 +600,6 @@
     .hugMini:hover{
       transform:none;
       box-shadow:0 6px 14px rgba(0,0,0,.06);
-    }
-
-    .reportBtn{
-      font-size:12px;
-      padding:7px 11px;
-      background:linear-gradient(180deg,#f8e6e1,#efc7bf);
-      color:#874d43;
     }
 
     .inputArea{
@@ -802,7 +810,7 @@
     @media (max-width:760px){
       .frame{
         width:100vw;
-        height:100vh;
+        min-height:100vh;
         margin:0;
         border-radius:0;
       }
@@ -882,6 +890,10 @@
       .msgWrap{
         max-width:92%;
       }
+
+      #messages{
+        min-height:260px;
+      }
     }
 
     @media (max-width:560px){
@@ -903,16 +915,20 @@
       .roomTag{
         align-self:flex-end;
       }
+
+      #home, #rooms, #appView{
+        min-height:auto;
+      }
     }
   </style>
 </head>
 <body>
   <div class="frame">
     <div class="audioWrap">
-     <div id="musicStatus">배경음악 : 포근한 밤 🎵</div>
-     <audio id="bgm" controls loop>
-  <source src="music.wav.wav" type="audio/wav" />
-</audio>
+      <div id="musicStatus">배경음악 : 포근한 밤 🎵</div>
+      <audio id="bgm" controls loop>
+        <source src="music.wav.wav" type="audio/wav" />
+      </audio>
     </div>
 
     <header>따뜻한 포옹</header>
@@ -992,6 +1008,7 @@
 
         <div class="panelCard">
           <div class="panelTitle">신고 안내</div>
+          <div class="statLine">메시지를 길게 누르면 신고할 수 있어요.</div>
           <div class="statLine">1회 경고 / 3회 24시간 정지 / 5회 영구정지</div>
         </div>
       </aside>
@@ -1218,6 +1235,10 @@
     let messageSeq = 1;
     let disconnectTimer = null;
 
+    const LONG_PRESS_MS = 650;
+    let longPressTimer = null;
+    let longPressTriggered = false;
+
     const state = loadState();
 
     init();
@@ -1301,6 +1322,7 @@
       home.style.display = "none";
       appView.style.display = "none";
       rooms.style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function openRoom(roomKey){
@@ -1335,6 +1357,8 @@
       if(roomKey !== "help"){
         msgInput.focus();
       }
+
+      setTimeout(scrollBottom, 60);
     }
 
     function renderPresence(info){
@@ -1394,6 +1418,7 @@
     function appendMessageElement(item){
       const wrap = document.createElement("div");
       wrap.className = `msgWrap ${item.who || "other"}`;
+      wrap.dataset.messageId = item.id;
 
       const nick = document.createElement("div");
       nick.className = "nick";
@@ -1430,18 +1455,74 @@
         hugBar.appendChild(btn);
       });
 
-      const report = document.createElement("button");
-      report.className = "hugMini reportBtn";
-      report.type = "button";
-      report.textContent = "신고";
-      report.addEventListener("click", () => reportMessage(item.id));
-      hugBar.appendChild(report);
+      addLongPressEvents(wrap, item);
 
       wrap.appendChild(nick);
       wrap.appendChild(msg);
       wrap.appendChild(meta);
       wrap.appendChild(hugBar);
       messages.appendChild(wrap);
+    }
+
+    function addLongPressEvents(targetEl, item){
+      const start = (e) => {
+        if(e.target.closest("button")) return;
+
+        longPressTriggered = false;
+        targetEl.classList.add("longpressing");
+
+        clearTimeout(longPressTimer);
+        longPressTimer = setTimeout(() => {
+          longPressTriggered = true;
+          targetEl.classList.remove("longpressing");
+          openReportPopup(item);
+        }, LONG_PRESS_MS);
+      };
+
+      const cancel = () => {
+        clearTimeout(longPressTimer);
+        targetEl.classList.remove("longpressing");
+      };
+
+      targetEl.addEventListener("mousedown", start);
+      targetEl.addEventListener("touchstart", start, { passive: true });
+
+      targetEl.addEventListener("mouseup", cancel);
+      targetEl.addEventListener("mouseleave", cancel);
+      targetEl.addEventListener("touchend", cancel);
+      targetEl.addEventListener("touchcancel", cancel);
+
+      targetEl.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+      });
+
+      targetEl.addEventListener("click", (e) => {
+        if(longPressTriggered){
+          e.preventDefault();
+          e.stopPropagation();
+          longPressTriggered = false;
+        }
+      }, true);
+    }
+
+    function openReportPopup(item){
+      showModal({
+        emoji: "🚨",
+        title: "이 메시지를 신고할까요?",
+        text: `선택한 메시지:\n"${item.text}"`,
+        actions: [
+          {
+            label: "신고하기",
+            className: "dangerBtn",
+            onClick: () => reportMessage(item.id)
+          },
+          {
+            label: "취소",
+            className: "softBtn",
+            onClick: () => {}
+          }
+        ]
+      });
     }
 
     function addMessage(text, who = "me", nick = currentNickname){
