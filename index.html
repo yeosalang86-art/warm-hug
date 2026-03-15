@@ -273,7 +273,6 @@ body{
       cursor:pointer;
       transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
       position:relative;
-      overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch;
     }
 
     .room::before{
@@ -910,16 +909,37 @@ body{
         min-height:auto;
       }
     }
+    .helpIntro{
+  padding:14px 18px 20px;
+}
+
+.helpIntroText{
+  background:linear-gradient(180deg, rgba(255,250,243,.96), rgba(255,244,235,.86));
+  border-radius:24px;
+  padding:18px 20px;
+  box-shadow:var(--shadow-soft);
+  border:1px solid rgba(255,255,255,.5);
+  font-size:17px;
+  line-height:1.7;
+  color:var(--brown-2);
+  text-align:center;
+  margin-bottom:18px;
+}
+
+.helpIntroImage{
+  display:block;
+  width:min(280px, 72vw);
+  margin:0 auto 18px;
+}
   </style>
 </head>
 <body>
   <div class="frame">
-    <div class="audioWrap">
-      <div id="musicStatus">배경음악 : 포근한 밤 🎵</div>
-      <audio id="bgm" controls loop>
-        <source src="music.wav.wav" type="audio/wav" />
-      </audio>
-    </div>
+   <div class="audioWrap" aria-hidden="true">
+  <audio id="bgm" autoplay loop preload="auto" style="display:none;">
+    <source src="music.wav.wav" type="audio/wav" />
+  </audio>
+</div>
 
     <header>따뜻한 포옹</header>
     <div class="sub">평가 없이, 비교 없이, 다정함만 머무는 정서적 쉼터</div>
@@ -1034,6 +1054,17 @@ body{
         </div>
 
         <div id="helpPanel" style="display:none;">
+          <div class="helpIntro">
+  <div class="helpIntroText">
+    도움연결방에 들어왔어요, 지금의 상황에 맞는 기관으로 이어질 수 있어요.
+  </div>
+
+  <img
+    class="helpIntroImage"
+    src="hug.png"
+    alt="따뜻한 포옹 그림"
+  />
+</div>
           <div class="helpGrid">
             <div class="helpCard">
               <div class="helpName">1366 여성긴급전화</div>
@@ -1209,8 +1240,6 @@ body{
     const friendComfortInput = document.getElementById("friendComfortInput");
     const helpPanel = document.getElementById("helpPanel");
     const bgm = document.getElementById("bgm");
-    const musicStatus = document.getElementById("musicStatus");
-
     const modal = document.getElementById("modal");
     const modalEmoji = document.getElementById("modalEmoji");
     const modalTitle = document.getElementById("modalTitle");
@@ -1240,7 +1269,6 @@ body{
 
       nicknameChip.textContent = `나의 닉네임: ${currentNickname}`;
       updateStats();
-      updateMusicStatus();
 
       showNotice("포근한 공간에 오신 걸 환영해요.");
     }
@@ -1823,16 +1851,6 @@ body{
         emotionList.appendChild(chip);
       });
     }
-
-    function updateMusicStatus(){
-      const source = bgm.querySelector("source");
-      if(source && source.getAttribute("src")){
-        musicStatus.textContent = "배경음악이 연결되어 있어요 🎵";
-      }else{
-        musicStatus.textContent = "배경음악은 사용자가 직접 넣을 수 있어요 🎵";
-      }
-    }
-
     function simulatePresenceEnter(info){
       if(info.title === "도움연결 방") return;
       addSystemMessage(`${currentNickname}님 입장하셨습니다.`, currentRoom, true);
