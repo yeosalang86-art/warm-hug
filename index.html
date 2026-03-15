@@ -1204,10 +1204,72 @@
     function showMenuGuide(){
       showModal({
         emoji:"📚",
-        title:"메뉴 안내",
-        text:"이 공간은 나만의 기록용 개인 공간이에요.\n왼쪽 위 버튼으로 홈으로 돌아가거나, 이 자리에서 기록을 이어갈 수 있어요.",
+        title:"메뉴",
+        text:"확인하고 싶은 항목을 골라주세요.",
         actions:[
-          { label:"확인", className:"softBtn", onClick:() => {} }
+          {
+            label:"감정 기록",
+            className:"softBtn",
+            onClick: showEmotionHistory
+          },
+          {
+            label:"오늘 받은 포옹",
+            className:"softBtn",
+            onClick: showTodayHugsInfo
+          },
+          {
+            label:"총 포옹 수",
+            className:"softBtn",
+            onClick: showTotalHugsInfo
+          },
+          {
+            label:"닫기",
+            className:"softBtn",
+            onClick: () => {}
+          }
+        ]
+      });
+    }
+
+    function showEmotionHistory(){
+      const emotionLines = state.emotions.length
+        ? [...new Set(state.emotions)].slice(0, 10).map((emotion, index) => `${index + 1}. ${emotion}`).join("
+")
+        : "아직 기록된 감정이 없어요.";
+
+      showModal({
+        emoji:"💛",
+        title:"감정 기록",
+        text:`지금까지 기록한 감정을 볼 수 있어요.
+
+${emotionLines}`,
+        actions:[
+          { label:"확인", className:"softBtn", onClick: () => {} }
+        ]
+      });
+    }
+
+    function showTodayHugsInfo(){
+      showModal({
+        emoji:"🫂",
+        title:"오늘 받은 포옹",
+        text:`오늘 받은 포옹은 ${state.stats.todayHugs}회예요.
+오늘의 나를 다정하게 안아준 횟수도 여기에 포함돼요.`,
+        actions:[
+          { label:"확인", className:"softBtn", onClick: () => {} }
+        ]
+      });
+    }
+
+    function showTotalHugsInfo(){
+      const totalHugs = state.stats.weekWarmth;
+      showModal({
+        emoji:"🤎",
+        title:"총 포옹 수",
+        text:`지금까지 받은 전체 포옹 수는 ${totalHugs}회예요.
+차곡차곡 쌓인 다정함이에요.`,
+        actions:[
+          { label:"확인", className:"softBtn", onClick: () => {} }
         ]
       });
     }
