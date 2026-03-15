@@ -1,826 +1,1661 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Heart,
-  ShieldAlert,
-  DoorOpen,
-  Trash2,
-  Send,
-  LifeBuoy,
-  Users,
-  Sparkles,
-  RefreshCw,
-  WifiOff,
-  Flag,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { Progress } from "@/components/ui/progress";
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>따뜻한 포옹</title>
+  <style>
+    :root{
+      --bg1:#2f241d;
+      --bg2:#5c4331;
+      --warm:#f4d8b6;
+      --cream:#fff6ea;
+      --card:#fffaf3;
+      --brown:#6b4a36;
+      --brown2:#8b6a52;
+      --soft:#f7efe5;
+      --danger:#c86b5a;
+      --good:#ddb983;
+    }
 
-import { initializeApp } from "firebase/app";
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  getFirestore,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-  runTransaction,
-  serverTimestamp,
-  setDoc,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+    *{
+      box-sizing:border-box;
+    }
 
-/**
- * 새 파일입니다. 기존 로컬 프로토타입은 그대로 두고,
- * 이 파일은 Firebase 실시간 버전으로 따로 분리했습니다.
- *
- * 사용 전 준비
- * 1. npm install firebase
- * 2. 아래 FIREBASE_CONFIG 교체
- * 3. Firestore 활성화
- */
+    body{
+      margin:0;
+      font-family:"Arial","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+      min-height:100vh;
+      color:#4f3729;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,210,140,.25), transparent 20%),
+        radial-gradient(circle at 80% 15%, rgba(255,230,170,.18), transparent 18%),
+        linear-gradient(180deg,var(--bg2),var(--bg1));
+      overflow:hidden;
+    }
 
-const FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-};
+    a{
+      color:inherit;
+      text-decoration:none;
+    }
 
-const firebaseApp = initializeApp(FIREBASE_CONFIG);
-const db = getFirestore(firebaseApp);
+    .frame{
+      width:min(1100px,96vw);
+      height:min(94vh,920px);
+      margin:3vh auto;
+      border-radius:32px;
+      background:linear-gradient(180deg, rgba(255,246,234,.96), rgba(245,229,207,.97));
+      box-shadow:0 24px 70px rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.35);
+      position:relative;
+      overflow:hidden;
+    }
 
-const LOCAL_KEY = "warm-hug-firebase-user-v1";
+    .frame::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 85% 12%, rgba(255,203,105,.42), transparent 14%),
+        radial-gradient(circle at 90% 18%, rgba(255,230,168,.35), transparent 18%);
+    }
 
-const NICKNAMES = [
-  "둥글레차",
-  "보리차",
-  "홍차",
-  "녹차",
-  "옥수수차",
-  "유자차",
-  "국화차",
-  "대추차",
-  "생강차",
-  "캐모마일차",
-  "메밀차",
-  "쌍화차",
-];
+    .audioWrap{
+      position:absolute;
+      top:16px;
+      right:16px;
+      z-index:5;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:8px;
+    }
 
-const ROOM_CONFIG = {
-  friend: {
-    key: "friend",
-    title: "친구의 방",
-    icon: "🤎",
-    tag: "공감",
-    description: "동등한 입장에서 짧은 고민과 따뜻한 허그를 주고받는 공간",
-    detail: "최대 4명 · 고민 50자 · 판단/조언 금지 · 허그 중심",
-    welcome: "친구의 방에 왔어요. 입장 순서대로 마음을 적고, 포옹으로 응답할 수 있어요.",
-    interactive: true,
-    maxParticipants: 4,
-  },
-  comfort: {
-    key: "comfort",
-    title: "포근한 방",
-    icon: "🧸",
-    tag: "보호",
-    description: "말보다 먼저 포근함이 도착하는 공간",
-    detail: "큰 곰 · 토닥임 · 하트 · 안심 반응 중심",
-    welcome: "포근한 방에 왔어요. 말이 적어도 괜찮아요. 여기서는 부드러운 반응이 먼저 와요.",
-    interactive: true,
-    maxParticipants: 3,
-  },
-  help: {
-    key: "help",
-    title: "도움연결 방",
-    icon: "🆘",
-    tag: "연결",
-    description: "혼자 감당하기 어려운 상황에서 공식 기관과 연결되는 공간",
-    detail: "1366 · 117 · 112 · 119 공식 연결",
-    welcome: "도움연결 방에 왔어요. 지금 상황에 맞는 공식 기관으로 바로 이어질 수 있어요.",
-    interactive: false,
-    maxParticipants: 1,
-  },
-};
+    #musicStatus{
+      font-size:13px;
+      color:#7a5a46;
+      background:rgba(255,250,243,.88);
+      padding:8px 10px;
+      border-radius:14px;
+      box-shadow:0 6px 14px rgba(0,0,0,.08);
+      max-width:240px;
+      text-align:right;
+    }
 
-const HUG_TYPES = [
-  {
-    id: "comfort",
-    emoji: "🤍",
-    label: "괜찮아질 거예요",
-    title: "포근한 반응이 도착했어요",
-    message: "괜찮아질 거예요. 여기서는 잠깐 기대어도 괜찮아요.",
-  },
-  {
-    id: "support",
-    emoji: "💛",
-    label: "잘 될 거예요",
-    title: "누군가 당신을 응원하고 있어요",
-    message: "잘 될 거예요. 지금까지도 충분히 잘 버텨왔어요.",
-  },
-  {
-    id: "rest",
-    emoji: "🧡",
-    label: "많이 아팠죠? 이제 괜찮아요",
-    title: "잠깐 쉬어도 괜찮아요",
-    message: "많이 아팠죠? 이제 잠깐 여기서 쉬어요.",
-  },
-  {
-    id: "help",
-    emoji: "🚨",
-    label: "도움이 필요해보여요",
-    title: "전문기관 연결을 제안할게요",
-    message: "혼자 감당하기 힘들어 보여요. 공식 도움기관으로 연결해볼까요?",
-    suggestHelp: true,
-  },
-];
+    #bgm{
+      width:220px;
+    }
 
-const HELP_LINKS = [
-  {
-    name: "1366 여성긴급전화",
-    desc: "가정폭력, 성폭력, 데이트폭력, 스토킹 등 여성폭력 피해 상담 및 연계",
-    href: "https://www.women1366.kr/",
-  },
-  {
-    name: "117 학교폭력 신고센터",
-    desc: "학교폭력, 청소년 위기 상황, 신고 및 1:1 상담 연결",
-    href: "https://www.safe182.go.kr/cont/homeLogContents.do?contentsNm=report_info_117",
-  },
-  {
-    name: "112 경찰",
-    desc: "범죄 신고, 위협 상황, 긴급 보호가 필요한 경우 경찰 포털 연결",
-    href: "https://www.112.go.kr/",
-  },
-  {
-    name: "119 응급·구조",
-    desc: "응급환자, 화재, 구조 요청 등 긴급 상황 신고 안내",
-    href: "https://www.119.go.kr/",
-  },
-];
+    header{
+      text-align:center;
+      font-size:36px;
+      font-weight:700;
+      padding:26px 24px 8px;
+      color:#65442f;
+      position:relative;
+      z-index:2;
+    }
 
-const BLOCKED_PATTERNS = [/죽어/, /병신/, /멍청/, /꺼져/, /시?발/, /좆/, /개새/, /염병/, /놈아/];
-const THREAT_PATTERNS = [/죽고\s?싶/, /자살/, /살려줘/, /폭행/, /학대/, /스토킹/, /성폭행/, /납치/, /칼/, /도와줘/];
+    .sub{
+      text-align:center;
+      color:#8b6a52;
+      font-size:18px;
+      margin-bottom:6px;
+      padding:0 20px;
+      position:relative;
+      z-index:2;
+    }
 
-const EMOTION_MAP = {
-  불안: ["불안", "무서", "떨려", "긴장"],
-  슬픔: ["슬퍼", "눈물", "우울", "외로"],
-  지침: ["지쳐", "버겁", "무기력", "힘들"],
-  분노: ["화나", "짜증", "억울"],
-  관계: ["친구", "엄마", "아빠", "가족", "학교", "사람"],
-  위로필요: ["안아", "위로", "포옹", "괜찮"],
-};
+    #home,#rooms,#appView{
+      position:relative;
+      z-index:2;
+      height:calc(100% - 90px);
+    }
 
-function randomNickname(exclude?: string) {
-  const pool = NICKNAMES.filter((n) => n !== exclude);
-  return pool[Math.floor(Math.random() * pool.length)] || NICKNAMES[0];
-}
+    #home{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:16px;
+      padding:24px;
+      text-align:center;
+    }
 
-function getLocalUser() {
-  if (typeof window === "undefined") return { userId: "local-dev", nickname: "둥글레차" };
-  const raw = localStorage.getItem(LOCAL_KEY);
-  if (raw) return JSON.parse(raw);
-  const next = { userId: crypto.randomUUID(), nickname: randomNickname() };
-  localStorage.setItem(LOCAL_KEY, JSON.stringify(next));
-  return next;
-}
+    .heroBear{
+      font-size:132px;
+      line-height:1;
+      animation:idle 2.8s ease-in-out infinite;
+      filter:drop-shadow(0 10px 20px rgba(0,0,0,.12));
+    }
 
-function setLocalUser(user: { userId: string; nickname: string }) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(LOCAL_KEY, JSON.stringify(user));
-}
+    .heroNote{
+      background:rgba(255,250,243,.9);
+      border-radius:999px;
+      padding:12px 18px;
+      font-size:20px;
+      color:#7b5a45;
+      box-shadow:0 10px 25px rgba(97,62,34,.10);
+      max-width:780px;
+    }
 
-function detectEmotion(text: string) {
-  for (const [emotion, words] of Object.entries(EMOTION_MAP)) {
-    if (words.some((w) => text.includes(w))) return emotion;
-  }
-  return "흔들림";
-}
+    button{
+      border:none;
+      border-radius:999px;
+      background:linear-gradient(180deg,#f7d7b3,#efc695);
+      color:#61412c;
+      font-size:18px;
+      font-weight:700;
+      padding:13px 22px;
+      cursor:pointer;
+      box-shadow:0 10px 20px rgba(95,60,34,.16);
+      transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    }
 
-function containsBlocked(text: string) {
-  return BLOCKED_PATTERNS.some((p) => p.test(text));
-}
+    button:hover{
+      transform:translateY(-2px) scale(1.02);
+      box-shadow:0 14px 28px rgba(95,60,34,.2);
+    }
 
-function containsThreat(text: string) {
-  return THREAT_PATTERNS.some((p) => p.test(text));
-}
+    button:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      transform:none;
+      box-shadow:0 8px 14px rgba(95,60,34,.08);
+    }
 
-function penaltyMinutes(escapeCount: number) {
-  const mapping = [0, 5, 10, 20, 40];
-  return mapping[Math.min(escapeCount, mapping.length - 1)];
-}
+    .softBtn{
+      background:linear-gradient(180deg,#f9ece0,#f2d8bc);
+      font-size:15px;
+      padding:10px 14px;
+    }
 
-function tsToMillis(value: any) {
-  if (!value) return 0;
-  if (typeof value.toMillis === "function") return value.toMillis();
-  return 0;
-}
+    .dangerBtn{
+      background:linear-gradient(180deg,#efc0b8,#df8e7f);
+      color:#fffaf5;
+    }
 
-async function ensureUserProfile(user: { userId: string; nickname: string }) {
-  const ref = doc(db, "userProfiles", user.userId);
-  const snap = await getDoc(ref);
-  if (!snap.exists()) {
-    await setDoc(ref, {
-      nickname: user.nickname,
-      reportCount: 0,
-      suspensionLevel: 0,
-      escapeCount: 0,
-      suspendedUntil: null,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
-  } else if (snap.data().nickname !== user.nickname) {
-    await updateDoc(ref, {
-      nickname: user.nickname,
-      updatedAt: serverTimestamp(),
-    });
-  }
-}
+    #rooms{
+      display:none;
+      padding:18px 22px 26px;
+      overflow:auto;
+    }
 
-async function getUserProfile(userId: string) {
-  const snap = await getDoc(doc(db, "userProfiles", userId));
-  return snap.exists() ? { id: snap.id, ...snap.data() } : null;
-}
+    .roomsTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+      flex-wrap:wrap;
+    }
 
-async function createRoom(typeKey: keyof typeof ROOM_CONFIG) {
-  const cfg = ROOM_CONFIG[typeKey];
-  const roomRef = await addDoc(collection(db, "rooms"), {
-    type: cfg.key,
-    title: cfg.title,
-    status: "waiting",
-    maxParticipants: cfg.maxParticipants,
-    turnIndex: 1,
-    createdAt: serverTimestamp(),
-  });
-  return roomRef.id;
-}
+    .userChip{
+      background:rgba(255,250,243,.95);
+      border-radius:999px;
+      padding:10px 16px;
+      color:#6d4d39;
+      font-weight:700;
+      box-shadow:0 8px 18px rgba(76,48,28,.10);
+    }
 
-async function findOrCreateJoinableRoom(typeKey: keyof typeof ROOM_CONFIG) {
-  const q = query(
-    collection(db, "rooms"),
-    where("type", "==", typeKey),
-    where("status", "in", ["waiting", "active"]),
-    orderBy("createdAt", "asc"),
-    limit(10)
-  );
-  const snap = await getDocs(q);
+    .room{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      background:rgba(255,250,243,.95);
+      border:1px solid rgba(145,108,78,.10);
+      border-radius:28px;
+      margin:14px 0;
+      padding:22px;
+      box-shadow:0 10px 24px rgba(76,48,28,.10);
+      cursor:pointer;
+      transition:transform .15s ease, box-shadow .15s ease;
+    }
 
-  for (const roomDoc of snap.docs) {
-    const participantSnap = await getDocs(collection(db, "rooms", roomDoc.id, "participants"));
-    const active = participantSnap.docs.map((d) => d.data()).filter((p) => p.isOnline !== false);
-    if (active.length < roomDoc.data().maxParticipants) return roomDoc.id;
-  }
+    .room:hover{
+      transform:translateY(-2px);
+      box-shadow:0 16px 28px rgba(76,48,28,.14);
+    }
 
-  return createRoom(typeKey);
-}
+    .roomName{
+      font-size:26px;
+      font-weight:700;
+      color:#65452f;
+    }
 
-async function joinRoom(args: { roomId: string; typeKey: keyof typeof ROOM_CONFIG; user: { userId: string; nickname: string } }) {
-  const { roomId, user, typeKey } = args;
-  const roomRef = doc(db, "rooms", roomId);
-  const participantRef = doc(db, "rooms", roomId, "participants", user.userId);
-  const profileRef = doc(db, "userProfiles", user.userId);
+    .roomMeta{
+      font-size:15px;
+      color:#96755d;
+      margin-top:4px;
+      line-height:1.5;
+    }
 
-  await runTransaction(db, async (tx) => {
-    const roomSnap = await tx.get(roomRef);
-    if (!roomSnap.exists()) throw new Error("방을 찾을 수 없습니다.");
+    .roomTag{
+      background:#f2dfc7;
+      color:#78563f;
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:15px;
+      white-space:nowrap;
+    }
 
-    const profileSnap = await tx.get(profileRef);
-    if (profileSnap.exists()) {
-      const suspendedUntil = tsToMillis(profileSnap.data().suspendedUntil);
-      if (suspendedUntil && suspendedUntil > Date.now()) {
-        throw new Error("현재 이용이 제한되어 있습니다.");
+    #appView{
+      display:none;
+      grid-template-columns: 300px 1fr;
+      gap:0;
+    }
+
+    .sidePanel{
+      background:rgba(255,249,241,.65);
+      border-right:1px solid rgba(145,108,78,.12);
+      padding:16px;
+      overflow:auto;
+    }
+
+    .panelCard{
+      background:rgba(255,250,243,.95);
+      border-radius:24px;
+      padding:16px;
+      box-shadow:0 10px 22px rgba(76,48,28,.08);
+      margin-bottom:14px;
+    }
+
+    .panelTitle{
+      font-size:18px;
+      font-weight:700;
+      color:#644531;
+      margin-bottom:10px;
+    }
+
+    .statLine{
+      font-size:15px;
+      color:#7c5d47;
+      margin:8px 0;
+      line-height:1.5;
+    }
+
+    .warmCount{
+      font-size:30px;
+      font-weight:700;
+      color:#5f402d;
+    }
+
+    .emotionList{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .emotionChip{
+      background:#f3dfc6;
+      color:#75543f;
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:14px;
+    }
+
+    .mainPanel{
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+      height:100%;
+    }
+
+    .chatTop{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px 16px 12px;
+      border-bottom:1px solid rgba(145,108,78,.10);
+      background:rgba(255,250,243,.35);
+      flex-wrap:wrap;
+    }
+
+    .chatBearMini{
+      width:54px;
+      height:54px;
+      border-radius:18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:30px;
+      background:#f5ede3;
+      box-shadow:0 8px 18px rgba(0,0,0,.12);
+    }
+
+    .chatTitle{
+      font-size:24px;
+      font-weight:700;
+      color:#61412c;
+    }
+
+    .chatDesc{
+      font-size:15px;
+      color:#8c6d56;
+      line-height:1.45;
+    }
+
+    .topAction{
+      margin-left:auto;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .presenceBar{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      padding:12px 16px 4px;
+    }
+
+    .presenceChip{
+      background:#f1e2cf;
+      color:#72523d;
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:14px;
+    }
+
+    #messages{
+      flex:1;
+      overflow:auto;
+      padding:14px 16px 8px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .systemMsg{
+      align-self:center;
+      background:rgba(255,250,243,.9);
+      color:#7d5d47;
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:14px;
+      box-shadow:0 8px 18px rgba(0,0,0,.06);
+    }
+
+    .msgWrap{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      max-width:78%;
+    }
+
+    .msgWrap.me{
+      align-self:flex-end;
+      align-items:flex-end;
+    }
+
+    .msgWrap.other{
+      align-self:flex-start;
+      align-items:flex-start;
+    }
+
+    .nick{
+      font-size:13px;
+      color:#8c6d56;
+      padding:0 8px;
+    }
+
+    .msg{
+      padding:14px 18px;
+      border-radius:24px;
+      font-size:17px;
+      line-height:1.5;
+      box-shadow:0 6px 18px rgba(76,48,28,.08);
+      word-break:keep-all;
+      white-space:pre-wrap;
+    }
+
+    .me .msg{
+      background:linear-gradient(180deg,#f5d3ad,#edc08c);
+      color:#5f402d;
+      border-bottom-right-radius:10px;
+    }
+
+    .other .msg{
+      background:rgba(255,251,245,.98);
+      color:#664935;
+      border-bottom-left-radius:10px;
+    }
+
+    .msgMeta{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      padding:2px 8px 0;
+    }
+
+    .miniBadge{
+      background:#f3e0c8;
+      color:#7c5a45;
+      padding:5px 10px;
+      border-radius:999px;
+      font-size:12px;
+    }
+
+    .hugBar{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+
+    .hugMini{
+      border:none;
+      background:#f8efe3;
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:13px;
+      color:#6a4b38;
+      cursor:pointer;
+      box-shadow:0 4px 12px rgba(0,0,0,.05);
+    }
+
+    .hugMini:hover{
+      transform:none;
+      box-shadow:0 6px 14px rgba(0,0,0,.08);
+    }
+
+    .reportBtn{
+      font-size:12px;
+      padding:7px 11px;
+      background:linear-gradient(180deg,#f8e4df,#efc1b8);
+      color:#7d463c;
+      box-shadow:0 4px 12px rgba(0,0,0,.05);
+    }
+
+    .inputArea{
+      border-top:1px solid rgba(145,108,78,.10);
+      padding:14px 16px 16px;
+      background:rgba(255,250,243,.35);
+    }
+
+    .roleSelect{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+
+    .rolePill{
+      background:#f2dfc7;
+      color:#78563f;
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:13px;
+    }
+
+    #msg{
+      width:100%;
+      border:none;
+      outline:none;
+      background:#fff9f3;
+      padding:14px 16px;
+      border-radius:20px;
+      font-size:16px;
+      color:#5f402d;
+      box-shadow:inset 0 2px 8px rgba(0,0,0,.05);
+      resize:none;
+      min-height:86px;
+      max-height:130px;
+    }
+
+    .inputBottom{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+
+    .charCount{
+      color:#8d6d57;
+      font-size:14px;
+    }
+
+    .inputBtns{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .helpGrid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      padding:12px 16px 18px;
+      overflow:auto;
+    }
+
+    .helpCard{
+      background:rgba(255,250,243,.96);
+      border-radius:24px;
+      padding:18px;
+      box-shadow:0 10px 24px rgba(76,48,28,.08);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .helpName{
+      font-size:22px;
+      font-weight:700;
+      color:#62422f;
+    }
+
+    .helpDesc{
+      font-size:15px;
+      line-height:1.6;
+      color:#7f604b;
+    }
+
+    .helpButtons{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:auto;
+    }
+
+    .modalOverlay{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(47,36,29,.26);
+      backdrop-filter:blur(2px);
+      z-index:60;
+      padding:16px;
+    }
+
+    .modalCard{
+      width:min(540px,92vw);
+      background:linear-gradient(180deg,#fffaf4,#f7e8d5);
+      border-radius:30px;
+      padding:24px;
+      box-shadow:0 20px 60px rgba(0,0,0,.25);
+      color:#644531;
+      text-align:center;
+    }
+
+    .modalEmoji{
+      font-size:88px;
+      line-height:1;
+      margin-bottom:10px;
+      animation:idle 2.2s ease-in-out infinite;
+    }
+
+    .modalTitle{
+      font-size:28px;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+
+    .modalText{
+      font-size:17px;
+      line-height:1.65;
+      color:#7a5a46;
+      white-space:pre-wrap;
+    }
+
+    .modalActions{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top:16px;
+    }
+
+    #notice{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:30px;
+      background:rgba(255,250,243,.98);
+      color:#6b4a36;
+      padding:14px 20px;
+      border-radius:20px;
+      box-shadow:0 10px 24px rgba(0,0,0,.14);
+      display:none;
+      z-index:80;
+      font-size:16px;
+      max-width:min(92vw,580px);
+      text-align:center;
+    }
+
+    .heart{
+      position:fixed;
+      font-size:28px;
+      animation:float 2s linear forwards;
+      z-index:75;
+      pointer-events:none;
+    }
+
+    @keyframes float{
+      0%{
+        transform:translateY(0) scale(1);
+        opacity:1;
+      }
+      100%{
+        transform:translateY(-160px) scale(1.25);
+        opacity:0;
       }
     }
 
-    const participantsSnap = await getDocs(collection(db, "rooms", roomId, "participants"));
-    const active = participantsSnap.docs.map((d) => d.data()).filter((p) => p.isOnline !== false);
-    if (active.length >= roomSnap.data().maxParticipants) throw new Error("방이 가득 찼습니다.");
-
-    tx.set(
-      participantRef,
-      {
-        nickname: user.nickname,
-        isOnline: true,
-        joinedAt: serverTimestamp(),
-        lastSeenAt: serverTimestamp(),
-      },
-      { merge: true }
-    );
-
-    tx.update(roomRef, { status: "active" });
-  });
-
-  const messagesRef = collection(db, "rooms", roomId, "messages");
-  const firstMessageCheck = await getDocs(query(messagesRef, limit(1)));
-  if (firstMessageCheck.empty) {
-    await addDoc(messagesRef, {
-      type: "system",
-      text: ROOM_CONFIG[typeKey].welcome,
-      createdAt: serverTimestamp(),
-    });
-  }
-
-  await addDoc(messagesRef, {
-    type: "system",
-    text: `${user.nickname}님 입장하셨습니다.`,
-    createdAt: serverTimestamp(),
-  });
-}
-
-async function leaveRoom(args: { roomId: string; userId: string }) {
-  const { roomId, userId } = args;
-  const participantRef = doc(db, "rooms", roomId, "participants", userId);
-  const profile = await getUserProfile(userId);
-  const nextEscapeCount = (profile?.escapeCount || 0) + 1;
-  const waitUntil = new Date(Date.now() + penaltyMinutes(nextEscapeCount) * 60 * 1000);
-
-  await updateDoc(participantRef, {
-    isOnline: false,
-    lastSeenAt: serverTimestamp(),
-    waitUntil,
-  });
-
-  await updateDoc(doc(db, "userProfiles", userId), {
-    escapeCount: nextEscapeCount,
-    updatedAt: serverTimestamp(),
-  });
-
-  await addDoc(collection(db, "rooms", roomId, "messages"), {
-    type: "system",
-    text: "잘 가요. 조심해서 가요.",
-    createdAt: serverTimestamp(),
-  });
-}
-
-async function touchPresence(roomId: string, userId: string) {
-  await updateDoc(doc(db, "rooms", roomId, "participants", userId), {
-    isOnline: true,
-    lastSeenAt: serverTimestamp(),
-  });
-}
-
-async function createMessage(args: { roomId: string; user: { userId: string; nickname: string }; text: string }) {
-  const { roomId, user, text } = args;
-  const roomRef = doc(db, "rooms", roomId);
-  const messagesRef = collection(db, "rooms", roomId, "messages");
-
-  await runTransaction(db, async (tx) => {
-    const roomSnap = await tx.get(roomRef);
-    if (!roomSnap.exists()) throw new Error("방을 찾을 수 없습니다.");
-    const turn = roomSnap.data().turnIndex || 1;
-    const messageRef = doc(messagesRef);
-
-    tx.set(messageRef, {
-      type: "post",
-      authorId: user.userId,
-      authorNickname: user.nickname,
-      text,
-      turn,
-      status: "visible",
-      createdAt: serverTimestamp(),
-    });
-
-    tx.update(roomRef, { turnIndex: turn + 1 });
-  });
-}
-
-async function createReaction(args: {
-  roomId: string;
-  messageId: string;
-  user: { userId: string; nickname: string };
-  type: (typeof HUG_TYPES)[number];
-  auto?: boolean;
-}) {
-  const { roomId, messageId, user, type, auto = false } = args;
-  await addDoc(collection(db, "rooms", roomId, "reactions"), {
-    messageId,
-    fromParticipantId: auto ? "system-auto" : user.userId,
-    fromNickname: auto ? "포근한 곰" : user.nickname,
-    typeId: type.id,
-    typeEmoji: type.emoji,
-    typeLabel: type.label,
-    auto,
-    createdAt: serverTimestamp(),
-  });
-}
-
-async function createReport(args: { roomId: string; messageId: string; reporterId: string }) {
-  const { roomId, messageId, reporterId } = args;
-  const profile = await getUserProfile(reporterId);
-  const nextCount = (profile?.reportCount || 0) + 1;
-
-  await addDoc(collection(db, "moderation", "reports", "items"), {
-    roomId,
-    messageId,
-    reporterId,
-    reason: "user_report",
-    createdAt: serverTimestamp(),
-  });
-
-  const payload: Record<string, any> = {
-    reportCount: nextCount,
-    updatedAt: serverTimestamp(),
-  };
-
-  if (nextCount >= 5) {
-    payload.suspensionLevel = 3;
-    payload.suspendedUntil = new Date(Date.now() + 3650 * 24 * 60 * 60 * 1000);
-  } else if (nextCount >= 3) {
-    payload.suspensionLevel = 2;
-    payload.suspendedUntil = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  } else if (nextCount >= 1) {
-    payload.suspensionLevel = 1;
-  }
-
-  await updateDoc(doc(db, "userProfiles", reporterId), payload);
-}
-
-function useRoomData(roomId: string | null) {
-  const [messages, setMessages] = useState<any[]>([]);
-  const [participants, setParticipants] = useState<any[]>([]);
-  const [reactions, setReactions] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (!roomId) return;
-
-    const unsubMessages = onSnapshot(
-      query(collection(db, "rooms", roomId, "messages"), orderBy("createdAt", "asc")),
-      (snap) => setMessages(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
-    );
-
-    const unsubParticipants = onSnapshot(
-      query(collection(db, "rooms", roomId, "participants"), orderBy("joinedAt", "asc")),
-      (snap) => setParticipants(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
-    );
-
-    const unsubReactions = onSnapshot(
-      query(collection(db, "rooms", roomId, "reactions"), orderBy("createdAt", "asc")),
-      (snap) => setReactions(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
-    );
-
-    return () => {
-      unsubMessages();
-      unsubParticipants();
-      unsubReactions();
-    };
-  }, [roomId]);
-
-  return { messages, participants, reactions };
-}
-
-export default function WarmHugFirebaseRealtime() {
-  const baseUser = useMemo(() => getLocalUser(), []);
-  const [user, setUser] = useState(baseUser);
-  const [profile, setProfile] = useState<any>(null);
-  const [view, setView] = useState<"home" | "rooms" | "room">("home");
-  const [roomType, setRoomType] = useState<keyof typeof ROOM_CONFIG | null>(null);
-  const [roomId, setRoomId] = useState<string | null>(null);
-  const [draft, setDraft] = useState("");
-  const [notice, setNotice] = useState("포근한 공간에 오신 걸 환영해요.");
-  const [modal, setModal] = useState<any>(null);
-  const [hearts, setHearts] = useState<any[]>([]);
-  const [joining, setJoining] = useState(false);
-  const [stats, setStats] = useState({ todayHugs: 0, weekWarmth: 0 });
-  const [emotions, setEmotions] = useState<string[]>([]);
-  const autoReactionGuard = useRef(new Set<string>());
-  const timersRef = useRef<any[]>([]);
-  const listRef = useRef<HTMLDivElement | null>(null);
-
-  const roomData = useRoomData(roomId);
-  const currentRoom = roomType ? ROOM_CONFIG[roomType] : null;
-
-  useEffect(() => {
-    ensureUserProfile(user).then(() => getUserProfile(user.userId).then(setProfile));
-  }, [user]);
-
-  useEffect(() => {
-    if (!notice) return;
-    const t = setTimeout(() => setNotice(""), 2200);
-    return () => clearTimeout(t);
-  }, [notice]);
-
-  useEffect(() => {
-    if (listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight;
-  }, [roomData.messages, roomData.reactions]);
-
-  useEffect(() => {
-    if (!roomId) return;
-    const interval = setInterval(() => {
-      touchPresence(roomId, user.userId).catch(() => {});
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [roomId, user.userId]);
-
-  useEffect(() => {
-    if (!roomId || !roomType || !currentRoom?.interactive) return;
-    const visiblePosts = roomData.messages.filter((m) => m.type === "post" && m.status !== "hidden");
-
-    visiblePosts.forEach((message) => {
-      if (autoReactionGuard.current.has(message.id)) return;
-      autoReactionGuard.current.add(message.id);
-      const alreadyReacted = roomData.reactions.some((r) => r.messageId === message.id);
-      if (alreadyReacted) return;
-
-      const choices = roomType === "comfort"
-        ? HUG_TYPES.filter((h) => h.id !== "help" && h.id !== "support")
-        : HUG_TYPES.filter((h) => h.id !== "help");
-
-      const pick = choices[Math.floor(Math.random() * choices.length)];
-      const delay = 2800 + Math.floor(Math.random() * 1400);
-      const t = setTimeout(() => {
-        createReaction({ roomId, messageId: message.id, user, type: pick, auto: true }).catch(() => {});
-      }, delay);
-      timersRef.current.push(t);
-    });
-  }, [roomId, roomType, currentRoom, roomData.messages, roomData.reactions, user]);
-
-  useEffect(() => {
-    return () => timersRef.current.forEach((t) => clearTimeout(t));
-  }, []);
-
-  const mergedMessages = useMemo(() => {
-    return roomData.messages.map((message) => {
-      const reactions = roomData.reactions.filter((r) => r.messageId === message.id);
-      const summary = reactions.length
-        ? `${reactions[reactions.length - 1].typeEmoji} ${reactions[reactions.length - 1].typeLabel}`
-        : "아직 받은 포옹 없음";
-      return { ...message, reactionSummary: summary };
-    });
-  }, [roomData.messages, roomData.reactions]);
-
-  const onlineParticipants = roomData.participants.filter((p) => p.isOnline !== false);
-  const nextPenalty = penaltyMinutes(profile?.escapeCount || 0);
-
-  const sparkHearts = (count = 8) => {
-    const batch = Array.from({ length: count }).map((_, idx) => ({
-      id: `${Date.now()}-${idx}-${Math.random()}`,
-      left: Math.round(Math.random() * 90),
-      icon: ["🤎", "💛", "🧡", "🤍", "🫂"][Math.floor(Math.random() * 5)],
-      duration: 1.5 + Math.random() * 1.4,
-    }));
-    setHearts((prev) => [...prev, ...batch]);
-    const t = setTimeout(() => {
-      setHearts((prev) => prev.filter((h) => !batch.some((b) => b.id === h.id)));
-    }, 2500);
-    timersRef.current.push(t);
-  };
-
-  const regenerateNickname = async () => {
-    const next = { ...user, nickname: randomNickname(user.nickname) };
-    setUser(next);
-    setLocalUser(next);
-    await ensureUserProfile(next);
-    setProfile(await getUserProfile(next.userId));
-    setNotice("닉네임을 새로 바꿨어요.");
-  };
-
-  const openRoom = async (typeKey: keyof typeof ROOM_CONFIG) => {
-    setJoining(true);
-    try {
-      const nextRoomId = await findOrCreateJoinableRoom(typeKey);
-      await joinRoom({ roomId: nextRoomId, typeKey, user });
-      setRoomType(typeKey);
-      setRoomId(nextRoomId);
-      setView("room");
-      setDraft("");
-      setNotice(`${ROOM_CONFIG[typeKey].title}에 들어왔어요.`);
-    } catch (error: any) {
-      setNotice(error?.message || "방에 들어가지 못했어요.");
-    } finally {
-      setJoining(false);
-    }
-  };
-
-  const submitPost = async () => {
-    const text = draft.trim();
-    if (!text || !roomId) return;
-    if (text.length > 50) {
-      setNotice("고민은 50자 이내로 적어주세요.");
-      return;
-    }
-    if (containsBlocked(text)) {
-      setModal({
-        emoji: "🐿️",
-        title: "조금 더 따뜻하게 말해볼까요?",
-        text: "괜찮아괜찮아. 나쁜 말은 하지 말자. 이 공간은 상처 주는 말을 쉬게 하는 곳이에요.",
-        actions: [{ label: "다시 쓰기", onClick: () => setModal(null) }],
-      });
-      return;
+    @keyframes idle{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-8px)}
     }
 
-    await createMessage({ roomId, user, text });
-    setDraft("");
-    setEmotions((prev) => [detectEmotion(text), ...prev].slice(0, 8));
+    @media (max-width:900px){
+      #appView{
+        grid-template-columns:1fr;
+      }
 
-    if (containsThreat(text)) {
-      const t = setTimeout(() => {
-        setModal({
-          emoji: "🆘",
-          title: "도움이 필요해 보여요",
-          text: "혼자 감당하기 어려운 상황처럼 보여요. 공식 도움기관으로 연결할까요?",
-          actions: [
-            { label: "예, 연결할게요", onClick: () => { setModal(null); openRoom("help"); } },
-            { label: "아니오", onClick: () => { setModal(null); setNotice("필요할 때 언제든 도움연결 방으로 갈 수 있어요."); } },
-          ],
-        });
-      }, 700);
-      timersRef.current.push(t);
+      .sidePanel{
+        display:none;
+      }
     }
-  };
 
-  const reactToMessage = async (messageId: string, type: (typeof HUG_TYPES)[number]) => {
-    if (!roomId) return;
-    await createReaction({ roomId, messageId, user, type, auto: false });
-    setStats((prev) => ({ todayHugs: prev.todayHugs + 1, weekWarmth: prev.weekWarmth + 1 }));
-    sparkHearts(type.id === "help" ? 6 : 8);
-    setModal({
-      emoji: type.emoji,
-      title: "따뜻한 포옹이 도착했어요",
-      text: type.message,
-      actions: type.suggestHelp
-        ? [
-            { label: "도움연결 방으로", onClick: () => { setModal(null); openRoom("help"); } },
-            { label: "닫기", onClick: () => setModal(null) },
-          ]
-        : [{ label: "고마워요", onClick: () => setModal(null) }],
-    });
-  };
+    @media (max-width:700px){
+      header{
+        font-size:28px;
+        padding-top:22px;
+      }
 
-  const reportPost = async (messageId: string) => {
-    if (!roomId) return;
-    await createReport({ roomId, messageId, reporterId: user.userId });
-    setProfile(await getUserProfile(user.userId));
-    setModal({
-      emoji: "🚨",
-      title: "신고가 접수되었어요",
-      text: "권장 방식: 신고 1회 경고 · 3회 24시간 정지 · 5회 영구정지",
-      actions: [{ label: "확인", onClick: () => setModal(null) }],
-    });
-  };
+      .sub{
+        font-size:15px;
+      }
 
-  const clearRoom = async () => {
-    if (!roomId || !currentRoom) return;
-    const snap = await getDocs(collection(db, "rooms", roomId, "messages"));
-    await Promise.all(snap.docs.map((d) => deleteDoc(doc(db, "rooms", roomId, "messages", d.id))));
-    await addDoc(collection(db, "rooms", roomId, "messages"), {
-      type: "system",
-      text: currentRoom.welcome,
-      createdAt: serverTimestamp(),
-    });
-    setNotice("이 방의 대화를 지웠어요.");
-  };
+      .heroBear{
+        font-size:96px;
+      }
 
-  const leaveCurrentRoom = async () => {
-    if (!roomId) return;
-    await leaveRoom({ roomId, userId: user.userId });
-    setRoomId(null);
-    setRoomType(null);
-    setView("rooms");
-    setProfile(await getUserProfile(user.userId));
-    setModal({
-      emoji: "🧸",
-      title: "잘 가요",
-      text: "조심해서 가요. 언제든 다시 쉬러 와도 괜찮아요.",
-      actions: [{ label: "방 목록으로", onClick: () => setModal(null) }],
-    });
-  };
+      .heroNote{
+        font-size:16px;
+      }
 
-  const selfHug = () => {
-    setStats((prev) => ({ todayHugs: prev.todayHugs + 1, weekWarmth: prev.weekWarmth + 1 }));
-    sparkHearts(9);
-    setModal({
-      emoji: "🫂",
-      title: "나에게도 포옹",
-      text: "오늘의 나도 안아줄게요. 정말 애썼어요.",
-      actions: [{ label: "고마워요", onClick: () => setModal(null) }],
-    });
-  };
+      .roomName{
+        font-size:22px;
+      }
 
-  return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_20%_20%,rgba(255,210,140,.25),transparent_20%),radial-gradient(circle_at_80%_15%,rgba(255,230,170,.18),transparent_18%),linear-gradient(180deg,#5c4331,#2f241d)] p-3 md:p-6 text-stone-800">
-      <div className="mx-auto grid min-h-[92vh] max-w-7xl overflow-hidden rounded-[2rem] border border-white/30 bg-[linear-gradient(180deg,rgba(255,246,234,.96),rgba(245,229,207,.97))] shadow-2xl">
-        <header className="relative px-5 pt-8 text-center">
-          <div className="text-3xl font-bold tracking-tight text-stone-700 md:text-4xl">따뜻한 포옹</div>
-          <p className="mx-auto mt-2 max-w-3xl text-sm text-stone-500 md:text-base">평가 없이, 비교 없이, 다정함만 머무는 정서적 쉼터 · Firebase 실시간 버전</p>
-        </header>
+      .msgWrap{
+        max-width:92%;
+      }
 
-        {view === "home" && (
-          <section className="flex flex-1 flex-col items-center justify-center px-6 py-10 text-center">
-            <motion.div animate={{ y: [0, -8, 0] }} transition={{ repeat: Infinity, duration: 2.8 }} className="text-8xl md:text-[9rem]">🧸</motion.div>
-            <div className="mt-4 max-w-3xl rounded-full bg-white/70 px-6 py-4 text-base text-stone-600 shadow-lg md:text-xl">여기서는 괜찮아요. 조언보다 온기, 판단보다 포옹이 먼저 오는 공간이에요.</div>
-            <Button className="mt-6 rounded-full px-8 py-6 text-lg" onClick={() => setView("rooms")}>시작하기</Button>
-          </section>
-        )}
+      #bgm{
+        width:180px;
+      }
 
-        {view === "rooms" && (
-          <section className="flex-1 overflow-auto px-5 pb-6 pt-3 md:px-6">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <Badge className="rounded-full bg-white/80 px-4 py-2 text-sm text-stone-700 shadow">나의 닉네임: {user.nickname}</Badge>
-              <Button variant="secondary" className="rounded-full" onClick={regenerateNickname}><RefreshCw className="mr-2 h-4 w-4" />닉네임 바꾸기</Button>
-            </div>
+      #musicStatus{
+        max-width:180px;
+      }
 
-            <div className="mb-4 grid gap-3 md:grid-cols-3">
-              <Card className="rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardContent className="pt-6 text-sm text-stone-600"><div className="text-2xl font-bold text-stone-700">{stats.todayHugs} 🫂</div><div className="mt-1">오늘 받은 포옹</div></CardContent></Card>
-              <Card className="rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardContent className="pt-6 text-sm text-stone-600"><div className="text-2xl font-bold text-stone-700">{profile?.reportCount || 0}</div><div className="mt-1">누적 신고 횟수</div></CardContent></Card>
-              <Card className="rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardContent className="pt-6 text-sm text-stone-600"><div className="text-2xl font-bold text-stone-700">{nextPenalty}분</div><div className="mt-1">현재 이탈 기준 대기 시간</div></CardContent></Card>
-            </div>
+      .helpGrid{
+        grid-template-columns:1fr;
+      }
 
-            <div className="grid gap-4 md:grid-cols-3">
-              {Object.values(ROOM_CONFIG).map((r) => (
-                <motion.div key={r.key} whileHover={{ y: -4 }} whileTap={{ scale: 0.99 }}>
-                  <Card className="h-full rounded-[1.75rem] border-0 bg-white/85 shadow-lg">
-                    <CardHeader>
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <CardTitle className="text-2xl text-stone-700">{r.title}</CardTitle>
-                          <p className="mt-2 text-sm leading-6 text-stone-500">{r.description}</p>
-                          <p className="mt-1 text-sm leading-6 text-stone-400">{r.detail}</p>
-                        </div>
-                        <Badge className="rounded-full bg-amber-100 text-stone-700">{r.tag}</Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="mb-4 text-5xl">{r.icon}</div>
-                      <Button className="w-full rounded-full" disabled={joining} onClick={() => openRoom(r.key as keyof typeof ROOM_CONFIG)}>{joining ? "입장 중..." : `${r.title} 들어가기`}</Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-        )}
+      .chatTitle{
+        font-size:21px;
+      }
 
-        {view === "room" && currentRoom && (
-          <section className="grid min-h-0 flex-1 md:grid-cols-[300px_1fr]">
-            <aside className="hidden overflow-auto border-r border-stone-200/70 bg-white/40 p-4 md:block">
-              <Card className="mb-4 rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardHeader><CardTitle className="text-lg">실시간 상태</CardTitle></CardHeader><CardContent className="space-y-2 text-sm text-stone-600"><div>Room ID: {roomId}</div><div>현재 인원: {onlineParticipants.length} / {currentRoom.maxParticipants}</div><div>다음 대기 시간: {nextPenalty}분</div></CardContent></Card>
-              <Card className="mb-4 rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardHeader><CardTitle className="text-lg">감정 기록</CardTitle></CardHeader><CardContent><div className="text-sm text-stone-600">오늘의 마음: {emotions[0] || "아직 기록이 없어요."}</div><div className="mt-3 flex flex-wrap gap-2">{[...new Set(emotions)].slice(0, 6).map((emotion) => <Badge key={emotion} className="rounded-full bg-amber-100 text-stone-700">{emotion}</Badge>)}</div></CardContent></Card>
-              <Card className="mb-4 rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardHeader><CardTitle className="text-lg">방 규칙</CardTitle></CardHeader><CardContent className="space-y-2 text-sm text-stone-600"><div>조언, 훈수, 판단, 논쟁 금지</div><div>고민 글은 50자 이내</div><div>상처 주는 말 자동 차단</div><div>위기 상황은 기관 연결 우선</div></CardContent></Card>
-              <Card className="rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardHeader><CardTitle className="text-lg">신고/제재</CardTitle></CardHeader><CardContent className="space-y-2 text-sm text-stone-600"><div>1회: 경고</div><div>3회: 24시간 정지</div><div>5회: 영구 정지</div><Progress className="mt-3" value={Math.min(((profile?.reportCount || 0) / 5) * 100, 100)} /></CardContent></Card>
-            </aside>
+      .modalTitle{
+        font-size:24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="audioWrap">
+      <div id="musicStatus">배경음악은 사용자가 직접 넣을 수 있어요 🎵</div>
+      <audio id="bgm" controls loop>
+        <source src="" type="audio/mpeg" />
+        브라우저가 오디오를 지원하지 않습니다.
+      </audio>
+    </div>
 
-            <main className="flex min-h-0 flex-col">
-              <div className="flex flex-wrap items-center gap-3 border-b border-stone-200/70 bg-white/30 px-4 py-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-3xl shadow">{currentRoom.icon}</div>
-                <div><div className="text-2xl font-bold text-stone-700">{currentRoom.title}</div><div className="text-sm text-stone-500">{currentRoom.description}</div></div>
-                <div className="ml-auto flex flex-wrap gap-2"><Button variant="secondary" className="rounded-full" onClick={clearRoom}><Trash2 className="mr-2 h-4 w-4" />대화 지우기</Button><Button variant="secondary" className="rounded-full" onClick={leaveCurrentRoom}><DoorOpen className="mr-2 h-4 w-4" />방 나가기</Button><Button variant="secondary" className="rounded-full" onClick={() => setView("rooms")}>방 목록</Button></div>
-              </div>
+    <header>따뜻한 포옹</header>
+    <div class="sub">평가 없이, 비교 없이, 다정함만 머무는 정서적 쉼터</div>
 
-              <div className="flex flex-wrap gap-2 px-4 py-3">
-                {onlineParticipants.map((participant, idx) => <Badge key={participant.id} className="rounded-full bg-amber-100 px-3 py-1 text-stone-700">{idx + 1} {participant.nickname}</Badge>)}
-                <Badge className="rounded-full bg-white text-stone-600"><WifiOff className="mr-1 h-3 w-3" />5초 유예 연결 복귀</Badge>
-              </div>
+    <section id="home">
+      <div class="heroBear">🧸</div>
+      <div class="heroNote">
+        여기서는 괜찮아요. 조언보다 온기, 판단보다 포옹이 먼저 오는 공간이에요.
+      </div>
+      <button id="startBtn" type="button">시작하기</button>
+    </section>
 
-              <div ref={listRef} className="min-h-0 flex-1 space-y-3 overflow-auto px-4 pb-4">
-                {mergedMessages.map((msg) => msg.type === "system" ? (
-                  <div key={msg.id} className="mx-auto w-fit rounded-full bg-white/90 px-4 py-2 text-sm text-stone-500 shadow">{msg.text}</div>
-                ) : (
-                  <div key={msg.id} className={`flex ${msg.authorId === user.userId ? "justify-end" : "justify-start"}`}>
-                    <div className="max-w-[88%] md:max-w-[78%]">
-                      <div className={`mb-1 px-2 text-xs text-stone-500 ${msg.authorId === user.userId ? "text-right" : "text-left"}`}>{msg.authorNickname}</div>
-                      <div className={`rounded-[1.6rem] px-4 py-3 shadow ${msg.authorId === user.userId ? "rounded-br-md bg-amber-200 text-stone-700" : "rounded-bl-md bg-white text-stone-700"}`}><div className="whitespace-pre-wrap break-keep text-[15px] leading-7 md:text-base">{msg.text}</div></div>
-                      <div className={`mt-2 flex flex-wrap items-center gap-2 px-2 ${msg.authorId === user.userId ? "justify-end" : "justify-start"}`}><Badge className="rounded-full bg-stone-100 text-stone-600">{msg.turn || "-"}번째 고민</Badge><Badge className="rounded-full bg-stone-100 text-stone-600">{msg.reactionSummary}</Badge></div>
-                      {currentRoom.interactive && <div className={`mt-2 flex flex-wrap gap-2 px-2 ${msg.authorId === user.userId ? "justify-end" : "justify-start"}`}>{HUG_TYPES.map((type) => <button key={type.id} onClick={() => reactToMessage(msg.id, type)} className="rounded-full bg-white px-3 py-2 text-xs text-stone-700 shadow transition hover:-translate-y-0.5">{type.emoji} {type.label}</button>)}<button onClick={() => reportPost(msg.id)} className="rounded-full bg-rose-100 px-3 py-2 text-xs text-rose-700 shadow"><Flag className="mr-1 inline h-3 w-3" />신고</button></div>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {currentRoom.interactive ? (
-                <div className="border-t border-stone-200/70 bg-white/30 px-4 py-4">
-                  <div className="mb-3 flex flex-wrap gap-2 text-xs text-stone-500"><Badge className="rounded-full bg-amber-100 text-stone-700"><Users className="mr-1 h-3 w-3" />실시간 동기화</Badge><Badge className="rounded-full bg-amber-100 text-stone-700"><Sparkles className="mr-1 h-3 w-3" />비평 없음</Badge><Badge className="rounded-full bg-amber-100 text-stone-700"><ShieldAlert className="mr-1 h-3 w-3" />공격 자동 차단</Badge></div>
-                  <Textarea value={draft} onChange={(e) => setDraft(e.target.value.slice(0, 50))} placeholder="마음을 50자 이내로 적어보세요..." className="min-h-[96px] rounded-2xl border-0 bg-white shadow-inner" />
-                  <div className="mt-3 flex flex-wrap items-center justify-between gap-3"><div className="text-sm text-stone-500">{draft.length} / 50</div><div className="flex flex-wrap gap-2"><Button variant="secondary" className="rounded-full" onClick={selfHug}><Heart className="mr-2 h-4 w-4" />나에게 포옹</Button><Button className="rounded-full" onClick={submitPost}><Send className="mr-2 h-4 w-4" />고민 올리기</Button></div></div>
-                </div>
-              ) : (
-                <div className="grid gap-4 overflow-auto border-t border-stone-200/70 bg-white/25 p-4 md:grid-cols-2">
-                  {HELP_LINKS.map((link) => <Card key={link.name} className="rounded-[1.5rem] border-0 bg-white/90 shadow-md"><CardHeader><CardTitle className="text-xl text-stone-700">{link.name}</CardTitle></CardHeader><CardContent><p className="mb-4 text-sm leading-6 text-stone-500">{link.desc}</p><a href={link.href} target="_blank" rel="noreferrer"><Button className="rounded-full"><LifeBuoy className="mr-2 h-4 w-4" />공식 연결 열기</Button></a></CardContent></Card>)}
-                </div>
-              )}
-            </main>
-          </section>
-        )}
+    <section id="rooms">
+      <div class="roomsTop">
+        <div class="userChip" id="nicknameChip">나의 닉네임: 둥글레차</div>
+        <button id="regenNickBtn" class="softBtn" type="button">닉네임 바꾸기</button>
       </div>
 
-      <AnimatePresence>
-        {modal && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 p-4 backdrop-blur-sm" onClick={() => setModal(null)}><motion.div initial={{ scale: 0.92, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.96, opacity: 0 }} className="w-full max-w-lg rounded-[2rem] bg-[linear-gradient(180deg,#fffaf4,#f7e8d5)] p-6 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}><div className="text-7xl">{modal.emoji}</div><div className="mt-3 text-2xl font-bold text-stone-700">{modal.title}</div><div className="mt-3 whitespace-pre-wrap text-stone-500 leading-7">{modal.text}</div><div className="mt-5 flex flex-wrap justify-center gap-2">{modal.actions?.map((action: any) => <Button key={action.label} className="rounded-full" variant="secondary" onClick={action.onClick}>{action.label}</Button>)}</div></motion.div></motion.div>}
-      </AnimatePresence>
+      <div class="room" data-room="friend">
+        <div>
+          <div class="roomName">친구의 방</div>
+          <div class="roomMeta">
+            동등한 입장에서 짧은 고민과 따뜻한 허그를 주고받는 공간<br />
+            최대 4명 / 고민 50자 / 허그 반응 중심
+          </div>
+        </div>
+        <div class="roomTag">공감</div>
+      </div>
 
-      <AnimatePresence>
-        {notice && <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2 rounded-full bg-white/95 px-5 py-3 text-sm text-stone-700 shadow-xl">{notice}</motion.div>}
-      </AnimatePresence>
+      <div class="room" data-room="comfort">
+        <div>
+          <div class="roomName">포근한 방</div>
+          <div class="roomMeta">
+            말보다 다정한 반응이 먼저 오는 공간<br />
+            큰 곰, 토닥임, 하트, 안심 이모티콘 중심
+          </div>
+        </div>
+        <div class="roomTag">보호</div>
+      </div>
 
-      {hearts.map((heart) => <motion.div key={heart.id} initial={{ opacity: 1, y: 0, scale: 1 }} animate={{ opacity: 0, y: -170, scale: 1.2 }} transition={{ duration: heart.duration, ease: "linear" }} className="pointer-events-none fixed bottom-24 z-30 text-2xl" style={{ left: `${heart.left}%` }}>{heart.icon}</motion.div>)}
+      <div class="room" data-room="help">
+        <div>
+          <div class="roomName">도움연결 방</div>
+          <div class="roomMeta">
+            혼자 감당하기 어려운 상황일 때 공식 기관과 연결되는 공간<br />
+            1366 / 117 / 112 / 119 연계
+          </div>
+        </div>
+        <div class="roomTag">연결</div>
+      </div>
+    </section>
+
+    <section id="appView">
+      <aside class="sidePanel">
+        <div class="panelCard">
+          <div class="panelTitle">오늘 받은 포옹</div>
+          <div class="warmCount" id="todayHugs">0 🫂</div>
+          <div class="statLine">이번 주 받은 따뜻함 <strong id="weekWarmth">0 hugs</strong></div>
+        </div>
+
+        <div class="panelCard">
+          <div class="panelTitle">감정 기록</div>
+          <div class="statLine" id="emotionSummary">오늘의 마음: 아직 기록이 없어요.</div>
+          <div class="emotionList" id="emotionList"></div>
+        </div>
+
+        <div class="panelCard">
+          <div class="panelTitle">방 규칙</div>
+          <div class="statLine">- 조언, 훈수, 판단, 논쟁 금지</div>
+          <div class="statLine">- 고민 글은 50자 이내</div>
+          <div class="statLine">- 상처 주는 말은 자동 차단</div>
+          <div class="statLine">- 위기 상황은 기관 연결 우선</div>
+        </div>
+
+        <div class="panelCard">
+          <div class="panelTitle">신고 안내</div>
+          <div class="statLine">1회 경고 / 3회 24시간 정지 / 5회 영구정지</div>
+        </div>
+      </aside>
+
+      <div class="mainPanel">
+        <div class="chatTop">
+          <div class="chatBearMini" id="roomEmoji">🧸</div>
+          <div>
+            <div class="chatTitle" id="chatRoomTitle">친구의 방</div>
+            <div class="chatDesc" id="chatRoomDesc">따뜻한 반응만 머무는 공간이에요.</div>
+          </div>
+          <div class="topAction">
+            <button id="clearBtn" class="softBtn" type="button">대화 지우기</button>
+            <button id="leaveBtn" class="softBtn" type="button">방 나가기</button>
+            <button id="backRoomsBtn" class="softBtn" type="button">방 목록</button>
+          </div>
+        </div>
+
+        <div class="presenceBar" id="presenceBar"></div>
+
+        <div id="messages" aria-live="polite"></div>
+
+        <div id="friendComfortInput" class="inputArea">
+          <div class="roleSelect" id="roleSelect"></div>
+          <textarea id="msg" maxlength="50" placeholder="마음을 50자 이내로 적어보세요..." aria-label="고민 입력"></textarea>
+          <div class="inputBottom">
+            <div class="charCount"><span id="charCount">0</span> / 50</div>
+            <div class="inputBtns">
+              <button id="sendBtn" type="button">고민 올리기</button>
+              <button id="hugMyselfBtn" class="softBtn" type="button">나에게 포옹</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="helpPanel" style="display:none;">
+          <div class="helpGrid">
+            <div class="helpCard">
+              <div class="helpName">1366 여성긴급전화</div>
+              <div class="helpDesc">
+                가정폭력, 성폭력, 데이트폭력, 스토킹 등 여성폭력 피해에 대한 상담 및 연계
+              </div>
+              <div class="helpButtons">
+                <a href="https://www.women1366.kr/" target="_blank" rel="noopener noreferrer">
+                  <button type="button">공식 상담 연결</button>
+                </a>
+              </div>
+            </div>
+
+            <div class="helpCard">
+              <div class="helpName">117 학교폭력 신고센터</div>
+              <div class="helpDesc">
+                학교폭력, 청소년 위기 상황, 신고 및 1:1 상담 지원
+              </div>
+              <div class="helpButtons">
+                <a href="https://www.safe182.go.kr/cont/homeLogContents.do?contentsNm=report_info_117" target="_blank" rel="noopener noreferrer">
+                  <button type="button">117 연결</button>
+                </a>
+              </div>
+            </div>
+
+            <div class="helpCard">
+              <div class="helpName">112 경찰</div>
+              <div class="helpDesc">
+                범죄 신고, 위협 상황, 긴급 보호가 필요한 경우 경찰 신고 포털 연결
+              </div>
+              <div class="helpButtons">
+                <a href="https://www.112.go.kr/" target="_blank" rel="noopener noreferrer">
+                  <button type="button">112 포털 열기</button>
+                </a>
+              </div>
+            </div>
+
+            <div class="helpCard">
+              <div class="helpName">119 응급·구조</div>
+              <div class="helpDesc">
+                화재, 응급환자, 구조 요청 등 긴급 상황에 대한 신고 안내
+              </div>
+              <div class="helpButtons">
+                <a href="https://www.119.go.kr/" target="_blank" rel="noopener noreferrer">
+                  <button type="button">119 연결</button>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="modal" class="modalOverlay" aria-hidden="true">
+    <div class="modalCard">
+      <div class="modalEmoji" id="modalEmoji">🧸</div>
+      <div class="modalTitle" id="modalTitle">따뜻한 반응</div>
+      <div class="modalText" id="modalText">여기서는 괜찮아요.</div>
+      <div class="modalActions" id="modalActions"></div>
     </div>
-  );
-}
+  </div>
+
+  <div id="notice" aria-live="polite"></div>
+
+  <script>
+    const STORAGE_KEY = "warm_hug_big_service_v1";
+
+    const nicknamePool = [
+      "둥글레차","보리차","홍차","녹차","옥수수차","유자차","국화차","쌍화차","캐모마일차","대추차","생강차","메밀차"
+    ];
+
+    const roomConfig = {
+      friend: {
+        title: "친구의 방",
+        emoji: "🤎",
+        desc: "동등한 입장에서 고민과 허그를 나누는 공간이에요. 조언 없이 공감만 머물러요.",
+        roles: ["친구 1", "친구 2", "친구 3", "친구 4"],
+        welcome: "친구의 방에 들어왔어요. 고민은 입장 순서대로 올릴 수 있어요.",
+        systemUsers: ["보리차", "홍차", "녹차"]
+      },
+      comfort: {
+        title: "포근한 방",
+        emoji: "🧸",
+        desc: "말보다 먼저 포근함이 도착하는 공간이에요. 큰 곰과 하트가 안아줄 거예요.",
+        roles: ["포근한 곰", "다정한 친구", "조용한 보호자"],
+        welcome: "포근한 방에 들어왔어요. 여기서는 말이 적어도 괜찮아요.",
+        systemUsers: ["하얀곰", "갈색곰"]
+      },
+      help: {
+        title: "도움연결 방",
+        emoji: "🆘",
+        desc: "혼자 감당하기 어렵다면, 공식 기관과 연결되는 길을 보여드릴게요.",
+        roles: [],
+        welcome: "도움연결 방에 들어왔어요. 지금의 상황에 맞는 기관으로 이어질 수 있어요.",
+        systemUsers: []
+      }
+    };
+
+    const hugTypes = [
+      {
+        id: "ok",
+        label: "괜찮아질 거예요",
+        emoji: "🤍",
+        popupEmoji: "🧸",
+        message: "괜찮아질 거예요.\n여기서는 잠깐 기대어도 괜찮아요."
+      },
+      {
+        id: "hold",
+        label: "잘 될 거예요",
+        emoji: "💛",
+        popupEmoji: "🐻",
+        message: "잘 될 거예요.\n지금까지도 충분히 잘 버텨왔어요."
+      },
+      {
+        id: "pain",
+        label: "많이 아팠죠? 이제 괜찮아요",
+        emoji: "🧡",
+        popupEmoji: "🫂",
+        message: "많이 아팠죠?\n이제 잠깐 여기서 쉬어요."
+      },
+      {
+        id: "help",
+        label: "도움이 필요해보여요",
+        emoji: "🚨",
+        popupEmoji: "🆘",
+        message: "혼자 감당하기 힘들어 보여요.\n전문기관과 연결해볼까요?",
+        needsConfirm: true
+      }
+    ];
+
+    const blockedWords = [
+      "죽어", "병신", "멍청", "꺼져", "씨발", "시발", "좆", "자살", "죽고싶", "죽고 싶", "학대", "폭행", "성폭행", "강간", "살인", "패고", "찔러"
+    ];
+
+    const threatWords = [
+      "죽고 싶", "자살", "살려줘", "맞고", "폭행", "성폭행", "학대", "스토킹", "죽여", "칼", "납치", "도와줘"
+    ];
+
+    const emotionKeywords = {
+      불안: ["불안", "무서", "떨려", "긴장"],
+      슬픔: ["슬퍼", "눈물", "우울", "외로", "힘들"],
+      분노: ["화나", "짜증", "억울", "분해"],
+      지침: ["지쳐", "버겁", "지친", "무기력"],
+      위로필요: ["위로", "안아", "포옹", "괜찮"],
+      관계: ["친구", "엄마", "가족", "학교", "사람"]
+    };
+
+    const home = document.getElementById("home");
+    const rooms = document.getElementById("rooms");
+    const appView = document.getElementById("appView");
+    const startBtn = document.getElementById("startBtn");
+    const roomEls = document.querySelectorAll(".room");
+    const nicknameChip = document.getElementById("nicknameChip");
+    const regenNickBtn = document.getElementById("regenNickBtn");
+    const chatRoomTitle = document.getElementById("chatRoomTitle");
+    const chatRoomDesc = document.getElementById("chatRoomDesc");
+    const roomEmoji = document.getElementById("roomEmoji");
+    const messages = document.getElementById("messages");
+    const presenceBar = document.getElementById("presenceBar");
+    const roleSelect = document.getElementById("roleSelect");
+    const msgInput = document.getElementById("msg");
+    const charCount = document.getElementById("charCount");
+    const sendBtn = document.getElementById("sendBtn");
+    const hugMyselfBtn = document.getElementById("hugMyselfBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const leaveBtn = document.getElementById("leaveBtn");
+    const backRoomsBtn = document.getElementById("backRoomsBtn");
+    const todayHugs = document.getElementById("todayHugs");
+    const weekWarmth = document.getElementById("weekWarmth");
+    const emotionSummary = document.getElementById("emotionSummary");
+    const emotionList = document.getElementById("emotionList");
+    const friendComfortInput = document.getElementById("friendComfortInput");
+    const helpPanel = document.getElementById("helpPanel");
+    const bgm = document.getElementById("bgm");
+    const musicStatus = document.getElementById("musicStatus");
+
+    const modal = document.getElementById("modal");
+    const modalEmoji = document.getElementById("modalEmoji");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalText = document.getElementById("modalText");
+    const modalActions = document.getElementById("modalActions");
+    const notice = document.getElementById("notice");
+
+    let currentRoom = "friend";
+    let currentRole = "";
+    let currentNickname = "";
+    let lastAutoReply = "";
+    let messageSeq = 1;
+    let disconnectTimer = null;
+
+    const state = loadState();
+
+    init();
+
+    function init(){
+      currentNickname = state.nickname || generateNickname();
+      state.nickname = currentNickname;
+      saveState();
+
+      nicknameChip.textContent = `나의 닉네임: ${currentNickname}`;
+      updateStats();
+      updateMusicStatus();
+
+      showNotice("포근한 공간에 오신 걸 환영해요.");
+    }
+
+    function defaultState(){
+      return {
+        nickname: "",
+        stats: {
+          todayHugs: 0,
+          weekWarmth: 0
+        },
+        emotions: [],
+        reports: 0,
+        suspensions: 0,
+        rooms: {
+          friend: [],
+          comfort: [],
+          help: []
+        }
+      };
+    }
+
+    function loadState(){
+      try{
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if(saved){
+          return JSON.parse(saved);
+        }
+      }catch(error){
+        console.error(error);
+      }
+      return defaultState();
+    }
+
+    function saveState(){
+      try{
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }catch(error){
+        console.error(error);
+      }
+    }
+
+    function generateNickname(){
+      return nicknamePool[Math.floor(Math.random() * nicknamePool.length)];
+    }
+
+    function regenerateNickname(){
+      let next = generateNickname();
+      while(next === currentNickname && nicknamePool.length > 1){
+        next = generateNickname();
+      }
+      currentNickname = next;
+      state.nickname = next;
+      nicknameChip.textContent = `나의 닉네임: ${currentNickname}`;
+      saveState();
+      showNotice(`새 닉네임은 ${currentNickname}예요.`);
+    }
+
+    function showNotice(text){
+      notice.textContent = text;
+      notice.style.display = "block";
+      clearTimeout(showNotice.timer);
+      showNotice.timer = setTimeout(() => {
+        notice.style.display = "none";
+      }, 2400);
+    }
+
+    function openRooms(){
+      home.style.display = "none";
+      appView.style.display = "none";
+      rooms.style.display = "block";
+    }
+
+    function openRoom(roomKey){
+      currentRoom = roomKey;
+      const info = roomConfig[roomKey];
+
+      rooms.style.display = "none";
+      home.style.display = "none";
+      appView.style.display = "grid";
+
+      chatRoomTitle.textContent = info.title;
+      chatRoomDesc.textContent = info.desc;
+      roomEmoji.textContent = info.emoji;
+
+      renderPresence(info);
+      renderRoles(info);
+      renderMessages(roomKey);
+
+      if(roomKey === "help"){
+        friendComfortInput.style.display = "none";
+        helpPanel.style.display = "block";
+      }else{
+        friendComfortInput.style.display = "block";
+        helpPanel.style.display = "none";
+      }
+
+      if(state.rooms[roomKey].length === 0){
+        addSystemMessage(info.welcome, roomKey, true);
+      }
+
+      simulatePresenceEnter(info);
+      msgInput.focus();
+    }
+
+    function renderPresence(info){
+      presenceBar.innerHTML = "";
+      const userList = [currentNickname, ...info.systemUsers].slice(0, roomKeyMaxPeople(currentRoom));
+      userList.forEach((name, index) => {
+        const chip = document.createElement("div");
+        chip.className = "presenceChip";
+        chip.textContent = `${index + 1} ${name}`;
+        presenceBar.appendChild(chip);
+      });
+    }
+
+    function roomKeyMaxPeople(roomKey){
+      if(roomKey === "friend") return 4;
+      if(roomKey === "comfort") return 3;
+      return 1;
+    }
+
+    function renderRoles(info){
+      roleSelect.innerHTML = "";
+      currentRole = info.roles[0] || "";
+      if(!info.roles.length){
+        roleSelect.style.display = "none";
+        return;
+      }
+      roleSelect.style.display = "flex";
+      info.roles.forEach((role, idx) => {
+        const pill = document.createElement("div");
+        pill.className = "rolePill";
+        pill.textContent = idx === 0 ? `현재 모드: ${role}` : role;
+        roleSelect.appendChild(pill);
+      });
+    }
+
+    function renderMessages(roomKey){
+      messages.innerHTML = "";
+      const list = state.rooms[roomKey] || [];
+      list.forEach(item => {
+        if(item.type === "system"){
+          appendSystemElement(item.text);
+        }else{
+          appendMessageElement(item);
+        }
+      });
+      scrollBottom();
+    }
+
+    function addSystemMessage(text, roomKey = currentRoom, save = true){
+      appendSystemElement(text);
+      if(save){
+        state.rooms[roomKey].push({
+          type:"system",
+          text
+        });
+        saveState();
+      }
+    }
+
+    function appendSystemElement(text){
+      const el = document.createElement("div");
+      el.className = "systemMsg";
+      el.textContent = text;
+      messages.appendChild(el);
+    }
+
+    function appendMessageElement(item){
+      const wrap = document.createElement("div");
+      wrap.className = `msgWrap ${item.who || "other"}`;
+
+      const nick = document.createElement("div");
+      nick.className = "nick";
+      nick.textContent = item.nick || (item.who === "me" ? currentNickname : "포근한 친구");
+
+      const msg = document.createElement("div");
+      msg.className = "msg";
+      msg.textContent = item.text;
+
+      const meta = document.createElement("div");
+      meta.className = "msgMeta";
+
+      const turnBadge = document.createElement("div");
+      turnBadge.className = "miniBadge";
+      turnBadge.textContent = `${item.turn || 1}번째 고민`;
+      meta.appendChild(turnBadge);
+
+      if(item.reactionSummary){
+        const summary = document.createElement("div");
+        summary.className = "miniBadge";
+        summary.textContent = item.reactionSummary;
+        meta.appendChild(summary);
+      }
+
+      const hugBar = document.createElement("div");
+      hugBar.className = "hugBar";
+
+      hugTypes.forEach(type => {
+        const btn = document.createElement("button");
+        btn.className = "hugMini";
+        btn.type = "button";
+        btn.textContent = `${type.emoji} ${type.label}`;
+        btn.addEventListener("click", () => handleHug(item.id, type));
+        hugBar.appendChild(btn);
+      });
+
+      const report = document.createElement("button");
+      report.className = "hugMini reportBtn";
+      report.type = "button";
+      report.textContent = "신고";
+      report.addEventListener("click", () => reportMessage(item.id));
+      hugBar.appendChild(report);
+
+      wrap.appendChild(nick);
+      wrap.appendChild(msg);
+      wrap.appendChild(meta);
+      wrap.appendChild(hugBar);
+      messages.appendChild(wrap);
+    }
+
+    function addMessage(text, who = "me", nick = currentNickname){
+      const item = {
+        id: "m_" + Date.now() + "_" + Math.random().toString(16).slice(2),
+        type: "message",
+        text,
+        who,
+        nick,
+        turn: messageSeq++,
+        reactionSummary: "아직 받은 포옹 없음"
+      };
+
+      state.rooms[currentRoom].push(item);
+      saveState();
+      renderMessages(currentRoom);
+      scrollBottom();
+
+      setTimeout(() => autoWarmReaction(item.id, text), randomDelay(2800, 4200));
+    }
+
+    function scrollBottom(){
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function randomDelay(min, max){
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function updateCharCount(){
+      charCount.textContent = msgInput.value.length;
+    }
+
+    function containsBlockedContent(text){
+      return blockedWords.some(word => text.includes(word));
+    }
+
+    function containsThreatContent(text){
+      return threatWords.some(word => text.includes(word));
+    }
+
+    function showModal({
+      emoji = "🧸",
+      title = "따뜻한 반응",
+      text = "여기서는 괜찮아요.",
+      actions = []
+    }){
+      modalEmoji.textContent = emoji;
+      modalTitle.textContent = title;
+      modalText.textContent = text;
+      modalActions.innerHTML = "";
+
+      if(actions.length){
+        actions.forEach(action => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = action.label;
+          if(action.className) btn.className = action.className;
+          btn.addEventListener("click", () => {
+            if(action.onClick) action.onClick();
+            closeModal();
+          });
+          modalActions.appendChild(btn);
+        });
+      }else{
+        const ok = document.createElement("button");
+        ok.type = "button";
+        ok.textContent = "닫기";
+        ok.addEventListener("click", closeModal);
+        modalActions.appendChild(ok);
+      }
+
+      modal.style.display = "flex";
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal(){
+      modal.style.display = "none";
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    function showSquirrelBlock(){
+      showModal({
+        emoji: "🐿️",
+        title: "조금 더 따뜻하게 말해볼까요?",
+        text: "괜찮아괜찮아.\n나쁜 말은 하지 말자.\n이 공간은 상처 주는 말을 쉬게 하는 곳이에요.",
+        actions: [
+          {
+            label: "다시 작성하기",
+            onClick: () => msgInput.focus()
+          }
+        ]
+      });
+    }
+
+    function showLeaveBear(){
+      showModal({
+        emoji: "🧸",
+        title: "잘 가요",
+        text: "조심해서 가요.\n언제든 다시 쉬러 와도 괜찮아요.",
+        actions: [
+          {
+            label: "방 목록으로",
+            onClick: openRooms
+          }
+        ]
+      });
+    }
+
+    function createHeart(){
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = ["🤎","💛","🧡","🤍","🫂"][Math.floor(Math.random() * 5)];
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.top = (window.innerHeight - 100 - Math.random() * 120) + "px";
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 2000);
+    }
+
+    function burstHearts(count = 8){
+      for(let i = 0; i < count; i++){
+        setTimeout(createHeart, i * 120);
+      }
+    }
+
+    function handleSend(){
+      const text = msgInput.value.trim();
+      if(!text) return;
+
+      if(text.length > 50){
+        showNotice("고민은 50자 이내로 적어주세요.");
+        return;
+      }
+
+      if(containsBlockedContent(text)){
+        showSquirrelBlock();
+        return;
+      }
+
+      const emotion = detectEmotion(text);
+      if(emotion){
+        state.emotions.unshift(emotion);
+        state.emotions = state.emotions.slice(0, 8);
+      }
+
+      addMessage(text, "me", currentNickname);
+      updateStats();
+      updateEmotionUI();
+
+      if(containsThreatContent(text)){
+        setTimeout(() => {
+          showModal({
+            emoji: "🆘",
+            title: "도움이 필요해 보여요",
+            text: "혼자 감당하기 어려운 상황처럼 보여요.\n지금 공식 도움기관으로 연결할까요?",
+            actions: [
+              {
+                label: "예, 연결할게요",
+                onClick: () => openRoom("help")
+              },
+              {
+                label: "아니오",
+                onClick: () => showNotice("필요할 때 언제든 도움연결 방으로 갈 수 있어요.")
+              }
+            ]
+          });
+        }, 800);
+      }
+
+      msgInput.value = "";
+      updateCharCount();
+    }
+
+    function autoWarmReaction(messageId, originalText){
+      if(currentRoom === "help") return;
+
+      const available = currentRoom === "comfort"
+        ? [hugTypes[0], hugTypes[2]]
+        : [hugTypes[0], hugTypes[1], hugTypes[2]];
+
+      let picked = available[Math.floor(Math.random() * available.length)];
+      while(available.length > 1 && picked.id === lastAutoReply){
+        picked = available[Math.floor(Math.random() * available.length)];
+      }
+      lastAutoReply = picked.id;
+
+      applyReactionToMessage(messageId, picked, true);
+
+      if(currentRoom === "comfort"){
+        burstHearts(10);
+      }
+    }
+
+    function handleHug(messageId, hugType){
+      applyReactionToMessage(messageId, hugType, false);
+    }
+
+    function applyReactionToMessage(messageId, hugType, isAuto = false){
+      const target = state.rooms[currentRoom].find(item => item.id === messageId);
+      if(!target) return;
+
+      state.stats.todayHugs += 1;
+      state.stats.weekWarmth += 1;
+      target.reactionSummary = `${hugType.emoji} ${hugType.label}`;
+      saveState();
+      updateStats();
+      renderMessages(currentRoom);
+
+      const title = isAuto ? "포근한 반응이 도착했어요" : "누군가 당신을 안아주었어요";
+      burstHearts(7);
+
+      if(hugType.needsConfirm){
+        showModal({
+          emoji: hugType.popupEmoji,
+          title,
+          text: hugType.message,
+          actions: [
+            {
+              label: "예, 연결할게요",
+              onClick: () => openRoom("help")
+            },
+            {
+              label: "아니오",
+              onClick: () => showNotice("괜찮아요. 필요할 때 도움연결 방으로 갈 수 있어요.")
+            }
+          ]
+        });
+      }else{
+        showModal({
+          emoji: hugType.popupEmoji,
+          title,
+          text: hugType.message,
+          actions: [
+            {
+              label: "고마워요",
+              onClick: () => showNotice("따뜻함이 전해졌어요.")
+            }
+          ]
+        });
+      }
+    }
+
+    function reportMessage(messageId){
+      state.reports += 1;
+      saveState();
+
+      let text = "신고가 접수되었어요.\n운영 검토 대상에 추가할게요.";
+      if(state.reports >= 5){
+        text += "\n누적 5회 기준: 영구정지 대상";
+      }else if(state.reports >= 3){
+        text += "\n누적 3회 기준: 24시간 정지 대상";
+      }else{
+        text += "\n1회 기준: 경고 대상";
+      }
+
+      showModal({
+        emoji: "🚨",
+        title: "신고 접수",
+        text,
+        actions: [
+          {
+            label: "확인",
+            onClick: () => {}
+          }
+        ]
+      });
+    }
+
+    function clearCurrentRoom(){
+      state.rooms[currentRoom] = [];
+      saveState();
+      renderMessages(currentRoom);
+      addSystemMessage(roomConfig[currentRoom].welcome, currentRoom, true);
+      showNotice("이 방의 대화를 지웠어요.");
+    }
+
+    function detectEmotion(text){
+      for(const [label, keywords] of Object.entries(emotionKeywords)){
+        if(keywords.some(word => text.includes(word))){
+          return label;
+        }
+      }
+      return "흔들림";
+    }
+
+    function updateStats(){
+      todayHugs.textContent = `${state.stats.todayHugs} 🫂`;
+      weekWarmth.textContent = `${state.stats.weekWarmth} hugs`;
+      updateEmotionUI();
+    }
+
+    function updateEmotionUI(){
+      emotionList.innerHTML = "";
+
+      if(!state.emotions.length){
+        emotionSummary.textContent = "오늘의 마음: 아직 기록이 없어요.";
+        return;
+      }
+
+      emotionSummary.textContent = `오늘의 마음: ${state.emotions[0]}`;
+
+      const uniq = [...new Set(state.emotions)].slice(0, 6);
+      uniq.forEach(emotion => {
+        const chip = document.createElement("div");
+        chip.className = "emotionChip";
+        chip.textContent = emotion;
+        emotionList.appendChild(chip);
+      });
+    }
+
+    function updateMusicStatus(){
+      const source = bgm.querySelector("source");
+      if(source && source.getAttribute("src")){
+        musicStatus.textContent = "배경음악이 연결되어 있어요 🎵";
+      }else{
+        musicStatus.textContent = "배경음악은 사용자가 직접 넣을 수 있어요 🎵";
+      }
+    }
+
+    function simulatePresenceEnter(info){
+      if(info.title === "도움연결 방") return;
+      addSystemMessage(`${currentNickname}님 입장하셨습니다.`, currentRoom, true);
+
+      info.systemUsers.forEach((user, idx) => {
+        setTimeout(() => {
+          addSystemMessage(`${user}님 입장하셨습니다.`, currentRoom, true);
+          if(currentRoom === infoKeyFromTitle(info.title)){
+            renderMessages(currentRoom);
+          }
+        }, 200 * (idx + 1));
+      });
+    }
+
+    function infoKeyFromTitle(title){
+      return Object.keys(roomConfig).find(key => roomConfig[key].title === title);
+    }
+
+    function simulateDisconnectGrace(){
+      clearTimeout(disconnectTimer);
+      showNotice("연결이 잠시 불안정해도 5초 동안은 방이 유지돼요.");
+      disconnectTimer = setTimeout(() => {
+        showLeaveBear();
+      }, 5000);
+    }
+
+    startBtn.addEventListener("click", openRooms);
+    regenNickBtn.addEventListener("click", regenerateNickname);
+
+    roomEls.forEach(room => {
+      room.addEventListener("click", () => openRoom(room.dataset.room));
+    });
+
+    msgInput.addEventListener("input", updateCharCount);
+
+    msgInput.addEventListener("keydown", (e) => {
+      if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        handleSend();
+      }
+    });
+
+    sendBtn.addEventListener("click", handleSend);
+
+    hugMyselfBtn.addEventListener("click", () => {
+      showModal({
+        emoji: "🫂",
+        title: "나에게도 포옹",
+        text: "오늘의 나도 안아줄게요.\n정말 애썼어요.",
+        actions: [
+          {
+            label: "고마워요",
+            onClick: () => {
+              state.stats.todayHugs += 1;
+              state.stats.weekWarmth += 1;
+              saveState();
+              updateStats();
+              burstHearts(8);
+            }
+          }
+        ]
+      });
+    });
+
+    clearBtn.addEventListener("click", clearCurrentRoom);
+    leaveBtn.addEventListener("click", showLeaveBear);
+    backRoomsBtn.addEventListener("click", openRooms);
+
+    modal.addEventListener("click", (e) => {
+      if(e.target === modal){
+        closeModal();
+      }
+    });
+
+    window.addEventListener("blur", simulateDisconnectGrace);
+
+    window.addEventListener("focus", () => {
+      clearTimeout(disconnectTimer);
+    });
+  </script>
+</body>
+</html>
