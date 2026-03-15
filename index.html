@@ -323,6 +323,36 @@ align-self:flex-end;
 let count = localStorage.getItem("visitorCount");
 
 if(!count){
+count=1;
+}else{
+count=parseInt(count)+1;
+}
+
+localStorage.setItem("visitorCount",count);
+document.getElementById("counter").innerText=count;
+
+
+/* 방 입장 기능 */
+
+const rooms = document.querySelectorAll(".room");
+
+rooms.forEach(room => {
+
+room.addEventListener("click", ()=>{
+
+const roomName = room.querySelector(".room-name").innerText;
+
+alert(roomName + " 에 입장했습니다 🧸");
+
+});
+
+});
+
+</script>
+
+let count = localStorage.getItem("visitorCount");
+
+if(!count){
 
 count=1;
 
