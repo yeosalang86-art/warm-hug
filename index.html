@@ -1,530 +1,595 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>따뜻한 포옹</title>
-<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg1:#2f241d;
-  --bg2:#5c4331;
-  --warm:#f4d8b6;
-  --cream:#fff6ea;
-  --card:#f7efe5;
-  --card2:#fffaf3;
-  --brown:#6b4a36;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:'Gaegu',cursive;
-  min-height:100vh;
-  color:#4f3729;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(255,210,140,.25), transparent 20%),
-    radial-gradient(circle at 80% 15%, rgba(255,230,170,.18), transparent 18%),
-    linear-gradient(180deg,var(--bg2),var(--bg1));
-  overflow:hidden;
-}
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at 8% 10%, rgba(255,241,214,.95) 0 26px, transparent 27px),
-    radial-gradient(circle at 14% 8%, rgba(255,241,214,.95) 0 20px, transparent 21px),
-    radial-gradient(circle at 21% 10%, rgba(255,241,214,.95) 0 24px, transparent 25px),
-    radial-gradient(circle at 79% 9%, rgba(255,241,214,.95) 0 24px, transparent 25px),
-    radial-gradient(circle at 86% 8%, rgba(255,241,214,.95) 0 20px, transparent 21px),
-    radial-gradient(circle at 92% 10%, rgba(255,241,214,.95) 0 26px, transparent 27px);
-  opacity:.25;
-}
-.frame{
-  width:min(960px,92vw);
-  height:min(92vh,860px);
-  margin:4vh auto;
-  border-radius:36px;
-  background:linear-gradient(180deg, rgba(255,246,234,.92), rgba(245,229,207,.94));
-  box-shadow:0 26px 80px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.5);
-  border:1px solid rgba(255,255,255,.35);
-  position:relative;
-  overflow:hidden;
-}
-.frame::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at 85% 12%, rgba(255,203,105,.55), transparent 14%),
-    radial-gradient(circle at 90% 18%, rgba(255,230,168,.55), transparent 18%),
-    linear-gradient(180deg, rgba(255,255,255,.12), transparent 30%);
-}
-header{
-  position:relative;
-  z-index:2;
-  text-align:center;
-  font-size:38px;
-  padding:26px 24px 8px;
-  color:#65442f;
-  text-shadow:0 1px 0 rgba(255,255,255,.65);
-}
-.sub{
-  text-align:center;
-  color:#8b6a52;
-  font-size:20px;
-  margin-bottom:8px;
-  position:relative;
-  z-index:2;
-}
-#home,#rooms,#chat{
-  position:relative;
-  z-index:2;
-  height:calc(100% - 90px);
-}
-#home{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:14px;
-  padding:20px;
-}
-.heroBear{
-  width:min(46vw,300px);
-  height:min(58vw,380px);
-  object-fit:contain;
-  object-position:center bottom;
-  border-radius:36px;
-  border:8px solid rgba(255,248,238,.95);
-  box-shadow:0 16px 34px rgba(0,0,0,.10);
-  background:#f5ede3;
-  padding:14px;
-  animation:idle 2.8s ease-in-out infinite;
-}
-.heroNote{
-  background:rgba(255,250,243,.82);
-  border-radius:999px;
-  padding:10px 18px;
-  font-size:22px;
-  color:#7b5a45;
-  box-shadow:0 10px 25px rgba(97,62,34,.10);
-}
-button{
-  border:none;
-  border-radius:999px;
-  background:linear-gradient(180deg,#f7d7b3,#efc695);
-  color:#61412c;
-  font-family:'Gaegu',cursive;
-  font-size:22px;
-  padding:14px 24px;
-  cursor:pointer;
-  box-shadow:0 10px 20px rgba(95,60,34,.16);
-  transition:transform .15s ease, box-shadow .15s ease;
-}
-button:hover{
-  transform:translateY(-2px) scale(1.02);
-  box-shadow:0 14px 28px rgba(95,60,34,.2);
-}
-#rooms{
-  display:none;
-  padding:18px 22px 26px;
-  overflow:auto;
-}
-.room{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:14px;
-  background:rgba(255,250,243,.92);
-  border:1px solid rgba(145,108,78,.10);
-  border-radius:28px;
-  margin:14px 0;
-  padding:20px 22px;
-  box-shadow:0 10px 24px rgba(76,48,28,.10);
-  cursor:pointer;
-}
-.roomName{font-size:28px;color:#65452f}
-.roomMeta{font-size:18px;color:#96755d}
-.roomTag{
-  background:#f2dfc7;
-  color:#78563f;
-  padding:8px 14px;
-  border-radius:999px;
-  font-size:18px;
-}
-#chat{
-  display:none;
-  flex-direction:column;
-  padding:12px 18px 18px;
-}
-.chatTop{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:10px 8px 12px;
-}
-.chatBearMini{
-  width:56px;
-  height:56px;
-  object-fit:contain;
-  object-position:center bottom;
-  padding:3px;
-  border-radius:18px;
-  border:3px solid #fff8f0;
-  box-shadow:0 8px 18px rgba(0,0,0,.12);
-  background:#f5ede3;
-}
-.chatTitle{font-size:26px;color:#61412c}
-.chatDesc{font-size:16px;color:#8c6d56}
-#messages{
-  flex:1;
-  overflow:auto;
-  padding:10px 4px 8px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.msgWrap{display:flex;flex-direction:column;gap:4px;max-width:72%}
-.msgWrap.me{align-self:flex-end;align-items:flex-end}
-.msgWrap.other{align-self:flex-start;align-items:flex-start}
-.nick{
-  font-size:15px;
-  color:#8c6d56;
-  padding:0 8px;
-}
-.msg{
-  padding:14px 18px;
-  border-radius:26px;
-  font-size:20px;
-  line-height:1.25;
-  box-shadow:0 6px 18px rgba(76,48,28,.08);
-  word-break:keep-all;
-}
-.me .msg{
-  background:linear-gradient(180deg,#f5d3ad,#edc08c);
-  color:#5f402d;
-  border-bottom-right-radius:10px;
-}
-.other .msg{
-  background:rgba(255,251,245,.96);
-  color:#664935;
-  border-bottom-left-radius:10px;
-}
-#inputBar{
-  display:flex;
-  gap:10px;
-  padding:12px 6px 6px;
-}
-#inputBar input{
-  flex:1;
-  border:none;
-  outline:none;
-  background:#fff9f3;
-  padding:14px 16px;
-  border-radius:999px;
-  font-family:'Gaegu',cursive;
-  font-size:19px;
-  color:#5f402d;
-  box-shadow:inset 0 2px 8px rgba(0,0,0,.05);
-}
-#hug{
-  position:fixed;
-  inset:0;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:30;
-  background:rgba(47,36,29,.18);
-  backdrop-filter:blur(1px);
-}
-.hugBearWrap{
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.hugBear{
-  width:min(58vw,360px);
-  height:min(72vw,460px);
-  object-fit:contain;
-  object-position:center bottom;
-  border-radius:42px;
-  border:10px solid rgba(255,248,238,.95);
-  box-shadow:0 24px 55px rgba(0,0,0,.18);
-  animation:hugBounce 1.15s infinite alternate ease-in-out;
-  background:#f5ede3;
-  padding:18px;
-}
-.hugArm{
-  position:absolute;
-  top:60%;
-  width:118px;
-  height:74px;
-  background:#f0ddce;
-  border-radius:999px;
-  box-shadow:0 8px 18px rgba(0,0,0,.08);
-  opacity:.94;
-}
-.armL{left:-10px;transform-origin:right center;animation:armL 1.15s infinite alternate}
-.armR{right:-10px;transform-origin:left center;animation:armR 1.15s infinite alternate}
-@keyframes hugBounce{
-  from{transform:scale(1)}
-  to{transform:scale(1.07)}
-}
-@keyframes armL{
-  from{transform:rotate(8deg)}
-  to{transform:rotate(-26deg)}
-}
-@keyframes armR{
-  from{transform:rotate(-8deg)}
-  to{transform:rotate(26deg)}
-}
-@keyframes idle{
-  0%{transform:translateY(0)}
-  50%{transform:translateY(-8px)}
-  100%{transform:translateY(0)}
-}
-.heart{
-  position:fixed;
-  font-size:30px;
-  animation:float 2s linear forwards;
-  z-index:40;
-}
-@keyframes float{
-  0%{opacity:1;transform:translateY(0)}
-  100%{opacity:0;transform:translateY(-180px)}
-}
-#notice{
-  position:fixed;
-  left:50%;
-  transform:translateX(-50%);
-  bottom:34px;
-  background:rgba(255,250,243,.96);
-  color:#6b4a36;
-  padding:14px 20px;
-  border-radius:20px;
-  box-shadow:0 10px 24px rgba(0,0,0,.14);
-  display:none;
-  z-index:50;
-  font-size:19px;
-}
-#audioWrap{
-  position:absolute;
-  top:18px;
-  right:18px;
-  z-index:5;
-}
-#bgm{
-  width:230px;
-  opacity:.88;
-  filter:sepia(.18) saturate(.9);
-}
-@media (max-width:700px){
-  .frame{width:100vw;height:100vh;margin:0;border-radius:0}
-  .heroBear{width:72vw;height:82vw}
-  .roomName{font-size:24px}
-  .msg{font-size:18px}
-  .hugBear{width:74vw;height:86vw}
-  #audioWrap{
-    top:12px;
-    right:12px;
-  }
-  #bgm{
-    width:170px;
-  }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>따뜻한 포옹</title>
+  <style>
+    :root{
+      --bg1:#2f241d;
+      --bg2:#5c4331;
+      --warm:#f4d8b6;
+      --cream:#fff6ea;
+      --card:#fffaf3;
+      --brown:#6b4a36;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:"Arial","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+      min-height:100vh;
+      color:#4f3729;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,210,140,.25), transparent 20%),
+        radial-gradient(circle at 80% 15%, rgba(255,230,170,.18), transparent 18%),
+        linear-gradient(180deg,var(--bg2),var(--bg1));
+      overflow:hidden;
+    }
+
+    .frame{
+      width:min(920px,94vw);
+      height:min(92vh,860px);
+      margin:4vh auto;
+      border-radius:32px;
+      background:linear-gradient(180deg, rgba(255,246,234,.95), rgba(245,229,207,.96));
+      box-shadow:0 24px 70px rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.35);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .frame::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 85% 12%, rgba(255,203,105,.45), transparent 14%),
+        radial-gradient(circle at 90% 18%, rgba(255,230,168,.40), transparent 18%);
+    }
+
+    .audioWrap{
+      position:absolute;
+      top:16px;
+      right:16px;
+      z-index:5;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:8px;
+    }
+
+    #musicStatus{
+      font-size:13px;
+      color:#7a5a46;
+      background:rgba(255,250,243,.88);
+      padding:8px 10px;
+      border-radius:14px;
+      box-shadow:0 6px 14px rgba(0,0,0,.08);
+      max-width:240px;
+      text-align:right;
+    }
+
+    #bgm{
+      width:240px;
+    }
+
+    header{
+      text-align:center;
+      font-size:36px;
+      font-weight:700;
+      padding:28px 24px 8px;
+      color:#65442f;
+    }
+
+    .sub{
+      text-align:center;
+      color:#8b6a52;
+      font-size:18px;
+      margin-bottom:6px;
+      padding:0 20px;
+    }
+
+    #home,#rooms,#chat{
+      position:relative;
+      z-index:2;
+      height:calc(100% - 90px);
+    }
+
+    #home{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:16px;
+      padding:24px;
+      text-align:center;
+    }
+
+    .heroBear{
+      font-size:132px;
+      line-height:1;
+      animation:idle 2.8s ease-in-out infinite;
+      filter:drop-shadow(0 10px 20px rgba(0,0,0,.12));
+    }
+
+    .heroNote{
+      background:rgba(255,250,243,.88);
+      border-radius:999px;
+      padding:12px 18px;
+      font-size:20px;
+      color:#7b5a45;
+      box-shadow:0 10px 25px rgba(97,62,34,.10);
+      max-width:740px;
+    }
+
+    button{
+      border:none;
+      border-radius:999px;
+      background:linear-gradient(180deg,#f7d7b3,#efc695);
+      color:#61412c;
+      font-size:20px;
+      font-weight:700;
+      padding:14px 24px;
+      cursor:pointer;
+      box-shadow:0 10px 20px rgba(95,60,34,.16);
+      transition:transform .15s ease, box-shadow .15s ease;
+    }
+
+    button:hover{
+      transform:translateY(-2px) scale(1.02);
+      box-shadow:0 14px 28px rgba(95,60,34,.2);
+    }
+
+    #rooms{
+      display:none;
+      padding:18px 22px 26px;
+      overflow:auto;
+    }
+
+    .room{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      background:rgba(255,250,243,.95);
+      border:1px solid rgba(145,108,78,.10);
+      border-radius:28px;
+      margin:14px 0;
+      padding:20px 22px;
+      box-shadow:0 10px 24px rgba(76,48,28,.10);
+      cursor:pointer;
+    }
+
+    .roomName{font-size:26px;font-weight:700;color:#65452f}
+    .roomMeta{font-size:16px;color:#96755d;margin-top:4px}
+    .roomTag{
+      background:#f2dfc7;
+      color:#78563f;
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:16px;
+      white-space:nowrap;
+    }
+
+    #chat{
+      display:none;
+      flex-direction:column;
+      padding:12px 18px 18px;
+    }
+
+    .chatTop{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px 8px 12px;
+    }
+
+    .chatBearMini{
+      width:54px;
+      height:54px;
+      border-radius:18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:30px;
+      background:#f5ede3;
+      box-shadow:0 8px 18px rgba(0,0,0,.12);
+    }
+
+    .chatTitle{font-size:24px;font-weight:700;color:#61412c}
+    .chatDesc{font-size:15px;color:#8c6d56}
+
+    #messages{
+      flex:1;
+      overflow:auto;
+      padding:10px 4px 8px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .msgWrap{display:flex;flex-direction:column;gap:4px;max-width:72%}
+    .msgWrap.me{align-self:flex-end;align-items:flex-end}
+    .msgWrap.other{align-self:flex-start;align-items:flex-start}
+
+    .nick{
+      font-size:13px;
+      color:#8c6d56;
+      padding:0 8px;
+    }
+
+    .msg{
+      padding:14px 18px;
+      border-radius:24px;
+      font-size:18px;
+      line-height:1.45;
+      box-shadow:0 6px 18px rgba(76,48,28,.08);
+      word-break:keep-all;
+    }
+
+    .me .msg{
+      background:linear-gradient(180deg,#f5d3ad,#edc08c);
+      color:#5f402d;
+      border-bottom-right-radius:10px;
+    }
+
+    .other .msg{
+      background:rgba(255,251,245,.98);
+      color:#664935;
+      border-bottom-left-radius:10px;
+    }
+
+    #inputBar{
+      display:flex;
+      gap:10px;
+      padding:12px 6px 6px;
+    }
+
+    #msg{
+      flex:1;
+      border:none;
+      outline:none;
+      background:#fff9f3;
+      padding:14px 16px;
+      border-radius:999px;
+      font-size:17px;
+      color:#5f402d;
+      box-shadow:inset 0 2px 8px rgba(0,0,0,.05);
+    }
+
+    #hug{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:30;
+      background:rgba(47,36,29,.18);
+      backdrop-filter:blur(1px);
+    }
+
+    .hugBearWrap{
+      position:relative;
+      width:300px;
+      height:300px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .hugBear{
+      width:220px;
+      height:220px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:110px;
+      background:#f7efe5;
+      box-shadow:0 24px 55px rgba(0,0,0,.18);
+      animation:hugBounce 1.15s infinite alternate ease-in-out;
+    }
+
+    .hugArm{
+      position:absolute;
+      top:56%;
+      width:108px;
+      height:66px;
+      background:#f0ddce;
+      border-radius:999px;
+      box-shadow:0 8px 18px rgba(0,0,0,.08);
+      opacity:.94;
+    }
+
+    .armL{left:6px;transform-origin:right center;animation:armL 1.15s infinite alternate}
+    .armR{right:6px;transform-origin:left center;animation:armR 1.15s infinite alternate}
+
+    #notice{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:30px;
+      background:rgba(255,250,243,.98);
+      color:#6b4a36;
+      padding:14px 20px;
+      border-radius:20px;
+      box-shadow:0 10px 24px rgba(0,0,0,.14);
+      display:none;
+      z-index:50;
+      font-size:17px;
+    }
+
+    .heart{
+      position:fixed;
+      font-size:28px;
+      animation:float 2s linear forwards;
+      z-index:40;
+      pointer-events:none;
+    }
+
+    @keyframes hugBounce{
+      from{transform:scale(1)}
+      to{transform:scale(1.07)}
+    }
+
+    @keyframes armL{
+      from{transform:rotate(8deg)}
+      to{transform:rotate(-26deg)}
+    }
+
+    @keyframes armR{
+      from{transform:rotate(-8deg)}
+      to{transform:rotate(26deg)}
+    }
+
+    @keyframes idle{
+      0%{transform:translateY(0)}
+      50%{transform:translateY(-8px)}
+      100%{transform:translateY(0)}
+    }
+
+    @keyframes float{
+      0%{opacity:1;transform:translateY(0)}
+      100%{opacity:0;transform:translateY(-180px)}
+    }
+
+    @media (max-width:700px){
+      .frame{width:100vw;height:100vh;margin:0;border-radius:0}
+      .audioWrap{top:12px;right:12px}
+      #bgm{width:180px}
+      .heroBear{font-size:100px}
+      .heroNote{font-size:17px;border-radius:24px}
+      .roomName{font-size:22px}
+      .msg{font-size:16px}
+      .hugBearWrap{width:240px;height:240px}
+      .hugBear{width:180px;height:180px;font-size:90px}
+      .hugArm{width:80px;height:52px}
+    }
+  </style>
 </head>
 <body>
-<div class="frame">
-  <div id="audioWrap">
-    <audio id="bgm" autoplay loop controls>
-      <source src="포근한%20음악.mp3" type="audio/mpeg">
-      브라우저가 오디오를 지원하지 않습니다.
+  <div class="frame">
+    <div class="audioWrap">
+      <div id="musicStatus">페이지를 한 번 클릭하면 배경음악이 재생돼요.</div>
+      <audio id="bgm" loop controls preload="auto">
+        <source src="cozy_hug_bgm%20(1).wav" type="audio/wav">
+        브라우저가 오디오를 지원하지 않습니다.
+      </audio>
+    </div>
+
+    <audio id="pop" preload="auto">
+      <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_2a1c2f2e4a.mp3" type="audio/mpeg">
     </audio>
-  </div>
 
-  <audio id="pop" preload="auto">
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_2a1c2f2e4a.mp3" type="audio/mpeg">
-  </audio>
+    <header>따뜻한 포옹</header>
+    <div class="sub">따뜻한 조명 아래, 잠깐 쉬어가도 괜찮아요</div>
 
-  <header>따뜻한 포옹</header>
-  <div class="sub">따뜻한 조명 아래, 잠깐 쉬어가도 괜찮아요</div>
-
-  <div id="home">
-    <img class="heroBear" src="bear.png" alt="곰돌이" />
-    <div class="heroNote">포근한 침대 옆 작은 무드등처럼, 오늘 마음을 내려놓아도 괜찮아요</div>
-    <button onclick="enterRooms()">포옹 받으러 들어가기</button>
-  </div>
-
-  <div id="rooms">
-    <div class="room" onclick="enterRoom('친구방')">
-      <div>
-        <div class="roomName">친구 방</div>
-        <div class="roomMeta">편하게 털어놓고 다정한 반응을 받아요</div>
-      </div>
-      <div class="roomTag">따뜻함 0</div>
+    <div id="home">
+      <div class="heroBear">🧸</div>
+      <div class="heroNote">포근한 침대 옆 작은 무드등처럼, 오늘 마음을 내려놓아도 괜찮아요.</div>
+      <button onclick="enterRooms()">포옹 받으러 들어가기</button>
     </div>
-    <div class="room" onclick="enterRoom('엄마방')">
-      <div>
-        <div class="roomName">엄마 방</div>
-        <div class="roomMeta">포근하고 다정한 말로 위로받는 공간</div>
-      </div>
-      <div class="roomTag">포옹 0</div>
-    </div>
-    <div class="room" onclick="enterRoom('전문가방')">
-      <div>
-        <div class="roomName">전문가 방</div>
-        <div class="roomMeta">도움이 더 필요할 때 연결되는 안심 공간</div>
-      </div>
-      <div class="roomTag">안심 0</div>
-    </div>
-  </div>
 
-  <div id="chat">
-    <div class="chatTop">
-      <img class="chatBearMini" src="bear.png" alt="곰돌이" />
-      <div>
-        <div class="chatTitle" id="chatTitle">친구 방</div>
-        <div class="chatDesc">말 한마디도 따뜻하게 머물도록</div>
+    <div id="rooms">
+      <div class="room" onclick="enterRoom('친구 방')">
+        <div>
+          <div class="roomName">친구 방</div>
+          <div class="roomMeta">편하게 털어놓고 다정한 반응을 받아요</div>
+        </div>
+        <div class="roomTag">따뜻함</div>
+      </div>
+
+      <div class="room" onclick="enterRoom('엄마 방')">
+        <div>
+          <div class="roomName">엄마 방</div>
+          <div class="roomMeta">포근하고 다정한 말로 위로받는 공간</div>
+        </div>
+        <div class="roomTag">포옹</div>
+      </div>
+
+      <div class="room" onclick="enterRoom('전문가 방')">
+        <div>
+          <div class="roomName">전문가 방</div>
+          <div class="roomMeta">도움이 더 필요할 때 연결되는 안심 공간</div>
+        </div>
+        <div class="roomTag">안심</div>
       </div>
     </div>
-    <div id="messages"></div>
-    <div id="inputBar">
-      <input id="msg" placeholder="따뜻한 말을 보내보세요" />
-      <button onclick="sendMsg()">보내기</button>
+
+    <div id="chat">
+      <div class="chatTop">
+        <div class="chatBearMini">🧸</div>
+        <div>
+          <div class="chatTitle" id="chatTitle">친구 방</div>
+          <div class="chatDesc">말 한마디도 따뜻하게 머물도록</div>
+        </div>
+      </div>
+
+      <div id="messages"></div>
+
+      <div id="inputBar">
+        <input id="msg" placeholder="따뜻한 말을 보내보세요" />
+        <button onclick="sendMsg()">보내기</button>
+      </div>
     </div>
   </div>
-</div>
 
-<div id="hug">
-  <div class="hugBearWrap">
-    <div class="hugArm armL"></div>
-    <img class="hugBear" src="bear.png" alt="곰돌이 포옹" />
-    <div class="hugArm armR"></div>
+  <div id="hug">
+    <div class="hugBearWrap">
+      <div class="hugArm armL"></div>
+      <div class="hugBear">🧸</div>
+      <div class="hugArm armR"></div>
+    </div>
   </div>
-</div>
 
-<div id="notice"></div>
+  <div id="notice"></div>
 
-<script>
-const names = ["옥수수차","둥글레차","홍차","녹차"];
-let nickname = names[Math.floor(Math.random() * names.length)];
-let currentRoom = '친구 방';
+  <script>
+    const names = ["옥수수차", "둥글레차", "홍차", "녹차"];
+    let nickname = names[Math.floor(Math.random() * names.length)];
+    let currentRoom = "친구 방";
 
-const replies = [
-  '괜찮아요. 여기서는 천천히 말해도 돼요.',
-  '많이 애썼네요. 잠깐 기대어 쉬어요.',
-  '지금 이곳에서는 편안했으면 좋겠어요.',
-  '따뜻한 차 한 잔처럼 마음이 조금 풀리면 좋겠어요.'
-];
+    const replies = [
+      "괜찮아요. 여기서는 천천히 말해도 돼요.",
+      "많이 애썼네요. 잠깐 기대어 쉬어요.",
+      "지금 이곳에서는 편안했으면 좋겠어요.",
+      "따뜻한 차 한 잔처럼 마음이 조금 풀리면 좋겠어요.",
+      "당신이 여기 와준 것만으로도 충분히 잘하고 있어요.",
+      "오늘 마음이 무거웠다면, 여기서 잠깐 내려놓아도 괜찮아요."
+    ];
 
-let replyPool = [];
+    let replyPool = [];
 
-function nextReply(){
-  if(replyPool.length === 0){
-    replyPool = [...replies].sort(() => Math.random() - 0.5);
-  }
-  return replyPool.pop();
-}
+    function nextReply(){
+      if(replyPool.length === 0){
+        replyPool = [...replies].sort(() => Math.random() - 0.5);
+      }
+      return replyPool.pop();
+    }
 
-function sound(){
-  const pop = document.getElementById('pop');
-  pop.currentTime = 0;
-  pop.play().catch(() => {});
-}
+    function sound(){
+      const pop = document.getElementById("pop");
+      pop.currentTime = 0;
+      pop.play().catch(() => {});
+    }
 
-function startBgm(){
-  const bgm = document.getElementById('bgm');
-  bgm.volume = 0.25;
-  bgm.play().catch(() => {});
-}
+    function updateMusicStatus(text){
+      document.getElementById("musicStatus").innerText = text;
+    }
 
-document.addEventListener('click', startBgm, { once:true });
+    function startBgm(){
+      const bgm = document.getElementById("bgm");
+      bgm.volume = 0.25;
 
-function enterRooms(){
-  sound();
-  document.getElementById('home').style.display = 'none';
-  document.getElementById('rooms').style.display = 'block';
-}
+      bgm.play()
+        .then(() => {
+          updateMusicStatus("배경음악이 재생 중이에요.");
+        })
+        .catch((error) => {
+          console.log("배경음악 재생 실패:", error);
+          updateMusicStatus("음악이 자동으로 재생되지 않았어요. 아래 오디오 재생 버튼을 눌러주세요.");
+        });
+    }
 
-function enterRoom(roomName){
-  sound();
-  currentRoom = roomName;
-  document.getElementById('chatTitle').innerText = roomName;
-  document.getElementById('rooms').style.display = 'none';
-  document.getElementById('chat').style.display = 'flex';
-  notice(nickname + '님이 ' + roomName + '에 들어왔어요.');
-  seedOtherMessage();
-}
+    document.addEventListener("click", startBgm, { once:true });
 
-function addMessage(text, who='me', name=nickname){
-  const wrap = document.createElement('div');
-  wrap.className = 'msgWrap ' + (who === 'me' ? 'me' : 'other');
+    function enterRooms(){
+      sound();
+      document.getElementById("home").style.display = "none";
+      document.getElementById("rooms").style.display = "block";
+    }
 
-  const nick = document.createElement('div');
-  nick.className = 'nick';
-  nick.innerText = name;
+    function enterRoom(roomName){
+      sound();
+      currentRoom = roomName;
+      document.getElementById("chatTitle").innerText = roomName;
+      document.getElementById("rooms").style.display = "none";
+      document.getElementById("chat").style.display = "flex";
+      notice(nickname + "님이 " + roomName + "에 들어왔어요.");
+      seedOtherMessage();
+    }
 
-  const bubble = document.createElement('div');
-  bubble.className = 'msg';
-  bubble.innerText = text;
+    function addMessage(text, who = "me", name = nickname){
+      const wrap = document.createElement("div");
+      wrap.className = "msgWrap " + (who === "me" ? "me" : "other");
 
-  wrap.appendChild(nick);
-  wrap.appendChild(bubble);
+      const nick = document.createElement("div");
+      nick.className = "nick";
+      nick.innerText = name;
 
-  const messages = document.getElementById('messages');
-  messages.appendChild(wrap);
-  messages.scrollTop = messages.scrollHeight;
-}
+      const bubble = document.createElement("div");
+      bubble.className = "msg";
+      bubble.innerText = text;
 
-function sendMsg(){
-  const input = document.getElementById('msg');
-  const text = input.value.trim();
-  if(text === '') return;
+      wrap.appendChild(nick);
+      wrap.appendChild(bubble);
 
-  sound();
-  addMessage(text, 'me', nickname);
-  input.value = '';
-  hug();
-  setTimeout(seedOtherMessage, 700);
-}
+      const messages = document.getElementById("messages");
+      messages.appendChild(wrap);
+      messages.scrollTop = messages.scrollHeight;
+    }
 
-function seedOtherMessage(){
-  const others = ['옥수수차','둥글레차','홍차','녹차'].filter(n => n !== nickname);
-  addMessage(nextReply(), 'other', others[Math.floor(Math.random() * others.length)]);
-}
+    function sendMsg(){
+      const input = document.getElementById("msg");
+      const text = input.value.trim();
+      if(text === "") return;
 
-function hug(){
-  const h = document.getElementById('hug');
-  h.style.display = 'flex';
+      sound();
+      addMessage(text, "me", nickname);
+      input.value = "";
+      hug();
+      setTimeout(seedOtherMessage, 700);
+    }
 
-  for(let i = 0; i < 12; i++){
-    const heart = document.createElement('div');
-    heart.className = 'heart';
-    heart.innerText = '💗';
-    heart.style.left = Math.random() * 100 + '%';
-    heart.style.bottom = '0';
-    document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 2000);
-  }
+    function seedOtherMessage(){
+      const others = ["옥수수차", "둥글레차", "홍차", "녹차"].filter(n => n !== nickname);
+      addMessage(nextReply(), "other", others[Math.floor(Math.random() * others.length)]);
+    }
 
-  setTimeout(() => h.style.display = 'none', 1500);
-}
+    function hug(){
+      const h = document.getElementById("hug");
+      h.style.display = "flex";
 
-function notice(t){
-  const n = document.getElementById('notice');
-  n.innerText = t;
-  n.style.display = 'block';
-  setTimeout(() => n.style.display = 'none', 2600);
-}
+      for(let i = 0; i < 12; i++){
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerText = "💗";
+        heart.style.left = Math.random() * 100 + "%";
+        heart.style.bottom = "0";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 2000);
+      }
 
-window.addEventListener('beforeunload', () => {
-  notice(nickname + '님이 나가셨어요.');
-});
-</script>
+      setTimeout(() => {
+        h.style.display = "none";
+      }, 1500);
+    }
+
+    function notice(text){
+      const n = document.getElementById("notice");
+      n.innerText = text;
+      n.style.display = "block";
+      setTimeout(() => {
+        n.style.display = "none";
+      }, 2600);
+    }
+
+    document.getElementById("msg").addEventListener("keydown", function(e){
+      if(e.key === "Enter"){
+        sendMsg();
+      }
+    });
+
+    const bgm = document.getElementById("bgm");
+    bgm.addEventListener("loadeddata", () => {
+      console.log("오디오 파일을 읽었어요.");
+    });
+    bgm.addEventListener("error", () => {
+      updateMusicStatus("음악 파일을 찾지 못했어요. HTML 파일과 WAV 파일이 같은 폴더에 있는지 확인해주세요.");
+    });
+  </script>
 </body>
 </html>
