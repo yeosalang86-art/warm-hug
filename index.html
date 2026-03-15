@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang=<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -9,84 +8,125 @@
 <style>
 body{
 margin:0;
-font-family:"Noto Sans KR", Arial, sans-serif;
-background:#fff5f7;
+font-family:"Noto Sans KR", sans-serif;
+background:linear-gradient(180deg,#fff6f7,#fffdf7);
 display:flex;
 justify-content:center;
 }
 
 #app{
-max-width:720px;
+max-width:820px;
 width:100%;
-padding:30px;
+padding:40px 20px;
 }
 
 h1{
 text-align:center;
-margin-bottom:10px;
-color:#444;
+font-size:32px;
+margin-bottom:8px;
 }
 
 .subtitle{
 text-align:center;
-margin-bottom:25px;
 color:#777;
+margin-bottom:35px;
 }
 
-.roomBox{
+.roomContainer{
+display:flex;
+flex-direction:column;
+gap:18px;
+}
+
+.room{
 background:white;
-padding:20px;
-border-radius:18px;
-box-shadow:0 10px 25px rgba(0,0,0,0.08);
-margin-bottom:20px;
+border-radius:20px;
+padding:22px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+display:flex;
+justify-content:space-between;
+align-items:center;
+transition:transform .15s ease;
 }
 
-.roomTitle{
+.room:hover{
+transform:translateY(-3px);
+}
+
+.roomName{
 font-size:18px;
-margin-bottom:10px;
 }
 
-button{
-background:#ffd9e2;
+.roomCount{
+font-size:14px;
+color:#888;
+margin-top:4px;
+}
+
+.enterBtn{
+background:#ffd9e4;
 border:none;
-padding:12px 18px;
+padding:10px 16px;
 border-radius:12px;
-font-size:15px;
 cursor:pointer;
+font-size:14px;
 }
 
-button:hover{
-background:#ffc7d5;
+.enterBtn:hover{
+background:#ffc6d6;
+}
+
+/* 채팅 영역 */
+#chatArea{
+margin-top:30px;
+display:none;
+}
+
+.chatBox{
+background:white;
+border-radius:20px;
+padding:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.chatMessages{
+max-height:220px;
+overflow:auto;
+margin-bottom:15px;
+}
+
+.msg{
+background:#fff1f5;
+padding:10px 14px;
+border-radius:14px;
+margin-bottom:10px;
+max-width:70%;
+}
+
+.msg.me{
+background:#e8f7ff;
+margin-left:auto;
 }
 
 textarea{
 width:100%;
-height:90px;
+height:80px;
 border-radius:12px;
 border:1px solid #eee;
 padding:10px;
-font-size:15px;
-margin-top:10px;
+font-size:14px;
 }
 
-.chat{
-margin-top:20px;
+.sendBtn{
+margin-top:8px;
+background:#ffe2ea;
+border:none;
+padding:10px 16px;
+border-radius:12px;
+cursor:pointer;
 }
 
-.msg{
-background:#fff0f4;
-padding:10px 14px;
-border-radius:14px;
-margin-bottom:10px;
-max-width:80%;
-}
-
-.msg.me{
-background:#e7f7ff;
-margin-left:auto;
-}
-
-.emojis{
+.emojiBar{
 margin-top:10px;
 }
 
@@ -111,44 +151,36 @@ flex-direction:column;
 z-index:999;
 }
 
-.bear{
-font-size:200px;
-animation:hug 1.5s ease-in-out infinite;
+.hugBear{
+font-size:320px;
+animation:hugMotion 1.4s ease-in-out infinite;
 }
 
-@keyframes hug{
-0%{transform:scale(0.9)}
-50%{transform:scale(1.1)}
-100%{transform:scale(0.9)}
+@keyframes hugMotion{
+0%{transform:scale(0.9) rotate(-2deg)}
+50%{transform:scale(1.05) rotate(2deg)}
+100%{transform:scale(0.9) rotate(-2deg)}
+}
+
+.hugText{
+background:white;
+padding:18px 24px;
+border-radius:20px;
+font-size:18px;
+margin-bottom:20px;
+box-shadow:0 6px 20px rgba(0,0,0,0.15);
 }
 
 /* 하트 애니메이션 */
 .heart{
 position:absolute;
-font-size:26px;
+font-size:28px;
 animation:float 2.2s ease-out forwards;
 }
 
 @keyframes float{
 0%{transform:translateY(0);opacity:1}
-100%{transform:translateY(-120px);opacity:0}
-}
-
-.bubble{
-background:white;
-padding:18px 24px;
-border-radius:20px;
-margin-bottom:20px;
-font-size:18px;
-max-width:320px;
-text-align:center;
-box-shadow:0 6px 18px rgba(0,0,0,0.15);
-}
-
-.userCount{
-font-size:14px;
-color:#888;
-margin-top:5px;
+100%{transform:translateY(-150px);opacity:0}
 }
 
 </style>
@@ -159,26 +191,47 @@ margin-top:5px;
 <div id="app">
 
 <h1>따뜻한 포옹</h1>
-<div class="subtitle">평가 없이, 비교 없이, 그냥 잠시 쉬어가는 곳</div>
+<div class="subtitle">지금 잠깐, 마음을 쉬어가도 괜찮아요</div>
 
-<div class="roomBox">
-<div class="roomTitle">친구 방</div>
-<button onclick="enterRoom()">들어가기</button>
-<div class="userCount" id="count">현재 인원 1명</div>
+<div class="roomContainer">
+
+<div class="room">
+<div>
+<div class="roomName">친구 방</div>
+<div class="roomCount" id="friendsCount">0명 들어와 있어요</div>
+</div>
+<button class="enterBtn" onclick="enterRoom('friends')">들어가기</button>
 </div>
 
-<div id="chatRoom" style="display:none">
+<div class="room">
+<div>
+<div class="roomName">엄마 방</div>
+<div class="roomCount" id="momCount">0명 들어와 있어요</div>
+</div>
+<button class="enterBtn" onclick="enterRoom('mom')">들어가기</button>
+</div>
 
-<div class="roomBox">
-<div class="roomTitle">대화</div>
+<div class="room">
+<div>
+<div class="roomName">전문가 방</div>
+<div class="roomCount" id="proCount">0명 들어와 있어요</div>
+</div>
+<button class="enterBtn" onclick="enterRoom('pro')">들어가기</button>
+</div>
 
-<div class="chat" id="chat"></div>
+</div>
 
-<textarea id="text" placeholder="지금 마음을 짧게 적어보세요"></textarea>
+<div id="chatArea">
 
-<button onclick="sendMsg()">보내기</button>
+<div class="chatBox">
 
-<div class="emojis">
+<div class="chatMessages" id="chat"></div>
+
+<textarea id="text" placeholder="마음을 짧게 적어보세요"></textarea>
+
+<button class="sendBtn" onclick="sendMsg()">보내기</button>
+
+<div class="emojiBar">
 <span class="emoji" onclick="sendEmoji('🫂')">🫂</span>
 <span class="emoji" onclick="sendEmoji('💗')">💗</span>
 <span class="emoji" onclick="sendEmoji('🌼')">🌼</span>
@@ -192,53 +245,59 @@ margin-top:5px;
 </div>
 
 <div id="hugPopup">
-
-<div class="bubble" id="hugText"></div>
-
-<div class="bear">🧸</div>
-
+<div class="hugText" id="hugText"></div>
+<div class="hugBear">🧸</div>
 </div>
 
 <script>
 
-let users=1
+let counts={
+friends:0,
+mom:0,
+pro:0
+}
 
-function enterRoom(){
+function enterRoom(room){
 
-users++
+counts[room]++
 
-document.getElementById("count").innerText="현재 인원 "+users+"명"
+updateCounts()
 
-document.getElementById("chatRoom").style.display="block"
+document.getElementById("chatArea").style.display="block"
 
 showHug()
 
 }
 
+function updateCounts(){
+
+document.getElementById("friendsCount").innerText=counts.friends+"명 들어와 있어요"
+
+document.getElementById("momCount").innerText=counts.mom+"명 들어와 있어요"
+
+document.getElementById("proCount").innerText=counts.pro+"명 들어와 있어요"
+
+}
+
 function sendMsg(){
 
-let text=document.getElementById("text")
-
-if(text.value.trim()=="") return
+let t=document.getElementById("text")
+if(t.value.trim()=="") return
 
 let div=document.createElement("div")
-
 div.className="msg me"
-
-div.innerText=text.value
+div.innerText=t.value
 
 chat.appendChild(div)
 
-text.value=""
+t.value=""
 
 }
 
 function sendEmoji(e){
 
 let div=document.createElement("div")
-
 div.className="msg"
-
 div.innerText=e
 
 chat.appendChild(div)
@@ -274,16 +333,13 @@ popup.style.display="none"
 
 function spawnHearts(){
 
-for(let i=0;i<8;i++){
+for(let i=0;i<10;i++){
 
 let h=document.createElement("div")
-
 h.className="heart"
-
 h.innerText="💗"
 
 h.style.left=Math.random()*100+"vw"
-
 h.style.top=(60+Math.random()*20)+"vh"
 
 
@@ -293,152 +349,6 @@ setTimeout(()=>h.remove(),2000)
 
 }
 
-}
-
-</script>
-
-</body>
-</html>
-"ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>따뜻한 포옹</title>
-<style>
-body{font-family:Arial, sans-serif;margin:0;background:#fff6f2;color:#333;display:flex;justify-content:center}
-.app{max-width:800px;width:100%;padding:20px}
-h1{text-align:center}
-.screen{display:none}
-.active{display:block}
-.card{background:white;padding:20px;border-radius:14px;box-shadow:0 8px 20px rgba(0,0,0,0.08);margin-top:20px}
-button{padding:10px 16px;border:none;border-radius:8px;background:#ffb8a2;color:white;cursor:pointer;margin-top:10px}
-.room-btn{display:block;width:100%;margin:10px 0}
-textarea{width:100%;height:80px;border-radius:10px;border:1px solid #ddd;padding:10px;resize:none}
-.hugs{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
-.hug{background:#fff1ea;border:1px solid #ffd6c8;padding:8px 12px;border-radius:10px;cursor:pointer}
-.feed{margin-top:20px}
-.post{background:#fafafa;padding:10px;border-radius:8px;margin-top:10px}
-.counter{margin-top:15px;font-weight:bold}
-.bear{font-size:40px;text-align:center;margin-top:10px}
-.nickname{font-size:14px;color:#888}
-</style>
-</head>
-<body>
-<div class="app">
-
-<h1>따뜻한 포옹</h1>
-
-<div id="start" class="screen active card">
-<p>따뜻한 공감이 있는 공간입니다. 시작하기를 눌러주세요.</p>
-<button onclick="goRooms()">시작하기</button>
-</div>
-
-<div id="rooms" class="screen card">
-<p>방을 선택해주세요</p>
-<button class="room-btn" onclick="enterRoom('친구 방')">친구 방</button>
-<button class="room-btn" onclick="enterRoom('엄마 방')">엄마 방</button>
-<button class="room-btn" onclick="enterRoom('전문가 방')">전문가 방</button>
-</div>
-
-<div id="room" class="screen card">
-<div class="nickname" id="nickname"></div>
-<h3 id="roomTitle"></h3>
-
-<textarea id="message" maxlength="50" placeholder="50자 이내로 마음을 남겨주세요"></textarea>
-<button onclick="postMessage()">남기기</button>
-
-<div class="hugs">
-<div class="hug" onclick="hug('괜찮아질 거예요')">괜찮아질 거예요</div>
-<div class="hug" onclick="hug('잘 될 거예요')">잘 될 거예요</div>
-<div class="hug" onclick="hug('많이 아팠죠?')">많이 아팠죠?</div>
-<div class="hug" onclick="hug('도움이 필요해 보여요')">도움이 필요해 보여요</div>
-</div>
-
-<div class="counter">오늘 받은 포옹: <span id="hugCount">0</span></div>
-
-<div class="feed" id="feed"></div>
-
-<button onclick="leaveRoom()">방 나가기</button>
-
-<div class="bear" id="bear"></div>
-
-</div>
-
-</div>
-
-<script>
-let hugCount=0
-
-const teas=["녹차","홍차","보리차","둥글레차","옥수수차","유자차","레몬차"]
-
-const badWords=["바보","멍청","죽어"]
-
-function nicknameGen(){
-const name=teas[Math.floor(Math.random()*teas.length)]
-return name
-}
-
-document.getElementById("nickname").innerText="닉네임: "+nicknameGen()
-
-function goRooms(){
-document.getElementById("start").classList.remove("active")
-document.getElementById("rooms").classList.add("active")
-}
-
-function enterRoom(name){
-document.getElementById("rooms").classList.remove("active")
-document.getElementById("room").classList.add("active")
-document.getElementById("roomTitle").innerText=name
-}
-
-function leaveRoom(){
-alert("잘가요 조심히 가요")
-location.reload()
-}
-
-function filter(text){
-for(let w of badWords){
-if(text.includes(w)){
-alert("나쁜 말은 하지 말아요")
-return false
-}
-}
-return true
-}
-
-function postMessage(){
-const text=document.getElementById("message").value
-if(!text)return
-
-if(!filter(text))return
-
-const post=document.createElement("div")
-post.className="post"
-post.innerText=text
-
-const feed=document.getElementById("feed")
-feed.prepend(post)
-
-setTimeout(()=>{randomHug()},2000+Math.random()*2000)
-
-}
-
-function hug(text){
-hugCount++
-document.getElementById("hugCount").innerText=hugCount
-
-const bear=document.getElementById("bear")
-bear.innerText="🐻 💗"
-
-setTimeout(()=>{bear.innerText=""},2000)
-
-alert("포옹이 도착했습니다: "+text)
-}
-
-function randomHug(){
-const hugs=["괜찮아질 거예요","잘 될 거예요","많이 아팠죠?"]
-const r=hugs[Math.floor(Math.random()*hugs.length)]
-hug(r)
 }
 
 </script>
