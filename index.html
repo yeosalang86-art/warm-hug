@@ -163,6 +163,12 @@
       padding:20px 22px;
       box-shadow:0 10px 24px rgba(76,48,28,.10);
       cursor:pointer;
+      transition:transform .15s ease, box-shadow .15s ease;
+    }
+
+    .room:hover{
+      transform:translateY(-2px);
+      box-shadow:0 16px 28px rgba(76,48,28,.14);
     }
 
     .roomName{
@@ -378,4 +384,298 @@
     }
 
     @keyframes armL{
-      from{transform:rotate(8
+      from{transform:rotate(8deg) translateX(0)}
+      to{transform:rotate(-18deg) translateX(18px)}
+    }
+
+    @keyframes armR{
+      from{transform:rotate(-8deg) translateX(0)}
+      to{transform:rotate(18deg) translateX(-18px)}
+    }
+
+    @keyframes float{
+      0%{
+        transform:translateY(0) scale(1);
+        opacity:1;
+      }
+      100%{
+        transform:translateY(-160px) scale(1.25);
+        opacity:0;
+      }
+    }
+
+    @keyframes idle{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-8px)}
+    }
+
+    @media (max-width:700px){
+      header{
+        font-size:28px;
+        padding-top:22px;
+      }
+
+      .sub{
+        font-size:15px;
+      }
+
+      .heroBear{
+        font-size:96px;
+      }
+
+      .heroNote{
+        font-size:16px;
+      }
+
+      .roomName{
+        font-size:22px;
+      }
+
+      .msgWrap{
+        max-width:86%;
+      }
+
+      #bgm{
+        width:180px;
+      }
+
+      #musicStatus{
+        max-width:180px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="audioWrap">
+      <div id="musicStatus">배경음악은 사용자가 직접 넣을 수 있어요 🎵</div>
+      <audio id="bgm" controls loop>
+        <source src="" type="audio/mpeg" />
+        브라우저가 오디오를 지원하지 않습니다.
+      </audio>
+    </div>
+
+    <header>따뜻한 포옹</header>
+    <div class="sub">지친 마음을 쉬게 하는 다정한 대화 공간</div>
+
+    <section id="home">
+      <div class="heroBear">🧸</div>
+      <div class="heroNote">여기서는 괜찮아요. 천천히 들어와서, 오늘 마음을 잠깐 내려놓아도 돼요.</div>
+      <button id="startBtn">포근한 방 둘러보기</button>
+    </section>
+
+    <section id="rooms">
+      <div class="room" data-room="위로의 방">
+        <div>
+          <div class="roomName">위로의 방</div>
+          <div class="roomMeta">따뜻한 말 한마디가 필요한 순간</div>
+        </div>
+        <div class="roomTag">다정함</div>
+      </div>
+
+      <div class="room" data-room="조용한 방">
+        <div>
+          <div class="roomName">조용한 방</div>
+          <div class="roomMeta">말 없이도 가만히 머물 수 있는 공간</div>
+        </div>
+        <div class="roomTag">쉼</div>
+      </div>
+
+      <div class="room" data-room="용기의 방">
+        <div>
+          <div class="roomName">용기의 방</div>
+          <div class="roomMeta">다시 해볼 힘이 필요할 때</div>
+        </div>
+        <div class="roomTag">응원</div>
+      </div>
+    </section>
+
+    <section id="chat">
+      <div class="chatTop">
+        <div class="chatBearMini">🧸</div>
+        <div>
+          <div class="chatTitle" id="chatRoomTitle">위로의 방</div>
+          <div class="chatDesc" id="chatRoomDesc">천천히 말해도 괜찮아요.</div>
+        </div>
+        <div style="margin-left:auto;">
+          <button id="backBtn" style="font-size:15px;padding:10px 16px;">뒤로</button>
+        </div>
+      </div>
+
+      <div id="messages"></div>
+
+      <div id="inputBar">
+        <input id="msg" type="text" placeholder="마음을 적어보세요..." />
+        <button id="sendBtn">보내기</button>
+        <button id="hugBtn">포옹</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="hug">
+    <div class="hugBearWrap">
+      <div class="hugArm armL"></div>
+      <div class="hugBear">🧸</div>
+      <div class="hugArm armR"></div>
+    </div>
+  </div>
+
+  <div id="notice"></div>
+
+  <script>
+    const home = document.getElementById("home");
+    const rooms = document.getElementById("rooms");
+    const chat = document.getElementById("chat");
+    const startBtn = document.getElementById("startBtn");
+    const backBtn = document.getElementById("backBtn");
+    const roomEls = document.querySelectorAll(".room");
+    const messages = document.getElementById("messages");
+    const msgInput = document.getElementById("msg");
+    const sendBtn = document.getElementById("sendBtn");
+    const hugBtn = document.getElementById("hugBtn");
+    const hug = document.getElementById("hug");
+    const notice = document.getElementById("notice");
+    const chatRoomTitle = document.getElementById("chatRoomTitle");
+    const chatRoomDesc = document.getElementById("chatRoomDesc");
+
+    const roomReplies = {
+      "위로의 방": {
+        desc: "마음이 조금 무거운 날, 따뜻한 말이 기다리고 있어요.",
+        replies: [
+          "오늘 정말 애썼어요. 여기서는 잠깐 기대어도 괜찮아요.",
+          "당신의 마음이 힘들었다는 것, 그 자체로 이미 충분히 이해받을 가치가 있어요.",
+          "괜찮지 않아도 괜찮아요. 지금 이 순간만큼은 천천히 숨 쉬어요.",
+          "혼자 버티느라 많이 지쳤겠어요. 여기서는 조금 내려놓아도 돼요."
+        ]
+      },
+      "조용한 방": {
+        desc: "말이 없어도 괜찮은, 잔잔한 휴식의 공간이에요.",
+        replies: [
+          "아무 말 없이 함께 있어도 괜찮아요. 조용히 곁에 있을게요.",
+          "천천히 숨 쉬어요. 지금은 급할 것이 하나도 없어요.",
+          "고요한 시간도 마음을 안아줄 수 있어요.",
+          "이 방에서는 침묵도 따뜻한 대화예요."
+        ]
+      },
+      "용기의 방": {
+        desc: "다시 한 걸음 내딛을 힘을 모아보는 공간이에요.",
+        replies: [
+          "지금까지 버텨온 것만으로도 이미 대단해요.",
+          "아주 작아도 괜찮아요. 한 걸음이면 충분해요.",
+          "당신 안에는 다시 일어날 힘이 분명 있어요.",
+          "오늘의 용기는 거창하지 않아도 돼요. 포기하지 않는 마음이면 충분해요."
+        ]
+      }
+    };
+
+    let currentRoom = "위로의 방";
+
+    function showNotice(text){
+      notice.textContent = text;
+      notice.style.display = "block";
+      clearTimeout(showNotice.timer);
+      showNotice.timer = setTimeout(() => {
+        notice.style.display = "none";
+      }, 2200);
+    }
+
+    function addMessage(text, who="other", nickText=null){
+      const wrap = document.createElement("div");
+      wrap.className = `msgWrap ${who}`;
+
+      const nick = document.createElement("div");
+      nick.className = "nick";
+      nick.textContent = nickText || (who === "me" ? "나" : "포근한 곰");
+
+      const msg = document.createElement("div");
+      msg.className = "msg";
+      msg.textContent = text;
+
+      wrap.appendChild(nick);
+      wrap.appendChild(msg);
+      messages.appendChild(wrap);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function openRooms(){
+      home.style.display = "none";
+      chat.style.display = "none";
+      rooms.style.display = "block";
+    }
+
+    function openChat(roomName){
+      currentRoom = roomName;
+      const data = roomReplies[roomName];
+      chatRoomTitle.textContent = roomName;
+      chatRoomDesc.textContent = data.desc;
+
+      rooms.style.display = "none";
+      home.style.display = "none";
+      chat.style.display = "flex";
+
+      messages.innerHTML = "";
+      addMessage("어서 와요. 오늘 마음은 어떤가요?");
+    }
+
+    function randomReply(){
+      const arr = roomReplies[currentRoom].replies;
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function sendMessage(){
+      const text = msgInput.value.trim();
+      if(!text) return;
+
+      addMessage(text, "me");
+      msgInput.value = "";
+
+      setTimeout(() => {
+        addMessage(randomReply(), "other");
+      }, 500);
+    }
+
+    function createHeart(){
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = ["🤎","💛","🧡","🤍"][Math.floor(Math.random() * 4)];
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.top = (window.innerHeight - 100 - Math.random() * 120) + "px";
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 2000);
+    }
+
+    function showHug(){
+      hug.style.display = "flex";
+      for(let i = 0; i < 10; i++){
+        setTimeout(createHeart, i * 120);
+      }
+      setTimeout(() => {
+        hug.style.display = "none";
+      }, 1700);
+      showNotice("꼬옥 안아드릴게요 🤎");
+    }
+
+    startBtn.addEventListener("click", openRooms);
+
+    roomEls.forEach(room => {
+      room.addEventListener("click", () => openChat(room.dataset.room));
+    });
+
+    backBtn.addEventListener("click", openRooms);
+    sendBtn.addEventListener("click", sendMessage);
+    hugBtn.addEventListener("click", showHug);
+
+    msgInput.addEventListener("keydown", (e) => {
+      if(e.key === "Enter"){
+        sendMessage();
+      }
+    });
+
+    // 첫 진입 안내
+    showNotice("포근한 공간에 오신 걸 환영해요.");
+  </script>
+</body>
+</html>
