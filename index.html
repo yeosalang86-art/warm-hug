@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>따뜻한 포옹</title>
+<style>
+body{font-family:Arial, sans-serif;margin:0;background:#fff6f2;color:#333;display:flex;justify-content:center}
+.app{max-width:800px;width:100%;padding:20px}
+h1{text-align:center}
+.screen{display:none}
+.active{display:block}
+.card{background:white;padding:20px;border-radius:14px;box-shadow:0 8px 20px rgba(0,0,0,0.08);margin-top:20px}
+button{padding:10px 16px;border:none;border-radius:8px;background:#ffb8a2;color:white;cursor:pointer;margin-top:10px}
+.room-btn{display:block;width:100%;margin:10px 0}
+textarea{width:100%;height:80px;border-radius:10px;border:1px solid #ddd;padding:10px;resize:none}
+.hugs{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.hug{background:#fff1ea;border:1px solid #ffd6c8;padding:8px 12px;border-radius:10px;cursor:pointer}
+.feed{margin-top:20px}
+.post{background:#fafafa;padding:10px;border-radius:8px;margin-top:10px}
+.counter{margin-top:15px;font-weight:bold}
+.bear{font-size:40px;text-align:center;margin-top:10px}
+.nickname{font-size:14px;color:#888}
+</style>
+</head>
+<body>
+<div class="app">
+
+<h1>따뜻한 포옹</h1>
+
+<div id="start" class="screen active card">
+<p>따뜻한 공감이 있는 공간입니다. 시작하기를 눌러주세요.</p>
+<button onclick="goRooms()">시작하기</button>
+</div>
+
+<div id="rooms" class="screen card">
+<p>방을 선택해주세요</p>
+<button class="room-btn" onclick="enterRoom('친구 방')">친구 방</button>
+<button class="room-btn" onclick="enterRoom('엄마 방')">엄마 방</button>
+<button class="room-btn" onclick="enterRoom('전문가 방')">전문가 방</button>
+</div>
+
+<div id="room" class="screen card">
+<div class="nickname" id="nickname"></div>
+<h3 id="roomTitle"></h3>
+
+<textarea id="message" maxlength="50" placeholder="50자 이내로 마음을 남겨주세요"></textarea>
+<button onclick="postMessage()">남기기</button>
+
+<div class="hugs">
+<div class="hug" onclick="hug('괜찮아질 거예요')">괜찮아질 거예요</div>
+<div class="hug" onclick="hug('잘 될 거예요')">잘 될 거예요</div>
+<div class="hug" onclick="hug('많이 아팠죠?')">많이 아팠죠?</div>
+<div class="hug" onclick="hug('도움이 필요해 보여요')">도움이 필요해 보여요</div>
+</div>
+
+<div class="counter">오늘 받은 포옹: <span id="hugCount">0</span></div>
+
+<div class="feed" id="feed"></div>
+
+<button onclick="leaveRoom()">방 나가기</button>
+
+<div class="bear" id="bear"></div>
+
+</div>
+
+</div>
+
+<script>
+let hugCount=0
+
+const teas=["녹차","홍차","보리차","둥글레차","옥수수차","유자차","레몬차"]
+
+const badWords=["바보","멍청","죽어"]
+
+function nicknameGen(){
+const name=teas[Math.floor(Math.random()*teas.length)]
+return name
+}
+
+document.getElementById("nickname").innerText="닉네임: "+nicknameGen()
+
+function goRooms(){
+document.getElementById("start").classList.remove("active")
+document.getElementById("rooms").classList.add("active")
+}
+
+function enterRoom(name){
+document.getElementById("rooms").classList.remove("active")
+document.getElementById("room").classList.add("active")
+document.getElementById("roomTitle").innerText=name
+}
+
+function leaveRoom(){
+alert("잘가요 조심히 가요")
+location.reload()
+}
+
+function filter(text){
+for(let w of badWords){
+if(text.includes(w)){
+alert("나쁜 말은 하지 말아요")
+return false
+}
+}
+return true
+}
+
+function postMessage(){
+const text=document.getElementById("message").value
+if(!text)return
+
+if(!filter(text))return
+
+const post=document.createElement("div")
+post.className="post"
+post.innerText=text
+
+const feed=document.getElementById("feed")
+feed.prepend(post)
+
+setTimeout(()=>{randomHug()},2000+Math.random()*2000)
+
+}
+
+function hug(text){
+hugCount++
+document.getElementById("hugCount").innerText=hugCount
+
+const bear=document.getElementById("bear")
+bear.innerText="🐻 💗"
+
+setTimeout(()=>{bear.innerText=""},2000)
+
+alert("포옹이 도착했습니다: "+text)
+}
+
+function randomHug(){
+const hugs=["괜찮아질 거예요","잘 될 거예요","많이 아팠죠?"]
+const r=hugs[Math.floor(Math.random()*hugs.length)]
+hug(r)
+}
+
+</script>
+
+</body>
+</html>
