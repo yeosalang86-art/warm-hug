@@ -83,6 +83,27 @@
         radial-gradient(circle at 12% 12%, rgba(255,250,240,.5), transparent 18%);
     }
 
+    .topLeftButtons{
+      position:absolute;
+      top:18px;
+      left:18px;
+      z-index:6;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .leftTopBtn{
+      text-align:left;
+      min-width:120px;
+    }
+
+    .underlinedStrong{
+      text-decoration:underline;
+      text-decoration-thickness:3px;
+      text-underline-offset:4px;
+    }
+
     header{
       text-align:center;
       font-family:"MaruBuri", serif;
@@ -316,14 +337,6 @@
       color:var(--brown-1);
     }
 
-    .freeLimitBar{
-      padding:0 18px 12px;
-      color:var(--brown-3);
-      font-size:14px;
-    }
-
-    .freeLimitStrong{ font-weight:700; color:var(--brown-1); }
-
     #messages{
       flex:1;
       overflow-y:auto;
@@ -485,7 +498,7 @@
     }
 
     .modalCard{
-      width:min(540px,92vw);
+      width:min(560px,92vw);
       background:linear-gradient(180deg,#fffaf4,#f8ead8);
       border-radius:32px;
       padding:26px;
@@ -567,18 +580,25 @@
 
     @media (max-width:760px){
       .frame{ width:100vw; min-height:100vh; margin:0; border-radius:0; }
-      header{ font-size:30px; padding-top:18px; }
+      header{ font-size:30px; padding-top:74px; }
       .sub{ font-size:15px; }
       .heroBear{ font-size:96px; }
       .heroNote{ font-size:16px; border-radius:28px; }
       .chatTitle{ font-size:21px; }
       .msgWrap{ max-width:92%; }
       #messages{ min-height:280px; }
+      .topLeftButtons{ top:12px; left:12px; }
+      .leftTopBtn{ min-width:104px; }
     }
   </style>
 </head>
 <body>
   <div class="frame">
+    <div class="topLeftButtons">
+      <button id="menuBtn" class="softBtn leftTopBtn underlinedStrong" type="button">메뉴</button>
+      <button id="homeBtn" class="softBtn leftTopBtn" type="button">홈으로</button>
+    </div>
+
     <header>따뜻한 포옹</header>
     <div class="sub">조언 없이, 판단 없이, 공감만 머무는 익명 감정 쉼터</div>
 
@@ -590,7 +610,6 @@
       </div>
       <div class="homeButtons">
         <button id="startBtn" type="button">마음 내려놓기</button>
-        <button id="premiumBtn" class="softBtn" type="button">프리미엄 안내</button>
       </div>
     </section>
 
@@ -600,7 +619,6 @@
           <div class="panelTitle">오늘 받은 포옹</div>
           <div class="warmCount" id="todayHugs">0 🫂</div>
           <div class="statLine">이번 주 받은 따뜻함 <strong id="weekWarmth">0 hugs</strong></div>
-          <div class="statLine">오늘 남은 무료 공감 <strong id="freeCountText">10회</strong></div>
         </div>
 
         <div class="panelCard">
@@ -629,7 +647,7 @@
           <div class="chatBearMini" id="characterEmoji">🍵</div>
           <div>
             <div class="chatTitle" id="characterTitle">둥글레차</div>
-            <div class="chatDesc" id="characterDesc">담백하고 조용한 공감으로 곁에 있어요.</div>
+            <div class="chatDesc" id="characterDesc">일상에서 지친 마음을 담백하게 안아주는 공감이에요.</div>
           </div>
           <div class="topAction">
             <button id="clearBtn" class="softBtn" type="button">기록 지우기</button>
@@ -638,7 +656,6 @@
         </div>
 
         <div class="characterTabs" id="characterTabs"></div>
-        <div class="freeLimitBar">무료 이용자는 하루 <span class="freeLimitStrong">10회 공감</span>까지 받을 수 있어요.</div>
 
         <div id="messages" aria-live="polite"></div>
 
@@ -668,15 +685,13 @@
   <div id="notice" aria-live="polite"></div>
 
   <script>
-    const STORAGE_KEY = "warmhug_mvp_v2";
-    const DAILY_LIMIT_FREE = 10;
+    const STORAGE_KEY = "warmhug_mvp_v3";
 
     const characters = {
       둥글레차: {
         emoji: "🍵",
-        desc: "담백하고 조용한 공감으로 곁에 있어요.",
-        short: "담백한 공감",
-        premium: false,
+        desc: "일상에서 지친 마음을 담백하게 안아주는 공감이에요.",
+        short: "일상 위로형",
         templates: [
           "그랬구나.\n많이 힘들었겠다.",
           "그 마음으로 여기까지 왔구나.\n조금 내려놓아도 괜찮아.",
@@ -686,9 +701,8 @@
       },
       홍차: {
         emoji: "☕",
-        desc: "조금 더 단단하게, 그러나 여전히 다정하게 머물러요.",
-        short: "단단한 공감",
-        premium: true,
+        desc: "조금 더 단단하고 또렷하게 마음을 받쳐주는 공감이에요.",
+        short: "단단한 공감형",
         templates: [
           "그 일을 겪고도 여기까지 온 거네.\n쉽지 않았겠다.",
           "무너지지 않으려 애쓴 마음이 느껴져.\n정말 애썼어.",
@@ -698,9 +712,8 @@
       },
       캐모마일차: {
         emoji: "🌼",
-        desc: "불안한 마음을 천천히 눕히는 공감이에요.",
+        desc: "불안하거나 예민한 마음을 천천히 눕혀주는 공감이에요.",
         short: "불안 완화형",
-        premium: true,
         templates: [
           "지금 마음이 많이 흔들리는 것 같아.\n여기서는 천천히 해도 괜찮아.",
           "긴장된 마음으로 오래 버텼구나.\n조금 숨을 고르고 있어도 괜찮아.",
@@ -731,9 +744,10 @@
     const home = document.getElementById("home");
     const app = document.getElementById("app");
     const startBtn = document.getElementById("startBtn");
-    const premiumBtn = document.getElementById("premiumBtn");
     const guideBtn = document.getElementById("guideBtn");
     const clearBtn = document.getElementById("clearBtn");
+    const menuBtn = document.getElementById("menuBtn");
+    const homeBtn = document.getElementById("homeBtn");
     const messages = document.getElementById("messages");
     const msgInput = document.getElementById("msg");
     const charCount = document.getElementById("charCount");
@@ -748,7 +762,6 @@
     const characterEmoji = document.getElementById("characterEmoji");
     const characterTitle = document.getElementById("characterTitle");
     const characterDesc = document.getElementById("characterDesc");
-    const freeCountText = document.getElementById("freeCountText");
     const modal = document.getElementById("modal");
     const modalEmoji = document.getElementById("modalEmoji");
     const modalTitle = document.getElementById("modalTitle");
@@ -767,9 +780,7 @@
         stats:{ todayHugs:0, weekWarmth:0 },
         emotions:[],
         entries:[],
-        currentCharacter:"둥글레차",
-        premium:false,
-        daily:{ date:getTodayKey(), count:0 }
+        currentCharacter:"둥글레차"
       };
     }
 
@@ -781,8 +792,7 @@
           return {
             ...defaultState(),
             ...parsed,
-            stats:{ ...defaultState().stats, ...(parsed.stats || {}) },
-            daily:{ ...defaultState().daily, ...(parsed.daily || {}) }
+            stats:{ ...defaultState().stats, ...(parsed.stats || {}) }
           };
         }
       }catch(error){
@@ -796,7 +806,6 @@
     }
 
     function init(){
-      resetDailyIfNeeded();
       renderCharacterTabs();
       updateCharacterUI();
       updateStats();
@@ -805,31 +814,17 @@
       showNotice("따뜻한 포옹에 오신 걸 환영해요.");
     }
 
-    function getTodayKey(){
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, "0");
-      const date = String(now.getDate()).padStart(2, "0");
-      return `${year}-${month}-${date}`;
-    }
-
-    function resetDailyIfNeeded(){
-      const todayKey = getTodayKey();
-      if(state.daily.date !== todayKey){
-        state.daily = { date:todayKey, count:0 };
-        saveState();
-      }
-    }
-
-    function remainingFreeCount(){
-      return Math.max(0, DAILY_LIMIT_FREE - state.daily.count);
-    }
-
     function showApp(){
       home.style.display = "none";
       app.style.display = "grid";
       setTimeout(() => msgInput.focus(), 120);
       setTimeout(scrollBottom, 150);
+    }
+
+    function goHome(){
+      app.style.display = "none";
+      home.style.display = "flex";
+      window.scrollTo({ top:0, behavior:"smooth" });
     }
 
     function showNotice(text){
@@ -844,7 +839,6 @@
     function updateStats(){
       todayHugs.textContent = `${state.stats.todayHugs} 🫂`;
       weekWarmth.textContent = `${state.stats.weekWarmth} hugs`;
-      freeCountText.textContent = `${remainingFreeCount()}회`;
     }
 
     function updateEmotionUI(){
@@ -871,7 +865,7 @@
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = `characterBtn ${name === currentCharacter ? "active" : ""}`;
-        btn.textContent = `${info.emoji} ${name}${info.premium ? " · premium" : ""}`;
+        btn.textContent = `${info.emoji} ${name}`;
         btn.addEventListener("click", () => selectCharacter(name));
         characterTabs.appendChild(btn);
 
@@ -883,19 +877,6 @@
     }
 
     function selectCharacter(name){
-      const target = characters[name];
-      if(target.premium && !state.premium){
-        showModal({
-          emoji: target.emoji,
-          title: `${name}는 프리미엄 캐릭터예요`,
-          text: "프리미엄에서는 모든 공감 스타일, 무제한 공감, 감정 기록 저장 확장을 사용할 수 있어요.",
-          actions:[
-            { label:"확인", className:"softBtn", onClick:() => {} }
-          ]
-        });
-        return;
-      }
-
       currentCharacter = name;
       state.currentCharacter = name;
       saveState();
@@ -1085,24 +1066,16 @@
       modal.setAttribute("aria-hidden", "true");
     }
 
-    function showPremiumModal(){
-      showModal({
-        emoji:"✨",
-        title:"프리미엄 안내",
-        text:"월 3,000~5,000원 구조로 생각해볼 수 있어요.\n\n- 모든 공감 캐릭터\n- 무제한 공감\n- 감정 기록 저장 확장\n- 감정 리포트\n- 힐링 메시지 카드",
-        actions:[
-          { label:"좋아요", className:"softBtn", onClick:() => {} }
-        ]
-      });
-    }
-
     function showHelpGuide(){
       showModal({
         emoji:"🆘",
-        title:"도움 연결 안내",
-        text:"혼자 감당하기 어려운 상황이라면 전문기관 연결이 먼저예요.\n\n1366 여성긴급전화\n117 학교폭력 신고센터\n112 경찰\n119 응급·구조",
+        title:"도움 연결",
+        text:"필요한 기관을 골라 바로 이동할 수 있어요.",
         actions:[
-          { label:"확인", className:"softBtn", onClick:() => {} }
+          { label:"1366 홈페이지", className:"softBtn", onClick:() => window.open("https://www.women1366.kr/", "_blank") },
+          { label:"117 홈페이지", className:"softBtn", onClick:() => window.open("https://www.safe182.go.kr/", "_blank") },
+          { label:"112 바로가기", className:"softBtn", onClick:() => window.open("https://www.112.go.kr/", "_blank") },
+          { label:"119 바로가기", className:"softBtn", onClick:() => window.open("https://www.119.go.kr/", "_blank") }
         ]
       });
     }
@@ -1124,7 +1097,6 @@
     }
 
     function handleSend(){
-      resetDailyIfNeeded();
       const text = msgInput.value.trim();
       if(!text) return;
 
@@ -1140,25 +1112,9 @@
         return;
       }
 
-      if(!state.premium && remainingFreeCount() <= 0){
-        showModal({
-          emoji:"🌙",
-          title:"오늘 무료 공감을 모두 사용했어요",
-          text:"내일 다시 10회가 열려요.\n프리미엄에서는 무제한 공감을 받을 수 있어요.",
-          actions:[
-            { label:"확인", className:"softBtn", onClick:() => {} }
-          ]
-        });
-        return;
-      }
-
       const emotion = detectEmotion(text);
       state.emotions.unshift(emotion);
       state.emotions = state.emotions.slice(0, 12);
-
-      if(!state.premium){
-        state.daily.count += 1;
-      }
 
       addEntry({
         id:"m_" + Date.now(),
@@ -1188,9 +1144,10 @@
           showModal({
             emoji:"🆘",
             title:"도움이 먼저 필요해 보여요",
-            text:"혼자 감당하기 어려운 상황처럼 보여요.\n지금은 전문기관 연결을 먼저 생각해보면 좋겠어요.\n\n1366 · 117 · 112 · 119",
+            text:"혼자 감당하기 어려운 상황처럼 보여요.\n지금은 전문기관 연결을 먼저 생각해보면 좋겠어요.",
             actions:[
-              { label:"확인", className:"softBtn", onClick:() => {} }
+              { label:"도움 연결 열기", className:"softBtn", onClick:showHelpGuide },
+              { label:"닫기", className:"softBtn", onClick:() => {} }
             ]
           });
         }, 500);
@@ -1208,10 +1165,22 @@
       showNotice("기록을 지웠어요.");
     }
 
+    function showMenuGuide(){
+      showModal({
+        emoji:"📚",
+        title:"메뉴 안내",
+        text:"왼쪽 위 버튼으로 언제든 홈으로 돌아가거나, 현재 화면에서 기록을 이어갈 수 있어요.",
+        actions:[
+          { label:"확인", className:"softBtn", onClick:() => {} }
+        ]
+      });
+    }
+
     startBtn.addEventListener("click", showApp);
-    premiumBtn.addEventListener("click", showPremiumModal);
     guideBtn.addEventListener("click", showHelpGuide);
     clearBtn.addEventListener("click", clearAllEntries);
+    menuBtn.addEventListener("click", showMenuGuide);
+    homeBtn.addEventListener("click", goHome);
     sendBtn.addEventListener("click", handleSend);
 
     msgInput.addEventListener("input", () => {
