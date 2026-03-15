@@ -1,5 +1,305 @@
 <!DOCTYPE html>
+<html lang=<!DOCTYPE html>
 <html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>따뜻한 포옹</title>
+
+<style>
+body{
+margin:0;
+font-family:"Noto Sans KR", Arial, sans-serif;
+background:#fff5f7;
+display:flex;
+justify-content:center;
+}
+
+#app{
+max-width:720px;
+width:100%;
+padding:30px;
+}
+
+h1{
+text-align:center;
+margin-bottom:10px;
+color:#444;
+}
+
+.subtitle{
+text-align:center;
+margin-bottom:25px;
+color:#777;
+}
+
+.roomBox{
+background:white;
+padding:20px;
+border-radius:18px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+margin-bottom:20px;
+}
+
+.roomTitle{
+font-size:18px;
+margin-bottom:10px;
+}
+
+button{
+background:#ffd9e2;
+border:none;
+padding:12px 18px;
+border-radius:12px;
+font-size:15px;
+cursor:pointer;
+}
+
+button:hover{
+background:#ffc7d5;
+}
+
+textarea{
+width:100%;
+height:90px;
+border-radius:12px;
+border:1px solid #eee;
+padding:10px;
+font-size:15px;
+margin-top:10px;
+}
+
+.chat{
+margin-top:20px;
+}
+
+.msg{
+background:#fff0f4;
+padding:10px 14px;
+border-radius:14px;
+margin-bottom:10px;
+max-width:80%;
+}
+
+.msg.me{
+background:#e7f7ff;
+margin-left:auto;
+}
+
+.emojis{
+margin-top:10px;
+}
+
+.emoji{
+font-size:26px;
+margin-right:6px;
+cursor:pointer;
+}
+
+/* 포옹 팝업 */
+#hugPopup{
+position:fixed;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+background:rgba(0,0,0,0.35);
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:999;
+}
+
+.bear{
+font-size:200px;
+animation:hug 1.5s ease-in-out infinite;
+}
+
+@keyframes hug{
+0%{transform:scale(0.9)}
+50%{transform:scale(1.1)}
+100%{transform:scale(0.9)}
+}
+
+/* 하트 애니메이션 */
+.heart{
+position:absolute;
+font-size:26px;
+animation:float 2.2s ease-out forwards;
+}
+
+@keyframes float{
+0%{transform:translateY(0);opacity:1}
+100%{transform:translateY(-120px);opacity:0}
+}
+
+.bubble{
+background:white;
+padding:18px 24px;
+border-radius:20px;
+margin-bottom:20px;
+font-size:18px;
+max-width:320px;
+text-align:center;
+box-shadow:0 6px 18px rgba(0,0,0,0.15);
+}
+
+.userCount{
+font-size:14px;
+color:#888;
+margin-top:5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<h1>따뜻한 포옹</h1>
+<div class="subtitle">평가 없이, 비교 없이, 그냥 잠시 쉬어가는 곳</div>
+
+<div class="roomBox">
+<div class="roomTitle">친구 방</div>
+<button onclick="enterRoom()">들어가기</button>
+<div class="userCount" id="count">현재 인원 1명</div>
+</div>
+
+<div id="chatRoom" style="display:none">
+
+<div class="roomBox">
+<div class="roomTitle">대화</div>
+
+<div class="chat" id="chat"></div>
+
+<textarea id="text" placeholder="지금 마음을 짧게 적어보세요"></textarea>
+
+<button onclick="sendMsg()">보내기</button>
+
+<div class="emojis">
+<span class="emoji" onclick="sendEmoji('🫂')">🫂</span>
+<span class="emoji" onclick="sendEmoji('💗')">💗</span>
+<span class="emoji" onclick="sendEmoji('🌼')">🌼</span>
+<span class="emoji" onclick="sendEmoji('🤍')">🤍</span>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="hugPopup">
+
+<div class="bubble" id="hugText"></div>
+
+<div class="bear">🧸</div>
+
+</div>
+
+<script>
+
+let users=1
+
+function enterRoom(){
+
+users++
+
+document.getElementById("count").innerText="현재 인원 "+users+"명"
+
+document.getElementById("chatRoom").style.display="block"
+
+showHug()
+
+}
+
+function sendMsg(){
+
+let text=document.getElementById("text")
+
+if(text.value.trim()=="") return
+
+let div=document.createElement("div")
+
+div.className="msg me"
+
+div.innerText=text.value
+
+chat.appendChild(div)
+
+text.value=""
+
+}
+
+function sendEmoji(e){
+
+let div=document.createElement("div")
+
+div.className="msg"
+
+div.innerText=e
+
+chat.appendChild(div)
+
+}
+
+const messages=[
+"괜찮아요. 여기서는 편히 쉬어도 돼요.",
+"오늘도 정말 잘 버텼어요.",
+"잠깐 안아줄게요.",
+"조금만 쉬어가도 괜찮아요.",
+"당신은 충분히 잘하고 있어요."
+]
+
+function showHug(){
+
+let popup=document.getElementById("hugPopup")
+let text=document.getElementById("hugText")
+
+let random=messages[Math.floor(Math.random()*messages.length)]
+
+text.innerText=random
+
+popup.style.display="flex"
+
+spawnHearts()
+
+setTimeout(()=>{
+popup.style.display="none"
+},3500)
+
+}
+
+function spawnHearts(){
+
+for(let i=0;i<8;i++){
+
+let h=document.createElement("div")
+
+h.className="heart"
+
+h.innerText="💗"
+
+h.style.left=Math.random()*100+"vw"
+
+h.style.top=(60+Math.random()*20)+"vh"
+
+
+document.body.appendChild(h)
+
+setTimeout(()=>h.remove(),2000)
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
+"ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
