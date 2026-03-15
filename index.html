@@ -12,20 +12,6 @@
 
 body{
 font-family:'Noto Sans KR',sans-serif;
-background:<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>따뜻한 포옹</title>
-
-<link href="https://fonts.googleapis.com/css2?family=MaruBuri:wght@400;700&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
-
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-
-body{
-font-family:'Noto Sans KR',sans-serif;
 background:
 radial-gradient(circle at 20% 20%, #ffe7c8 0%, transparent 30%),
 radial-gradient(circle at 80% 10%, #ffd9a6 0%, transparent 30%),
@@ -58,305 +44,10 @@ margin-bottom:30px;
 color:#7c5a44;
 }
 
-/* 방 목록 */
-
-.rooms{
-display:flex;
-flex-direction:column;
-gap:18px;
-}
-
-.room{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:22px;
-border-radius:22px;
-background:linear-gradient(
-180deg,
-rgba(255,248,238,.95),
-rgba(255,241,229,.9)
-);
-box-shadow:0 12px 25px rgba(120,80,40,0.15);
-cursor:pointer;
-transition:all .25s ease;
-}
-
-.room:hover{
-transform:translateY(-6px);
-box-shadow:0 22px 45px rgba(120,80,40,0.2);
-}
-
-.room-left{
-display:flex;
-align-items:center;
-gap:16px;
-}
-
-.icon{font-size:34px}
-
-.room-name{
-font-family:'MaruBuri',serif;
-font-size:22px;
-}
-
-.room-desc{
+.nickname{
+text-align:center;
+margin-bottom:20px;
 font-size:14px;
-color:#7c5a44;
-}
-
-.tag{
-background:#efd5b4;
-padding:7px 14px;
-border-radius:999px;
-font-size:13px;
-}
-
-/* 채팅 */
-
-.chat{
-display:none;
-flex-direction:column;
-gap:18px;
-}
-
-.chat-top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.back{
-background:#efd5b4;
-padding:6px 14px;
-border-radius:999px;
-cursor:pointer;
-}
-
-.messages{
-height:280px;
-overflow:auto;
-background:#fff7ef;
-border-radius:16px;
-padding:12px;
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.msg{
-background:white;
-padding:10px 12px;
-border-radius:12px;
-max-width:70%;
-}
-
-.me{
-align-self:flex-end;
-background:#f4d6b5;
-}
-
-.input-area{
-display:flex;
-gap:10px;
-}
-
-input{
-flex:1;
-padding:10px;
-border:none;
-border-radius:10px;
-background:white;
-}
-
-button{
-border:none;
-background:#e9c8a3;
-padding:10px 16px;
-border-radius:10px;
-cursor:pointer;
-}
-
-/* 팝업 */
-
-.popup{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:#fff8f0;
-padding:35px;
-border-radius:20px;
-box-shadow:0 20px 50px rgba(0,0,0,0.25);
-display:none;
-text-align:center;
-}
-
-.popup-emoji{
-font-size:120px; /* 3배 크기 */
-margin-bottom:10px;
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<h1>따뜻한 포옹</h1>
-<div class="subtitle">조언 없이 공감만 머무는 공간</div>
-
-<!-- 방 목록 -->
-
-<div id="rooms" class="rooms">
-
-<div class="room" data-room="친구의 방">
-<div class="room-left">
-<div class="icon">🫂</div>
-<div>
-<div class="room-name">친구의 방</div>
-<div class="room-desc">고민을 나누는 공간</div>
-</div>
-</div>
-<div class="tag">공감</div>
-</div>
-
-<div class="room" data-room="포근한 방">
-<div class="room-left">
-<div class="icon">🧸</div>
-<div>
-<div class="room-name">포근한 방</div>
-<div class="room-desc">따뜻한 반응이 오는 공간</div>
-</div>
-</div>
-<div class="tag">위로</div>
-</div>
-
-<div class="room" data-room="도움연결 방">
-<div class="room-left">
-<div class="icon">🆘</div>
-<div>
-<div class="room-name">도움연결 방</div>
-<div class="room-desc">기관 연결</div>
-</div>
-</div>
-<div class="tag">연결</div>
-</div>
-
-</div>
-
-<!-- 채팅 -->
-
-<div id="chat" class="chat">
-
-<div class="chat-top">
-<div id="roomTitle"></div>
-<div class="back" id="backBtn">나가기</div>
-</div>
-
-<div id="messages" class="messages"></div>
-
-<div class="input-area">
-<input id="msgInput" maxlength="50" placeholder="마음을 적어보세요">
-<button id="sendBtn">보내기</button>
-</div>
-
-</div>
-
-</div>
-
-<!-- 팝업 -->
-
-<div id="popup" class="popup">
-<div class="popup-emoji">🧸</div>
-<div>괜찮아요. 여기서는 쉬어도 돼요.</div>
-<br>
-<button id="closePopup">닫기</button>
-</div>
-
-<script>
-
-const rooms=document.querySelectorAll(".room");
-const chat=document.getElementById("chat");
-const roomsBox=document.getElementById("rooms");
-const roomTitle=document.getElementById("roomTitle");
-const backBtn=document.getElementById("backBtn");
-
-rooms.forEach(room=>{
-room.addEventListener("click",()=>{
-roomTitle.innerText=room.dataset.room;
-roomsBox.style.display="none";
-chat.style.display="flex";
-});
-});
-
-backBtn.onclick=()=>{
-chat.style.display="none";
-roomsBox.style.display="flex";
-};
-
-const sendBtn=document.getElementById("sendBtn");
-const input=document.getElementById("msgInput");
-const messages=document.getElementById("messages");
-
-sendBtn.onclick=()=>{
-
-const text=input.value.trim();
-if(!text)return;
-
-const msg=document.createElement("div");
-msg.className="msg me";
-msg.innerText=text;
-
-messages.appendChild(msg);
-
-input.value="";
-
-showPopup();
-
-};
-
-function showPopup(){
-document.getElementById("popup").style.display="block";
-}
-
-document.getElementById("closePopup").onclick=()=>{
-document.getElementById("popup").style.display="none";
-};
-
-</script>
-
-</body>
-</html> 이야 너무 좋은데 지금 웹디자인은 유지하고 여기에 있던 기능은 다시 집어넣어 단 지저분하지 않게 
-radial-gradient(circle at 20% 20%, #ffe7c8 0%, transparent 30%),
-radial-gradient(circle at 80% 10%, #ffd9a6 0%, transparent 30%),
-linear-gradient(180deg,#eadac6,#d9c6ae);
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-color:#5c4033;
-}
-
-.container{
-width:900px;
-max-width:92vw;
-background:rgba(255,255,255,0.85);
-border-radius:28px;
-padding:35px;
-box-shadow:0 25px 60px rgba(0,0,0,0.15);
-}
-
-h1{
-font-family:'MaruBuri',serif;
-text-align:center;
-margin-bottom:10px;
-}
-
-.subtitle{
-text-align:center;
-margin-bottom:30px;
 color:#7c5a44;
 }
 
@@ -458,6 +149,15 @@ align-self:flex-end;
 background:#f4d6b5;
 }
 
+.hug-btn{
+font-size:12px;
+margin-top:4px;
+background:#f0e2d0;
+border-radius:999px;
+padding:4px 10px;
+cursor:pointer;
+}
+
 .input-area{
 display:flex;
 gap:10px;
@@ -479,6 +179,12 @@ border-radius:10px;
 cursor:pointer;
 }
 
+.char{
+font-size:12px;
+color:#8b6d54;
+text-align:right;
+}
+
 /* 팝업 */
 
 .popup{
@@ -495,7 +201,7 @@ text-align:center;
 }
 
 .popup-emoji{
-font-size:120px; /* 3배 크기 */
+font-size:120px;
 margin-bottom:10px;
 }
 
@@ -508,6 +214,7 @@ margin-bottom:10px;
 
 <h1>따뜻한 포옹</h1>
 <div class="subtitle">조언 없이 공감만 머무는 공간</div>
+<div class="nickname" id="nickname"></div>
 
 <!-- 방 목록 -->
 
@@ -559,6 +266,8 @@ margin-bottom:10px;
 
 <div id="messages" class="messages"></div>
 
+<div class="char"><span id="count">0</span>/50</div>
+
 <div class="input-area">
 <input id="msgInput" maxlength="50" placeholder="마음을 적어보세요">
 <button id="sendBtn">보내기</button>
@@ -579,6 +288,11 @@ margin-bottom:10px;
 
 <script>
 
+const names=["둥글레차","보리차","홍차","유자차","국화차","메밀차"];
+const nickname=names[Math.floor(Math.random()*names.length)];
+
+document.getElementById("nickname").innerText="닉네임 : "+nickname;
+
 const rooms=document.querySelectorAll(".room");
 const chat=document.getElementById("chat");
 const roomsBox=document.getElementById("rooms");
@@ -590,6 +304,7 @@ room.addEventListener("click",()=>{
 roomTitle.innerText=room.dataset.room;
 roomsBox.style.display="none";
 chat.style.display="flex";
+addSystemMsg("방에 입장했습니다.");
 });
 });
 
@@ -602,7 +317,13 @@ const sendBtn=document.getElementById("sendBtn");
 const input=document.getElementById("msgInput");
 const messages=document.getElementById("messages");
 
-sendBtn.onclick=()=>{
+input.addEventListener("input",()=>{
+document.getElementById("count").innerText=input.value.length;
+});
+
+sendBtn.onclick=sendMsg;
+
+function sendMsg(){
 
 const text=input.value.trim();
 if(!text)return;
@@ -613,11 +334,56 @@ msg.innerText=text;
 
 messages.appendChild(msg);
 
+addHugBtn(msg);
+
 input.value="";
+document.getElementById("count").innerText=0;
 
-showPopup();
+autoComfort();
 
-};
+}
+
+function addHugBtn(msg){
+
+const hug=document.createElement("div");
+hug.className="hug-btn";
+hug.innerText="🫂 공감 보내기";
+
+hug.onclick=showPopup;
+
+msg.appendChild(hug);
+
+}
+
+function autoComfort(){
+
+const arr=[
+"괜찮아요 여기서는 쉬어도 돼요",
+"오늘도 버텨줘서 고마워요",
+"지금 충분히 잘하고 있어요"
+];
+
+setTimeout(()=>{
+
+const m=document.createElement("div");
+m.className="msg";
+m.innerText=arr[Math.floor(Math.random()*arr.length)];
+
+messages.appendChild(m);
+
+},2000);
+
+}
+
+function addSystemMsg(text){
+
+const m=document.createElement("div");
+m.className="msg";
+m.innerText=text
+  
+messages.appendChild(m);
+
+}
 
 function showPopup(){
 document.getElementById("popup").style.display="block";
