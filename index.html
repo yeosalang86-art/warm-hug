@@ -1,77 +1,93 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>따뜻한 포옹</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
+
 body{
 margin:0;
 font-family:'Gaegu',cursive;
-background:linear-gradient(#fff8fb,#ffeef6);
+background:linear-gradient(180deg,#fff9fb,#ffeef6);
 height:100vh;
 display:flex;
 flex-direction:column;
 align-items:center;
+color:#5b4b53;
 }
 
 header{
-font-size:34px;
-padding:20px;
-color:#6b4b57;
+font-size:36px;
+padding:24px;
 }
 
-/* home */
+/* HOME */
+
 #home{
 flex:1;
-width:100%;
 display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:center;
+text-align:center;
 }
 
-.bearHero{
+.heroBear{
 width:260px;
-height:260px;
-margin-bottom:10px;
+animation:idleBounce 2.2s infinite ease-in-out;
 }
 
-button{
-background:#ffd6e7;
+@keyframes idleBounce{
+0%{transform:translateY(0)}
+50%{transform:translateY(-8px)}
+100%{transform:translateY(0)}
+}
+
+.startBtn{
+margin-top:20px;
+padding:14px 26px;
+font-size:20px;
 border:none;
-padding:14px 24px;
 border-radius:30px;
-font-size:18px;
+background:#ffd6e7;
 cursor:pointer;
-box-shadow:0 6px 14px rgba(0,0,0,0.08);
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
 }
 
-button:hover{transform:scale(1.05)}
+.startBtn:hover{transform:scale(1.05)}
 
-/* rooms */
-#rooms{display:none;width:90%;max-width:600px}
+/* ROOMS */
+
+#rooms{
+display:none;
+width:90%;
+max-width:600px;
+}
+
 .room{
 background:white;
-padding:16px;
-border-radius:20px;
+padding:18px;
+border-radius:22px;
 margin:12px 0;
-box-shadow:0 6px 16px rgba(0,0,0,0.06);
-cursor:pointer;
+box-shadow:0 6px 18px rgba(0,0,0,0.06);
 display:flex;
 justify-content:space-between;
+font-size:20px;
+cursor:pointer;
 }
 
-/* chat */
+/* CHAT */
+
 #chat{
 display:none;
 flex-direction:column;
-height:100vh;
 width:100%;
 max-width:600px;
+height:100vh;
 }
 
 #messages{
@@ -80,25 +96,53 @@ padding:20px;
 overflow-y:auto;
 }
 
-.message{
+.msg{
 margin:10px 0;
-max-width:60%;
 padding:12px 16px;
 border-radius:20px;
+max-width:65%;
 font-size:18px;
 }
 
-.left{background:#ffffff;align-self:flex-start}
-.right{background:#ffd6e7;align-self:flex-end}
-
-#inputArea{display:flex;padding:10px;background:white}
-
-#inputArea input{
-flex:1;border:none;padding:10px;border-radius:20px;background:#f4f4f4;font-family:'Gaegu'
+.me{
+background:#ffd6e7;
+align-self:flex-end;
 }
 
-/* cute hug popup */
-#hugPopup{
+.other{
+background:white;
+align-self:flex-start;
+}
+
+#inputBar{
+display:flex;
+padding:10px;
+background:white;
+border-top:1px solid #eee;
+}
+
+#inputBar input{
+flex:1;
+border:none;
+background:#f4f4f4;
+padding:10px;
+border-radius:20px;
+font-family:'Gaegu';
+font-size:16px;
+}
+
+#inputBar button{
+margin-left:10px;
+border:none;
+background:#ffd6e7;
+border-radius:20px;
+padding:10px 16px;
+cursor:pointer;
+}
+
+/* HUG POPUP */
+
+#hug{
 position:fixed;
 top:0;
 left:0;
@@ -110,9 +154,9 @@ justify-content:center;
 z-index:10;
 }
 
-.bear{
-width:340px;
-animation:hugBounce 1.2s infinite alternate;
+.hugBear{
+width:360px;
+animation:hugBounce 1.2s infinite alternate ease-in-out;
 }
 
 @keyframes hugBounce{
@@ -120,36 +164,24 @@ from{transform:scale(1)}
 to{transform:scale(1.08)}
 }
 
-.armLeft{
-transform-origin:right center;
-animation:armL 1.2s infinite alternate
-}
+.armL{transform-origin:right center;animation:armL 1.2s infinite alternate}
+.armR{transform-origin:left center;animation:armR 1.2s infinite alternate}
 
-.armRight{
-transform-origin:left center;
-animation:armR 1.2s infinite alternate
-}
-
-@keyframes armL{
-from{transform:rotate(0deg)}
-to{transform:rotate(-18deg)}
-}
-
-@keyframes armR{
-from{transform:rotate(0deg)}
-to{transform:rotate(18deg)}
-}
+@keyframes armL{from{transform:rotate(0)}to{transform:rotate(-20deg)}}
+@keyframes armR{from{transform:rotate(0)}to{transform:rotate(20deg)}}
 
 .heart{
 position:fixed;
-font-size:28px;
-animation:float 2s linear forwards
+font-size:30px;
+animation:float 2s linear forwards;
 }
 
 @keyframes float{
-0%{transform:translateY(0);opacity:1}
-100%{transform:translateY(-160px);opacity:0}
+0%{opacity:1;transform:translateY(0)}
+100%{opacity:0;transform:translateY(-180px)}
 }
+
+/* NOTICE */
 
 #notice{
 position:fixed;
@@ -157,8 +189,8 @@ bottom:120px;
 background:white;
 padding:14px 20px;
 border-radius:16px;
-box-shadow:0 6px 18px rgba(0,0,0,0.15);
-display:none
+box-shadow:0 8px 20px rgba(0,0,0,0.15);
+display:none;
 }
 
 </style>
@@ -170,67 +202,76 @@ display:none
 
 <div id="home">
 
-<svg class="bearHero" viewBox="0 0 200 200">
+<!-- cute tea bear -->
 
-<circle cx="100" cy="100" r="70" fill="#F4B6C2"/>
+<svg class="heroBear" viewBox="0 0 200 200">
 
-<circle cx="60" cy="50" r="25" fill="#F4B6C2"/>
-<circle cx="140" cy="50" r="25" fill="#F4B6C2"/>
+<circle cx="100" cy="90" r="60" fill="#f7b8c7"/>
+<circle cx="55" cy="45" r="22" fill="#f7b8c7"/>
+<circle cx="145" cy="45" r="22" fill="#f7b8c7"/>
 
-<circle cx="60" cy="50" r="12" fill="#ffdbe5"/>
-<circle cx="140" cy="50" r="12" fill="#ffdbe5"/>
+<circle cx="55" cy="45" r="10" fill="#ffdce6"/>
+<circle cx="145" cy="45" r="10" fill="#ffdce6"/>
 
-<circle cx="75" cy="95" r="6" fill="#333"/>
-<circle cx="125" cy="95" r="6" fill="#333"/>
+<circle cx="78" cy="85" r="6" fill="#333"/>
+<circle cx="122" cy="85" r="6" fill="#333"/>
 
-<ellipse cx="100" cy="120" rx="18" ry="12" fill="#fff"/>
+<ellipse cx="100" cy="105" rx="18" ry="12" fill="white"/>
+<circle cx="100" cy="102" r="4" fill="#333"/>
 
-<circle cx="100" cy="115" r="4" fill="#333"/>
+<path d="M92 112 Q100 120 108 112" stroke="#333" stroke-width="2" fill="none"/>
 
-<path d="M92 124 Q100 132 108 124" stroke="#333" stroke-width="2" fill="none"/>
+<!-- mug -->
+<rect x="80" y="130" width="40" height="28" rx="10" fill="#ffe4ec"/>
+<path d="M120 138 Q140 140 120 150" stroke="#ffe4ec" stroke-width="6" fill="none"/>
 
-<rect x="85" y="135" width="30" height="30" rx="15" fill="#F4B6C2"/>
+<!-- steam -->
+<path d="M92 128 Q95 118 90 110" stroke="#bbb" fill="none"/>
+<path d="M108 128 Q110 118 105 110" stroke="#bbb" fill="none"/>
 
 </svg>
 
-<button onclick="enterRooms()">포옹 받으러 들어가기</button>
+<button class="startBtn" onclick="enterRooms()">포옹 받으러 들어가기</button>
+
 </div>
 
 <div id="rooms">
-<div class="room" onclick="enterRoom('친구방')">친구방 <span>0</span></div>
-<div class="room" onclick="enterRoom('엄마방')">엄마방 <span>0</span></div>
-<div class="room" onclick="enterRoom('전문가방')">전문가방 <span>0</span></div>
+
+<div class="room" onclick="enterRoom('친구방')">친구방 <span id="c1">0</span></div>
+<div class="room" onclick="enterRoom('엄마방')">엄마방 <span id="c2">0</span></div>
+<div class="room" onclick="enterRoom('전문가방')">전문가방 <span id="c3">0</span></div>
+
 </div>
 
 <div id="chat">
+
 <div id="messages"></div>
 
-<div id="inputArea">
-<input id="msg" placeholder="따뜻한 말을 보내보세요">
+<div id="inputBar">
+<input id="msg" placeholder="따뜻한 말을 보내보세요"/>
 <button onclick="sendMsg()">보내기</button>
 </div>
+
 </div>
 
-<div id="hugPopup">
+<div id="hug">
 
-<svg class="bear" viewBox="0 0 200 200">
+<svg class="hugBear" viewBox="0 0 200 200">
 
-<circle cx="100" cy="90" r="55" fill="#F4B6C2"/>
+<circle cx="100" cy="90" r="55" fill="#f7b8c7"/>
+<circle cx="60" cy="45" r="20" fill="#f7b8c7"/>
+<circle cx="140" cy="45" r="20" fill="#f7b8c7"/>
 
-<circle cx="60" cy="45" r="20" fill="#F4B6C2"/>
-<circle cx="140" cy="45" r="20" fill="#F4B6C2"/>
+<circle cx="80" cy="85" r="5" fill="#333"/>
+<circle cx="120" cy="85" r="5" fill="#333"/>
 
-<circle cx="75" cy="85" r="5" fill="#333"/>
-<circle cx="125" cy="85" r="5" fill="#333"/>
-
-<ellipse cx="100" cy="105" rx="16" ry="10" fill="#fff"/>
-
+<ellipse cx="100" cy="102" rx="16" ry="10" fill="white"/>
 <circle cx="100" cy="100" r="4" fill="#333"/>
 
 <path d="M92 110 Q100 118 108 110" stroke="#333" stroke-width="2" fill="none"/>
 
-<ellipse class="armLeft" cx="35" cy="120" rx="26" ry="18" fill="#F4B6C2"/>
-<ellipse class="armRight" cx="165" cy="120" rx="26" ry="18" fill="#F4B6C2"/>
+<ellipse class="armL" cx="30" cy="120" rx="28" ry="18" fill="#f7b8c7"/>
+<ellipse class="armR" cx="170" cy="120" rx="28" ry="18" fill="#f7b8c7"/>
 
 </svg>
 
@@ -244,33 +285,46 @@ display:none
 
 let nickname="사용자"+Math.floor(Math.random()*1000)
 
-function playSound(){document.getElementById("pop").play()}
+function sound(){document.getElementById('pop').play()}
 
 function enterRooms(){
-playSound()
-document.getElementById("home").style.display="none"
-document.getElementById("rooms").style.display="block"
+
+sound()
+
+document.getElementById('home').style.display='none'
+
+document.getElementById('rooms').style.display='block'
+
 }
 
 function enterRoom(){
-playSound()
-document.getElementById("rooms").style.display="none"
-document.getElementById("chat").style.display="flex"
-showNotice(nickname+"님이 입장했습니다.")
+
+sound()
+
+document.getElementById('rooms').style.display='none'
+
+document.getElementById('chat').style.display='flex'
+
+notice(nickname+'님이 입장했습니다.')
+
 }
 
 function sendMsg(){
 
-let input=document.getElementById("msg")
+let input=document.getElementById('msg')
 let text=input.value
-if(text=="") return
 
-let msg=document.createElement("div")
-msg.className="message right"
-msg.innerText=text
-messages.appendChild(msg)
+if(text==='')return
 
-input.value=""
+let m=document.createElement('div')
+
+m.className='msg me'
+
+m.innerText=text
+
+messages.appendChild(m)
+
+input.value=''
 
 hug()
 
@@ -278,36 +332,49 @@ hug()
 
 function hug(){
 
-let popup=document.getElementById("hugPopup")
-popup.style.display="flex"
+let h=document.getElementById('hug')
+
+h.style.display='flex'
 
 for(let i=0;i<12;i++){
-let heart=document.createElement("div")
-heart.className="heart"
-heart.innerText="💗"
-heart.style.left=Math.random()*100+"%"
-heart.style.bottom="0px"
+
+let heart=document.createElement('div')
+
+heart.className='heart'
+
+heart.innerText='💗'
+
+heart.style.left=Math.random()*100+'%'
+
+heart.style.bottom='0'
+
 
 document.body.appendChild(heart)
+
 setTimeout(()=>heart.remove(),2000)
-}
-
-setTimeout(()=>popup.style.display="none",1500)
 
 }
 
-function showNotice(text){
-
-let n=document.getElementById("notice")
-n.innerText=text
-n.style.display="block"
-
-setTimeout(()=>{n.style.display="none"},3000)
+setTimeout(()=>h.style.display='none',1500)
 
 }
 
-window.addEventListener("beforeunload",function(){
-showNotice(nickname+"님이 나가셨습니다.")
+function notice(t){
+
+let n=document.getElementById('notice')
+
+n.innerText=t
+
+n.style.display='block'
+
+setTimeout(()=>n.style.display='none',3000)
+
+}
+
+window.addEventListener('beforeunload',()=>{
+
+notice(nickname+'님이 나가셨습니다.')
+
 })
 
 </script>
