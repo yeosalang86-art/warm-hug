@@ -10,6 +10,10 @@
   <link href="https://fonts.googleapis.com/css2?family=MaruBuri:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 
   <style>
+ .msg{
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
     :root{
       --bg-1:#f4eadc;
       --bg-2:#e8d8c4;
@@ -48,18 +52,21 @@
       min-height:100%;
     }
 
-    body{
-      font-family:"Noto Sans KR", sans-serif;
-      color:var(--brown-1);
-      background:
-        radial-gradient(circle at 15% 18%, rgba(255,240,214,.95) 0%, rgba(255,240,214,0) 24%),
-        radial-gradient(circle at 84% 12%, rgba(255,223,174,.85) 0%, rgba(255,223,174,0) 20%),
-        radial-gradient(circle at 78% 72%, rgba(255,236,208,.55) 0%, rgba(255,236,208,0) 18%),
-        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 52%, var(--bg-3) 100%);
-      overflow:auto;
-      position:relative;
-      -webkit-overflow-scrolling: touch;
-    }
+ body{
+  font-family:"Noto Sans KR", sans-serif;
+  color:var(--brown-1);
+  background:
+    radial-gradient(circle at 15% 18%, rgba(255,240,214,.95) 0%, rgba(255,240,214,0) 24%),
+    radial-gradient(circle at 84% 12%, rgba(255,223,174,.85) 0%, rgba(255,223,174,0) 20%),
+    radial-gradient(circle at 78% 72%, rgba(255,236,208,.55) 0%, rgba(255,236,208,0) 18%),
+    linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 52%, var(--bg-3) 100%);
+    
+  overflow-y:auto;
+  overflow-x:hidden;
+
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+}
 
     body::before{
       content:"";
@@ -78,21 +85,18 @@
       text-decoration:none;
     }
 
-    .frame{
-      width:min(1180px, 96vw);
-      min-height:min(95vh, 940px);
-      margin:2.5vh auto;
-      border-radius:36px;
-      position:relative;
-      overflow:hidden;
-      background:
-        linear-gradient(180deg, rgba(255,251,246,.82), rgba(250,242,232,.88));
-      border:1px solid rgba(255,255,255,.45);
-      box-shadow:
-        0 30px 80px rgba(95,67,46,.18),
-        inset 0 1px 0 rgba(255,255,255,.6);
-      backdrop-filter: blur(12px);
-    }
+  .frame{
+  width:min(1180px, 96vw);
+  min-height:95vh;
+  margin:2.5vh auto;
+  border-radius:36px;
+  position:relative;
+
+  overflow:visible;
+
+  background:
+    linear-gradient(180deg, rgba(255,251,246,.82), rgba(250,242,232,.88));
+}
 
     .frame::before{
       content:"";
@@ -159,11 +163,10 @@
     }
 
     #home, #rooms, #appView{
-      position:relative;
-      z-index:2;
-      min-height:calc(100vh - 120px);
-    }
-
+  display:none;
+  flex-direction:row;
+  min-height:600px;
+}
     #home{
       display:flex;
       flex-direction:column;
@@ -419,12 +422,11 @@
     }
 
     .mainPanel{
-      display:flex;
-      flex-direction:column;
-      min-width:0;
-      min-height:0;
-      height:100%;
-    }
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  min-height:600px;
+}
 
     .chatTop{
       display:flex;
@@ -486,15 +488,19 @@
     }
 
     #messages{
-      flex:1;
-      min-height:320px;
-      overflow:auto;
-      padding:14px 18px 10px;
-      display:flex;
-      flex-direction:column;
-      gap:13px;
-      -webkit-overflow-scrolling: touch;
-    }
+  flex:1;
+  overflow-y:auto;
+  overflow-x:hidden;
+
+  padding:14px 18px 10px;
+  display:flex;
+  flex-direction:column;
+  gap:13px;
+
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+}
 
     .systemMsg{
       align-self:center;
@@ -1013,7 +1019,7 @@
         </div>
       </aside>
 
-      <div class="mainPanel">
+      <div class="overflow">
         <div class="chatTop">
           <div class="chatBearMini" id="roomEmoji">🧸</div>
           <div>
