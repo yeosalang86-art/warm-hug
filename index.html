@@ -665,8 +665,9 @@
 
   <script>
     const STORAGE_KEY = "warmhug_private_diary_v2";
-    const DONATION_URL = "https://buymeacoffee.com/yourname";
-
+  const DONATION_BANK = "국민은행";
+const DONATION_ACCOUNT = "51840201642069";
+const DONATION_HOLDER = "여사랑";
     const characters = {
       둥글레차: {
         emoji: "🍵",
@@ -1062,21 +1063,36 @@
         ]
       });
     }
+function showDonationGuide(){
 
-    function showDonationGuide(){
-      if(DONATION_URL.includes("yourname")){
-        showModal({
-          emoji:"☕",
-          title:"후원 링크를 넣어주세요",
-          text:"코드 안의 DONATION_URL 값을 본인의 후원 링크로 바꾸면 버튼이 바로 연결돼요.\n\n예: Buy Me a Coffee, Ko-fi, 토스 후원",
-          actions:[
-            { label:"확인", className:"softBtn", onClick:() => {} }
-          ]
-        });
-        return;
+  showModal({
+    emoji:"🤎",
+    title:"후원하기",
+    text:
+`따뜻한 포옹을 응원해주셔서 감사합니다.
+
+국민은행
+51840201642069
+예금주: 여사랑`,
+    actions:[
+      {
+        label:"계좌번호 복사",
+        className:"softBtn",
+        onClick:() => {
+          navigator.clipboard.writeText("51840201642069");
+          showNotice("계좌번호를 복사했어요.");
+        }
+      },
+      {
+        label:"닫기",
+        className:"softBtn",
+        onClick:() => {}
       }
-      window.open(DONATION_URL, "_blank");
-    }
+    ]
+  });
+
+}
+  
 
     function showEmotionPicker(){
       const emotions = [
