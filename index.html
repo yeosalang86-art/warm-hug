@@ -1,104 +1,77 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta name="description" content="따뜻한 포옹 - 조언 없이 공감만 머무는 익명 위로 공간 warmhug">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="따뜻한 포옹 - 조언 없이 공감만 머무는 익명 감정 쉼터" />
+  <meta name="keywords" content="따뜻한 포옹, warmhug, 익명 위로, 감정 기록, 공감 쉼터" />
+  <meta name="author" content="warmhug" />
+  <meta name="google-site-verification" content="zVJYHhPfKUSfGslL9-qCuyFmVurIM8msktRbQeZrqEY" />
+  <title>따뜻한 포옹 | Warmhug</title>
 
-<meta name="keywords" content="따뜻한 포옹, warmhug, 익명 위로, 고민 나누기, 공감 공간">
-
-<meta name="author" content="warmhug">
-
-<meta charset="UTF-8">
-
-<title>따뜻한 포옹 | warmhug 익명 위로 공간</title>
-
-<meta name="description" content="따뜻한 포옹 - 조언 없이 공감만 머무는 익명 위로 공간 warmhug">
-
-<meta name="keywords" content="따뜻한 포옹, warmhug, 익명 위로, 고민 나누기, 공감 공간">
-
-<meta name="author" content="warmhug">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=MaruBuri:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=MaruBuri:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <style>
- .msg{
-  touch-action: pan-y;
-  -webkit-overflow-scrolling: touch;
-}
     :root{
-      --bg-1:#f4eadc;
-      --bg-2:#e8d8c4;
-      --bg-3:#dcc5a8;
-
+      --bg-1:#f6efe6;
+      --bg-2:#eadccb;
+      --bg-3:#dfc5a8;
       --paper:#fffaf4;
-      --paper-2:rgba(255,250,244,0.72);
-      --paper-3:rgba(255,248,240,0.92);
-
-      --brown-1:#5e4030;
-      --brown-2:#7a5640;
-      --brown-3:#9c7457;
-      --brown-4:#b98f6f;
-
-      --line:rgba(120,84,58,0.08);
-      --shadow:0 18px 40px rgba(103,72,48,0.12);
-      --shadow-soft:0 10px 24px rgba(103,72,48,0.09);
-
-      --tag-bg:#f1dec7;
-      --tag-text:#7d5942;
-
-      --accent:#efcfab;
-      --accent-2:#e9bf8d;
-      --accent-3:#f7e7d2;
-
+      --paper-soft:rgba(255,250,244,.84);
+      --paper-line:rgba(255,255,255,.56);
+      --brown-1:#5c4131;
+      --brown-2:#7a5842;
+      --brown-3:#9a7458;
+      --accent:#f1d0aa;
+      --accent-2:#e8bf8f;
+      --accent-3:#f8ebdb;
+      --line:rgba(117,82,58,.08);
+      --shadow:0 18px 42px rgba(96,67,45,.11);
+      --shadow-soft:0 10px 24px rgba(96,67,45,.08);
       --danger:#d88b7c;
-      --good:#d9b98b;
+      --good:#dcc09c;
     }
 
-    *{
-      box-sizing:border-box;
+    *{ box-sizing:border-box; }
+    html, body{ margin:0; min-height:100%; }
+
+    body{
+      font-family:"Noto Sans KR", sans-serif;
+      color:var(--brown-1);
+      background:
+        radial-gradient(circle at top left, #fff8ef, transparent 28%),
+        linear-gradient(180deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+      overflow-x:hidden;
+      position:relative;
     }
 
-    html, body{
-      margin:0;
-      min-height:100%;
-    }
-
-body{
-  font-family:"Noto Sans KR", sans-serif;
-  color:var(--brown-1);
-  background: ...;
-  overflow-y:auto;
-  overflow-x:hidden;
-  -webkit-overflow-scrolling:touch;
-  position:relative;
-}
     body::before{
       content:"";
       position:fixed;
       inset:0;
       pointer-events:none;
-      opacity:.14;
-      background-image:
-        radial-gradient(rgba(120,84,58,.28) 0.45px, transparent 0.45px);
+      opacity:.13;
+      background-image:radial-gradient(rgba(120,84,58,.25) 0.45px, transparent 0.45px);
       background-size:8px 8px;
       mix-blend-mode:multiply;
     }
 
-    a{
-      color:inherit;
-      text-decoration:none;
-    }
+    a{ color:inherit; text-decoration:none; }
 
-.frame{
-  width:min(1180px, 96vw);
-  min-height:95vh;
-  margin:2.5vh auto;
-  border-radius:36px;
-  position:relative;
-  overflow:visible;
-}
+    .frame{
+      width:min(1160px, 96vw);
+      min-height:95vh;
+      margin:2.5vh auto;
+      border-radius:36px;
+      overflow:hidden;
+      position:relative;
+      background:linear-gradient(180deg, rgba(255,250,244,.62), rgba(255,246,239,.44));
+      box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.45);
+      backdrop-filter: blur(6px);
+    }
 
     .frame::before{
       content:"";
@@ -106,49 +79,16 @@ body{
       inset:0;
       pointer-events:none;
       background:
-        radial-gradient(circle at 88% 12%, rgba(255,211,135,.34), transparent 18%),
-        radial-gradient(circle at 92% 20%, rgba(255,238,201,.26), transparent 20%),
-        radial-gradient(circle at 12% 10%, rgba(255,250,240,.46), transparent 16%);
-    }
-
-    .audioWrap{
-      position:absolute;
-      top:18px;
-      right:18px;
-      z-index:5;
-      display:flex;
-      flex-direction:column;
-      align-items:flex-end;
-      gap:10px;
-    }
-
-    #musicStatus{
-      font-size:13px;
-      line-height:1.35;
-      color:var(--brown-3);
-      background:rgba(255,248,241,.94);
-      padding:12px 14px;
-      border-radius:18px;
-      box-shadow:var(--shadow-soft);
-      border:1px solid rgba(255,255,255,.5);
-      max-width:300px;
-      text-align:right;
-    }
-
-    #bgm{
-      width:245px;
-      border-radius:999px;
-      filter:sepia(.12) saturate(.9);
+        radial-gradient(circle at 88% 12%, rgba(255,218,157,.35), transparent 18%),
+        radial-gradient(circle at 12% 12%, rgba(255,250,240,.5), transparent 18%);
     }
 
     header{
-      padding:22px 24px 8px;
       text-align:center;
       font-family:"MaruBuri", serif;
       font-size:34px;
       font-weight:700;
-      letter-spacing:-0.02em;
-      color:var(--brown-1);
+      padding:26px 24px 8px;
       position:relative;
       z-index:2;
     }
@@ -156,76 +96,78 @@ body{
     .sub{
       text-align:center;
       color:var(--brown-3);
-      font-size:17px;
-      line-height:1.5;
-      padding:0 24px;
-      margin-bottom:4px;
+      font-size:16px;
+      line-height:1.6;
+      padding:0 24px 8px;
       position:relative;
       z-index:2;
     }
 
-    #home, #rooms, #appView{
-  display:none;
-  flex-direction:row;
-  min-height:600px;
-}
+    section{ display:none; }
+    #home{ display:flex; }
+
     #home{
-      display:flex;
+      min-height:78vh;
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:18px;
-      padding:28px;
       text-align:center;
+      padding:28px;
+      gap:18px;
+      position:relative;
+      z-index:2;
     }
 
     .heroBear{
-      font-size:124px;
+      font-size:120px;
       line-height:1;
+      filter:drop-shadow(0 14px 28px rgba(99,69,47,.11));
       animation:idle 3.2s ease-in-out infinite;
-      filter:drop-shadow(0 14px 28px rgba(99,69,47,.12));
     }
 
     .heroNote{
       max-width:780px;
-      padding:16px 22px;
+      background:rgba(255,250,243,.88);
+      padding:18px 22px;
       border-radius:999px;
-      background:rgba(255,250,243,.84);
-      border:1px solid rgba(255,255,255,.5);
       box-shadow:var(--shadow-soft);
-      font-size:19px;
+      border:1px solid rgba(255,255,255,.55);
       color:var(--brown-2);
-      line-height:1.65;
+      font-size:18px;
+      line-height:1.7;
+    }
+
+    .homeButtons{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
     }
 
     button{
       border:none;
       cursor:pointer;
       font-family:inherit;
-      font-size:17px;
+      font-size:16px;
       font-weight:700;
       color:var(--brown-1);
-      background:linear-gradient(180deg, #f8dcc0, #efc392);
+      background:linear-gradient(180deg, #f9ddc0, #efc392);
       border-radius:999px;
       padding:13px 22px;
-      box-shadow:
-        0 10px 22px rgba(115,79,52,.14),
-        inset 0 1px 0 rgba(255,255,255,.55);
+      box-shadow:0 10px 22px rgba(115,79,52,.13), inset 0 1px 0 rgba(255,255,255,.5);
       transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease;
     }
 
     button:hover{
       transform:translateY(-2px);
-      box-shadow:
-        0 14px 26px rgba(115,79,52,.18),
-        inset 0 1px 0 rgba(255,255,255,.55);
+      box-shadow:0 14px 28px rgba(115,79,52,.17), inset 0 1px 0 rgba(255,255,255,.5);
     }
 
     button:disabled{
-      opacity:.55;
+      opacity:.6;
       cursor:not-allowed;
       transform:none;
-      box-shadow:0 8px 14px rgba(95,60,34,.08);
+      box-shadow:0 8px 14px rgba(95,60,34,.07);
     }
 
     .softBtn{
@@ -239,149 +181,26 @@ body{
       color:#fffaf5;
     }
 
-    #rooms{
-      display:none;
-      padding:20px 26px 28px;
-      overflow:visible;
-    }
-
-    .roomsTop{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:14px;
-      margin-bottom:16px;
-      flex-wrap:wrap;
-    }
-
-    .userChip{
-      background:rgba(255,249,243,.94);
-      border:1px solid rgba(255,255,255,.55);
-      border-radius:999px;
-      padding:12px 18px;
-      color:var(--brown-2);
-      font-weight:700;
-      box-shadow:var(--shadow-soft);
-    }
-
-    .roomList{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:18px;
-      padding-bottom:12px;
-    }
-
-    .room{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:18px;
-      padding:24px 24px;
-      border-radius:30px;
-      background:linear-gradient(180deg, rgba(255,250,245,.9), rgba(255,246,240,.78));
-      border:1px solid rgba(255,255,255,.52);
-      box-shadow:
-        0 18px 34px rgba(107,74,51,.10),
-        inset 0 1px 0 rgba(255,255,255,.56);
-      cursor:pointer;
-      transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    #app{
+      min-height:78vh;
+      grid-template-columns:320px 1fr;
       position:relative;
+      z-index:2;
     }
-
-    .room::before{
-      content:"";
-      position:absolute;
-      inset:auto auto -30px -20px;
-      width:180px;
-      height:90px;
-      border-radius:999px;
-      background:radial-gradient(circle, rgba(255,233,203,.42), transparent 70%);
-      pointer-events:none;
-    }
-
-    .room:hover{
-      transform:translateY(-4px);
-      box-shadow:
-        0 24px 42px rgba(107,74,51,.14),
-        inset 0 1px 0 rgba(255,255,255,.56);
-      border-color:rgba(240,210,180,.7);
-    }
-
-    .roomLeft{
-      display:flex;
-      align-items:center;
-      gap:16px;
-      min-width:0;
-    }
-
-    .roomIcon{
-      width:68px;
-      height:68px;
-      min-width:68px;
-      border-radius:24px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:33px;
-      background:linear-gradient(180deg, #fbefe1, #f4dcc0);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.65),
-        0 10px 22px rgba(113,77,51,.10);
-    }
-
-    .roomText{
-      min-width:0;
-    }
-
-    .roomName{
-      font-family:"MaruBuri", serif;
-      font-size:31px;
-      font-weight:700;
-      line-height:1.2;
-      color:var(--brown-1);
-      margin-bottom:6px;
-      letter-spacing:-0.02em;
-    }
-
-    .roomMeta{
-      font-size:18px;
-      color:var(--brown-3);
-      line-height:1.55;
-      word-break:keep-all;
-    }
-
-    .roomTag{
-      background:linear-gradient(180deg, #f3e3cf, #ead1b2);
-      color:var(--tag-text);
-      padding:10px 16px;
-      border-radius:999px;
-      font-size:16px;
-      white-space:nowrap;
-      font-weight:700;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
-    }
-
-    #appView{
-  display:none;
-  grid-template-columns: 320px 1fr;
-  gap:0;
-  min-height:600px;
-}
 
     .sidePanel{
-      background:rgba(255,249,241,.42);
-      border-right:1px solid rgba(145,108,78,.10);
       padding:18px;
-      overflow:auto;
-      backdrop-filter: blur(8px);
+      border-right:1px solid var(--line);
+      background:rgba(255,249,241,.38);
+      backdrop-filter:blur(8px);
     }
 
     .panelCard{
-      background:linear-gradient(180deg, rgba(255,250,244,.92), rgba(255,246,239,.82));
+      background:linear-gradient(180deg, rgba(255,250,244,.94), rgba(255,246,239,.84));
       border-radius:26px;
       padding:18px;
       box-shadow:var(--shadow-soft);
-      border:1px solid rgba(255,255,255,.48);
+      border:1px solid var(--paper-line);
       margin-bottom:14px;
     }
 
@@ -389,15 +208,14 @@ body{
       font-family:"MaruBuri", serif;
       font-size:19px;
       font-weight:700;
-      color:var(--brown-1);
       margin-bottom:10px;
     }
 
     .statLine{
       font-size:15px;
       color:var(--brown-3);
-      margin:8px 0;
       line-height:1.6;
+      margin:7px 0;
     }
 
     .warmCount{
@@ -406,14 +224,14 @@ body{
       color:var(--brown-1);
     }
 
-    .emotionList{
+    .emotionList, .characterList{
       display:flex;
       flex-wrap:wrap;
       gap:8px;
       margin-top:10px;
     }
 
-    .emotionChip{
+    .emotionChip, .characterChip{
       background:linear-gradient(180deg,#f5e6d3,#efd9be);
       color:var(--brown-2);
       border-radius:999px;
@@ -423,20 +241,20 @@ body{
     }
 
     .mainPanel{
-  display:flex;
-  flex-direction:column;
-  width:100%;
-  min-height:600px;
-}
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+      min-height:78vh;
+    }
 
     .chatTop{
       display:flex;
       align-items:center;
       gap:12px;
-      padding:16px 18px 14px;
-      border-bottom:1px solid rgba(145,108,78,.08);
-      background:rgba(255,250,243,.34);
-      backdrop-filter: blur(6px);
+      padding:18px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,250,243,.38);
+      backdrop-filter:blur(6px);
       flex-wrap:wrap;
     }
 
@@ -462,7 +280,8 @@ body{
     .chatDesc{
       font-size:15px;
       color:var(--brown-3);
-      line-height:1.5;
+      line-height:1.55;
+      margin-top:2px;
     }
 
     .topAction{
@@ -472,36 +291,54 @@ body{
       flex-wrap:wrap;
     }
 
-    .presenceBar{
+    .characterTabs{
       display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      padding:12px 16px 6px;
+      gap:10px;
+      padding:14px 18px 10px;
+      overflow-x:auto;
+      scroll-behavior:smooth;
     }
 
-    .presenceChip{
-      background:linear-gradient(180deg,#f6e8d7,#efd8bc);
-      color:var(--brown-2);
+    .characterBtn{
+      min-width:max-content;
       border-radius:999px;
-      padding:8px 12px;
-      font-size:13px;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.42);
+      padding:10px 14px;
+      background:rgba(255,250,244,.92);
+      border:1px solid rgba(255,255,255,.55);
+      box-shadow:var(--shadow-soft);
+      color:var(--brown-2);
+      font-weight:700;
+      font-size:14px;
     }
 
-#messages{
-  flex:1;
-  overflow-y:auto;
-  overflow-x:hidden;
-  padding:14px 18px 10px;
-  display:flex;
-  flex-direction:column;
-  gap:13px;
-  -webkit-overflow-scrolling:touch;
-  scroll-behavior:smooth;
-}
+    .characterBtn.active{
+      background:linear-gradient(180deg, #f9ddc0, #efc392);
+      color:var(--brown-1);
+    }
+
+    .freeLimitBar{
+      padding:0 18px 12px;
+      color:var(--brown-3);
+      font-size:14px;
+    }
+
+    .freeLimitStrong{ font-weight:700; color:var(--brown-1); }
+
+    #messages{
+      flex:1;
+      overflow-y:auto;
+      overflow-x:hidden;
+      padding:14px 18px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:13px;
+      scroll-behavior:smooth;
+      -webkit-overflow-scrolling:touch;
+    }
+
     .systemMsg{
       align-self:center;
-      background:rgba(255,250,243,.9);
+      background:rgba(255,250,243,.92);
       color:var(--brown-3);
       padding:10px 15px;
       border-radius:999px;
@@ -515,9 +352,6 @@ body{
       flex-direction:column;
       gap:6px;
       max-width:78%;
-      user-select:none;
-      -webkit-user-select:none;
-      -webkit-touch-callout:none;
     }
 
     .msgWrap.me{
@@ -525,7 +359,7 @@ body{
       align-items:flex-end;
     }
 
-    .msgWrap.other{
+    .msgWrap.ai{
       align-self:flex-start;
       align-items:flex-start;
     }
@@ -540,18 +374,11 @@ body{
       padding:15px 18px;
       border-radius:24px;
       font-size:16px;
-      line-height:1.6;
+      line-height:1.65;
       box-shadow:0 8px 18px rgba(76,48,28,.07);
       word-break:keep-all;
       white-space:pre-wrap;
       border:1px solid rgba(255,255,255,.42);
-      position:relative;
-      touch-action:manipulation;
-    }
-
-    .msgWrap.longpressing .msg{
-      transform:scale(0.99);
-      opacity:0.92;
     }
 
     .me .msg{
@@ -560,8 +387,8 @@ body{
       border-bottom-right-radius:10px;
     }
 
-    .other .msg{
-      background:rgba(255,251,246,.95);
+    .ai .msg{
+      background:rgba(255,251,246,.96);
       color:var(--brown-1);
       border-bottom-left-radius:10px;
     }
@@ -569,7 +396,6 @@ body{
     .msgMeta{
       display:flex;
       gap:8px;
-      align-items:center;
       flex-wrap:wrap;
       padding:2px 8px 0;
     }
@@ -587,11 +413,12 @@ body{
       gap:8px;
       flex-wrap:wrap;
       margin-top:8px;
+      padding:0 8px;
     }
 
     .hugMini{
       border:none;
-      background:rgba(255,249,242,.95);
+      background:rgba(255,249,242,.96);
       border-radius:999px;
       padding:8px 12px;
       font-size:13px;
@@ -600,43 +427,30 @@ body{
       box-shadow:0 4px 10px rgba(0,0,0,.04);
     }
 
-    .hugMini:hover{
-      transform:none;
-      box-shadow:0 6px 14px rgba(0,0,0,.06);
-    }
-
     .inputArea{
-      border-top:1px solid rgba(145,108,78,.08);
+      border-top:1px solid var(--line);
       padding:14px 16px 16px;
-      background:rgba(255,250,243,.36);
-      backdrop-filter: blur(6px);
-    }
-
-    .roleSelect{
-      display:none;
+      background:rgba(255,250,243,.38);
+      backdrop-filter:blur(6px);
     }
 
     #msg{
       width:100%;
       border:none;
       outline:none;
-      background:rgba(255,251,246,.95);
+      background:rgba(255,251,246,.96);
       padding:15px 16px;
       border-radius:22px;
       font-size:16px;
       color:var(--brown-1);
-      box-shadow:
-        inset 0 2px 8px rgba(0,0,0,.04),
-        0 4px 12px rgba(95,60,34,.03);
       resize:none;
-      min-height:88px;
-      max-height:130px;
+      min-height:98px;
+      max-height:160px;
       font-family:inherit;
+      box-shadow:inset 0 2px 8px rgba(0,0,0,.04), 0 4px 12px rgba(95,60,34,.03);
     }
 
-    #msg::placeholder{
-      color:#b18a6a;
-    }
+    #msg::placeholder{ color:#b18a6a; }
 
     .inputBottom{
       display:flex;
@@ -656,46 +470,6 @@ body{
       display:flex;
       gap:8px;
       flex-wrap:wrap;
-    }
-
-    .helpGrid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:14px;
-      padding:14px 18px 20px;
-      overflow:auto;
-    }
-
-    .helpCard{
-      background:linear-gradient(180deg, rgba(255,250,243,.95), rgba(255,244,235,.84));
-      border-radius:26px;
-      padding:20px;
-      box-shadow:var(--shadow-soft);
-      border:1px solid rgba(255,255,255,.5);
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
-    .helpName{
-      font-family:"MaruBuri", serif;
-      font-size:22px;
-      font-weight:700;
-      color:var(--brown-1);
-      line-height:1.35;
-    }
-
-    .helpDesc{
-      font-size:15px;
-      line-height:1.65;
-      color:var(--brown-3);
-    }
-
-    .helpButtons{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:auto;
     }
 
     .modalOverlay{
@@ -777,14 +551,8 @@ body{
     }
 
     @keyframes float{
-      0%{
-        transform:translateY(0) scale(1);
-        opacity:1;
-      }
-      100%{
-        transform:translateY(-160px) scale(1.25);
-        opacity:0;
-      }
+      0%{ transform:translateY(0) scale(1); opacity:1; }
+      100%{ transform:translateY(-160px) scale(1.24); opacity:0; }
     }
 
     @keyframes idle{
@@ -793,340 +561,94 @@ body{
     }
 
     @media (max-width:980px){
-      #appView{
-        grid-template-columns:1fr;
-      }
-
-      .sidePanel{
-        display:none;
-      }
-
-      .roomName{
-        font-size:28px;
-      }
-
-      .roomMeta{
-        font-size:17px;
-      }
+      #app{ grid-template-columns:1fr; }
+      .sidePanel{ display:none; }
     }
 
     @media (max-width:760px){
-     .frame{
-  width:100vw;
-  min-height:100vh;
-  margin:0;
-  border-radius:0;
-}
-
-      header{
-        font-size:30px;
-        padding-top:18px;
-      }
-
-      .sub{
-        font-size:15px;
-      }
-
-      .heroBear{
-        font-size:96px;
-      }
-
-      .heroNote{
-        font-size:16px;
-        border-radius:28px;
-      }
-
-      .roomsTop{
-        margin-bottom:14px;
-      }
-
-      .room{
-        padding:18px;
-        border-radius:24px;
-      }
-
-      .roomLeft{
-        align-items:flex-start;
-      }
-
-      .roomIcon{
-        width:58px;
-        height:58px;
-        min-width:58px;
-        font-size:28px;
-        border-radius:20px;
-      }
-
-      .roomName{
-        font-size:24px;
-      }
-
-      .roomMeta{
-        font-size:15px;
-      }
-
-      .roomTag{
-        font-size:14px;
-        padding:9px 13px;
-      }
-
-      #bgm{
-        width:180px;
-      }
-
-      #musicStatus{
-        max-width:180px;
-      }
-
-      .helpGrid{
-        grid-template-columns:1fr;
-      }
-
-      .chatTitle{
-        font-size:21px;
-      }
-
-      .modalTitle{
-        font-size:24px;
-      }
-
-      .msgWrap{
-        max-width:92%;
-      }
-
-      #messages{
-        min-height:260px;
-      }
+      .frame{ width:100vw; min-height:100vh; margin:0; border-radius:0; }
+      header{ font-size:30px; padding-top:18px; }
+      .sub{ font-size:15px; }
+      .heroBear{ font-size:96px; }
+      .heroNote{ font-size:16px; border-radius:28px; }
+      .chatTitle{ font-size:21px; }
+      .msgWrap{ max-width:92%; }
+      #messages{ min-height:280px; }
     }
-
-    @media (max-width:560px){
-      .audioWrap{
-        position:static;
-        align-items:center;
-        padding:12px 14px 0;
-      }
-
-      header{
-        padding-top:10px;
-      }
-
-      .room{
-        flex-direction:column;
-        align-items:flex-start;
-      }
-
-      .roomTag{
-        align-self:flex-end;
-      }
-
-      #home, #rooms, #appView{
-        min-height:auto;
-      }
-    }
-    .helpIntro{
-  padding:14px 18px 20px;
-}
-
-.helpIntroText{
-  background:linear-gradient(180deg, rgba(255,250,243,.96), rgba(255,244,235,.86));
-  border-radius:24px;
-  padding:18px 20px;
-  box-shadow:var(--shadow-soft);
-  border:1px solid rgba(255,255,255,.5);
-  font-size:17px;
-  line-height:1.7;
-  color:var(--brown-2);
-  text-align:center;
-  margin-bottom:18px;
-}
-
-.helpIntroImage{
-  display:block;
-  width:min(280px, 72vw);
-  margin:0 auto 18px;
-}
   </style>
 </head>
-  <meta name="google-site-verification" content="zVJYHhPfKUSfGslL9-qCuyFmVurIM8msktRbQeZrqEY" />
 <body>
   <div class="frame">
-   <div class="audioWrap" aria-hidden="true">
-  <audio id="bgm" autoplay loop preload="auto" style="display:none;">
-    <source src="music.wav.wav" type="audio/wav" />
-  </audio>
-</div>
-
     <header>따뜻한 포옹</header>
-    <div class="sub">평가 없이, 비교 없이, 다정함만 머무는 정서적 쉼터</div>
+    <div class="sub">조언 없이, 판단 없이, 공감만 머무는 익명 감정 쉼터</div>
 
     <section id="home">
       <div class="heroBear">🧸</div>
       <div class="heroNote">
-        여기서는 괜찮아요. 조언보다 온기, 판단보다 포옹이 먼저 오는 공간이에요.
+        오늘 마음은 어떤가요?<br />
+        여기서는 고치려 하지 않아도 괜찮아요. 그냥 내려놓아도 괜찮아요.
       </div>
-      <button id="startBtn" type="button">시작하기</button>
-    </section>
-
-    <section id="rooms">
-      <div class="roomsTop">
-        <div class="userChip" id="nicknameChip">나의 닉네임: 둥글레차</div>
-        <button id="regenNickBtn" class="softBtn" type="button">닉네임 바꾸기</button>
-      </div>
-
-      <div class="roomList">
-        <div class="room" data-room="friend">
-          <div class="roomLeft">
-            <div class="roomIcon">🫂</div>
-            <div class="roomText">
-              <div class="roomName">친구의 방</div>
-              <div class="roomMeta">동등한 입장에서 짧은 고민과 따뜻한 허그를 주고받는 공간</div>
-            </div>
-          </div>
-          <div class="roomTag">공감</div>
-        </div>
-
-        <div class="room" data-room="comfort">
-          <div class="roomLeft">
-            <div class="roomIcon">🧸</div>
-            <div class="roomText">
-              <div class="roomName">포근한 방</div>
-              <div class="roomMeta">말보다 다정한 반응이 먼저 와서 마음을 감싸주는 공간</div>
-            </div>
-          </div>
-          <div class="roomTag">보호</div>
-        </div>
-
-        <div class="room" data-room="help">
-          <div class="roomLeft">
-            <div class="roomIcon">🆘</div>
-            <div class="roomText">
-              <div class="roomName">도움연결 방</div>
-              <div class="roomMeta">혼자 감당하기 어려운 상황일 때 공식 기관과 연결되는 공간</div>
-            </div>
-          </div>
-          <div class="roomTag">연결</div>
-        </div>
+      <div class="homeButtons">
+        <button id="startBtn" type="button">마음 내려놓기</button>
+        <button id="premiumBtn" class="softBtn" type="button">프리미엄 안내</button>
       </div>
     </section>
 
-    <section id="appView">
+    <section id="app">
       <aside class="sidePanel">
         <div class="panelCard">
           <div class="panelTitle">오늘 받은 포옹</div>
           <div class="warmCount" id="todayHugs">0 🫂</div>
           <div class="statLine">이번 주 받은 따뜻함 <strong id="weekWarmth">0 hugs</strong></div>
+          <div class="statLine">오늘 남은 무료 공감 <strong id="freeCountText">10회</strong></div>
         </div>
 
         <div class="panelCard">
-          <div class="panelTitle">감정 기록</div>
-          <div class="statLine" id="emotionSummary">오늘의 마음: 아직 기록이 없어요.</div>
+          <div class="panelTitle">오늘의 마음</div>
+          <div class="statLine" id="emotionSummary">아직 기록이 없어요.</div>
           <div class="emotionList" id="emotionList"></div>
         </div>
 
         <div class="panelCard">
-          <div class="panelTitle">방 규칙</div>
-          <div class="statLine">- 조언, 훈수, 판단, 논쟁 금지</div>
-          <div class="statLine">- 고민 글은 50자 이내</div>
-          <div class="statLine">- 상처 주는 말은 자동 차단</div>
-          <div class="statLine">- 위기 상황은 기관 연결 우선</div>
+          <div class="panelTitle">공감 스타일</div>
+          <div class="statLine">성격이 아니라, 다정함의 결을 고르는 방식이에요.</div>
+          <div class="characterList" id="characterList"></div>
         </div>
 
         <div class="panelCard">
-          <div class="panelTitle">신고 안내</div>
-          <div class="statLine">메시지를 길게 누르면 신고할 수 있어요.</div>
-          <div class="statLine">1회 경고 / 3회 24시간 정지 / 5회 영구정지</div>
+          <div class="panelTitle">공간의 약속</div>
+          <div class="statLine">- 조언하지 않아요</div>
+          <div class="statLine">- 판단하지 않아요</div>
+          <div class="statLine">- 비교하지 않아요</div>
+          <div class="statLine">- 위험 신호는 도움연결을 우선해요</div>
         </div>
       </aside>
 
-      <div class="overflow">
+      <div class="mainPanel">
         <div class="chatTop">
-          <div class="chatBearMini" id="roomEmoji">🧸</div>
+          <div class="chatBearMini" id="characterEmoji">🍵</div>
           <div>
-            <div class="chatTitle" id="chatRoomTitle">친구의 방</div>
-            <div class="chatDesc" id="chatRoomDesc">따뜻한 반응만 머무는 공간이에요.</div>
+            <div class="chatTitle" id="characterTitle">둥글레차</div>
+            <div class="chatDesc" id="characterDesc">담백하고 조용한 공감으로 곁에 있어요.</div>
           </div>
           <div class="topAction">
-            <button id="clearBtn" class="softBtn" type="button">대화 지우기</button>
-            <button id="leaveBtn" class="softBtn" type="button">방 나가기</button>
-            <button id="backRoomsBtn" class="softBtn" type="button">방 목록</button>
+            <button id="clearBtn" class="softBtn" type="button">기록 지우기</button>
+            <button id="guideBtn" class="softBtn" type="button">도움 연결</button>
           </div>
         </div>
 
-        <div class="presenceBar" id="presenceBar"></div>
+        <div class="characterTabs" id="characterTabs"></div>
+        <div class="freeLimitBar">무료 이용자는 하루 <span class="freeLimitStrong">10회 공감</span>까지 받을 수 있어요.</div>
 
         <div id="messages" aria-live="polite"></div>
 
-        <div id="friendComfortInput" class="inputArea">
-          <div class="roleSelect" id="roleSelect"></div>
-          <textarea id="msg" maxlength="50" placeholder="마음을 50자 이내로 적어보세요..." aria-label="고민 입력"></textarea>
+        <div class="inputArea">
+          <textarea id="msg" maxlength="120" placeholder="오늘 마음을 적어보세요..." aria-label="마음 입력"></textarea>
           <div class="inputBottom">
-            <div class="charCount"><span id="charCount">0</span> / 50</div>
+            <div class="charCount"><span id="charCount">0</span> / 120</div>
             <div class="inputBtns">
-              <button id="sendBtn" type="button">고민 올리기</button>
+              <button id="sendBtn" type="button">공감 받기</button>
               <button id="hugMyselfBtn" class="softBtn" type="button">나에게 포옹</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="helpPanel" style="display:none;">
-          <div class="helpIntro">
-  <div class="helpIntroText">
-    도움연결방에 들어왔어요, 지금의 상황에 맞는 기관으로 이어질 수 있어요.
-  </div>
-
-  <img
-    class="helpIntroImage"
-    src="hug.png"
-    alt="따뜻한 포옹 그림"
-  />
-</div>
-          <div class="helpGrid">
-            <div class="helpCard">
-              <div class="helpName">1366 여성긴급전화</div>
-              <div class="helpDesc">
-                가정폭력, 성폭력, 데이트폭력, 스토킹 등 여성폭력 피해에 대한 상담 및 연계
-              </div>
-              <div class="helpButtons">
-                <a href="https://www.women1366.kr/" target="_blank" rel="noopener noreferrer">
-                  <button type="button">공식 상담 연결</button>
-                </a>
-              </div>
-            </div>
-
-            <div class="helpCard">
-              <div class="helpName">117 학교폭력 신고센터</div>
-              <div class="helpDesc">
-                학교폭력, 청소년 위기 상황, 신고 및 1:1 상담 지원
-              </div>
-              <div class="helpButtons">
-                <a href="https://www.safe182.go.kr/cont/homeLogContents.do?contentsNm=report_info_117" target="_blank" rel="noopener noreferrer">
-                  <button type="button">117 연결</button>
-                </a>
-              </div>
-            </div>
-
-            <div class="helpCard">
-              <div class="helpName">112 경찰</div>
-              <div class="helpDesc">
-                범죄 신고, 위협 상황, 긴급 보호가 필요한 경우 경찰 신고 포털 연결
-              </div>
-              <div class="helpButtons">
-                <a href="https://www.112.go.kr/" target="_blank" rel="noopener noreferrer">
-                  <button type="button">112 포털 열기</button>
-                </a>
-              </div>
-            </div>
-
-            <div class="helpCard">
-              <div class="helpName">119 응급·구조</div>
-              <div class="helpDesc">
-                화재, 응급환자, 구조 요청 등 긴급 상황에 대한 신고 안내
-              </div>
-              <div class="helpButtons">
-                <a href="https://www.119.go.kr/" target="_blank" rel="noopener noreferrer">
-                  <button type="button">119 연결</button>
-                </a>
-              </div>
             </div>
           </div>
         </div>
@@ -1146,115 +668,87 @@ body{
   <div id="notice" aria-live="polite"></div>
 
   <script>
-    const STORAGE_KEY = "warm_hug_big_service_v1";
+    const STORAGE_KEY = "warmhug_mvp_v2";
+    const DAILY_LIMIT_FREE = 10;
 
-    const nicknamePool = [
-      "둥글레차","보리차","홍차","녹차","옥수수차","유자차","국화차","쌍화차","캐모마일차","대추차","생강차","메밀차"
-    ];
-
-    const roomConfig = {
-      friend: {
-        title: "친구의 방",
-        emoji: "🫂",
-        desc: "동등한 입장에서 고민과 허그를 나누는 공간이에요.",
-        roles: [],
-        welcome: "친구의 방에 들어왔어요.",
-        systemUsers: ["보리차", "홍차"]
+    const characters = {
+      둥글레차: {
+        emoji: "🍵",
+        desc: "담백하고 조용한 공감으로 곁에 있어요.",
+        short: "담백한 공감",
+        premium: false,
+        templates: [
+          "그랬구나.\n많이 힘들었겠다.",
+          "그 마음으로 여기까지 왔구나.\n조금 내려놓아도 괜찮아.",
+          "쉽지 않은 하루였겠네.\n여기서는 잠깐 쉬어도 괜찮아.",
+          "그렇게 느꼈구나.\n충분히 그럴 수 있어."
+        ]
       },
-      comfort: {
-        title: "포근한 방",
-        emoji: "🧸",
-        desc: "말보다 먼저 포근함이 도착하는 공간이에요.",
-        roles: [],
-        welcome: "포근한 방에 들어왔어요.",
-        systemUsers: ["하얀곰", "갈색곰"]
+      홍차: {
+        emoji: "☕",
+        desc: "조금 더 단단하게, 그러나 여전히 다정하게 머물러요.",
+        short: "단단한 공감",
+        premium: true,
+        templates: [
+          "그 일을 겪고도 여기까지 온 거네.\n쉽지 않았겠다.",
+          "무너지지 않으려 애쓴 마음이 느껴져.\n정말 애썼어.",
+          "그 상황 속에서 버티고 있었구나.\n그것만으로도 충분해.",
+          "견디는 동안 많이 지쳤겠다.\n지금은 조금 기대도 괜찮아."
+        ]
       },
-      help: {
-        title: "도움연결 방",
-        emoji: "🆘",
-        desc: "혼자 감당하기 어렵다면, 공식 기관과 연결되는 길을 보여드릴게요.",
-        roles: [],
-        welcome: "도움연결 방에 들어왔어요.",
-        systemUsers: []
+      캐모마일차: {
+        emoji: "🌼",
+        desc: "불안한 마음을 천천히 눕히는 공감이에요.",
+        short: "불안 완화형",
+        premium: true,
+        templates: [
+          "지금 마음이 많이 흔들리는 것 같아.\n여기서는 천천히 해도 괜찮아.",
+          "긴장된 마음으로 오래 버텼구나.\n조금 숨을 고르고 있어도 괜찮아.",
+          "불안한 밤 같은 마음이었겠네.\n지금 이 순간만큼은 조용해져도 괜찮아.",
+          "많이 조마조마했겠다.\n여기서는 서두르지 않아도 괜찮아."
+        ]
       }
     };
 
     const hugTypes = [
-      {
-        id: "ok",
-        label: "괜찮아질 거예요",
-        emoji: "🤍",
-        popupEmoji: "🧸",
-        message: "괜찮아질 거예요.\n여기서는 잠깐 기대어도 괜찮아요."
-      },
-      {
-        id: "hold",
-        label: "잘 될 거예요",
-        emoji: "💛",
-        popupEmoji: "🐻",
-        message: "잘 될 거예요.\n지금까지도 충분히 잘 버텨왔어요."
-      },
-      {
-        id: "pain",
-        label: "많이 아팠죠? 이제 괜찮아요",
-        emoji: "🧡",
-        popupEmoji: "🫂",
-        message: "많이 아팠죠?\n이제 잠깐 여기서 쉬어요."
-      },
-      {
-        id: "help",
-        label: "도움이 필요해보여요",
-        emoji: "🚨",
-        popupEmoji: "🆘",
-        message: "혼자 감당하기 힘들어 보여요.\n전문기관과 연결해볼까요?",
-        needsConfirm: true
-      }
+      { id:"ok", label:"괜찮아질 거예요", emoji:"🤍", popupEmoji:"🧸", message:"괜찮아질 거예요.\n여기서는 잠깐 기대어도 괜찮아요." },
+      { id:"pain", label:"많이 아팠죠", emoji:"🫂", popupEmoji:"🫂", message:"많이 아팠죠.\n이제 잠깐 여기서 쉬어요." },
+      { id:"hold", label:"잘 버텼어요", emoji:"💛", popupEmoji:"🐻", message:"잘 버텼어요.\n지금까지도 충분히 애써왔어요." }
     ];
 
-    const blockedWords = [
-      "죽어", "병신", "멍청", "꺼져", "씨발", "시발", "좆", "자살", "죽고싶", "죽고 싶", "학대", "폭행", "성폭행", "강간", "살인", "패고", "찔러"
-    ];
-
-    const threatWords = [
-      "죽고 싶", "자살", "살려줘", "맞고", "폭행", "성폭행", "학대", "스토킹", "죽여", "칼", "납치", "도와줘"
-    ];
+    const blockedWords = ["죽어","병신","멍청","꺼져","씨발","시발","좆","강간","살인"];
+    const threatWords = ["죽고 싶","자살","살려줘","폭행","성폭행","학대","스토킹","칼","납치","도와줘"];
 
     const emotionKeywords = {
-      불안: ["불안", "무서", "떨려", "긴장"],
-      슬픔: ["슬퍼", "눈물", "우울", "외로", "힘들"],
-      분노: ["화나", "짜증", "억울", "분해"],
-      지침: ["지쳐", "버겁", "지친", "무기력"],
-      위로필요: ["위로", "안아", "포옹", "괜찮"],
-      관계: ["친구", "엄마", "가족", "학교", "사람"]
+      불안:["불안","무서","떨려","긴장","초조"],
+      슬픔:["슬퍼","눈물","우울","외로","속상"],
+      분노:["화나","짜증","억울","분해"],
+      지침:["지쳐","버겁","무기력","피곤"],
+      위로필요:["위로","안아","포옹","괜찮"],
+      관계:["친구","엄마","가족","학교","회사","사람"]
     };
 
     const home = document.getElementById("home");
-    const rooms = document.getElementById("rooms");
-    const appView = document.getElementById("appView");
+    const app = document.getElementById("app");
     const startBtn = document.getElementById("startBtn");
-    const roomEls = document.querySelectorAll(".room");
-    const nicknameChip = document.getElementById("nicknameChip");
-    const regenNickBtn = document.getElementById("regenNickBtn");
-    const chatRoomTitle = document.getElementById("chatRoomTitle");
-    const chatRoomDesc = document.getElementById("chatRoomDesc");
-    const roomEmoji = document.getElementById("roomEmoji");
+    const premiumBtn = document.getElementById("premiumBtn");
+    const guideBtn = document.getElementById("guideBtn");
+    const clearBtn = document.getElementById("clearBtn");
     const messages = document.getElementById("messages");
-    const presenceBar = document.getElementById("presenceBar");
-    const roleSelect = document.getElementById("roleSelect");
     const msgInput = document.getElementById("msg");
     const charCount = document.getElementById("charCount");
     const sendBtn = document.getElementById("sendBtn");
     const hugMyselfBtn = document.getElementById("hugMyselfBtn");
-    const clearBtn = document.getElementById("clearBtn");
-    const leaveBtn = document.getElementById("leaveBtn");
-    const backRoomsBtn = document.getElementById("backRoomsBtn");
     const todayHugs = document.getElementById("todayHugs");
     const weekWarmth = document.getElementById("weekWarmth");
     const emotionSummary = document.getElementById("emotionSummary");
     const emotionList = document.getElementById("emotionList");
-    const friendComfortInput = document.getElementById("friendComfortInput");
-    const helpPanel = document.getElementById("helpPanel");
-    const bgm = document.getElementById("bgm");
+    const characterList = document.getElementById("characterList");
+    const characterTabs = document.getElementById("characterTabs");
+    const characterEmoji = document.getElementById("characterEmoji");
+    const characterTitle = document.getElementById("characterTitle");
+    const characterDesc = document.getElementById("characterDesc");
+    const freeCountText = document.getElementById("freeCountText");
     const modal = document.getElementById("modal");
     const modalEmoji = document.getElementById("modalEmoji");
     const modalTitle = document.getElementById("modalTitle");
@@ -1262,47 +756,20 @@ body{
     const modalActions = document.getElementById("modalActions");
     const notice = document.getElementById("notice");
 
-    let currentRoom = "friend";
-    let currentRole = "";
-    let currentNickname = "";
-    let lastAutoReply = "";
-    let messageSeq = 1;
-    let disconnectTimer = null;
-
-    const LONG_PRESS_MS = 650;
-    let longPressTimer = null;
-    let longPressTriggered = false;
-
     const state = loadState();
+    let currentCharacter = state.currentCharacter || "둥글레차";
+    let messageSeq = 1;
 
     init();
 
-    function init(){
-      currentNickname = state.nickname || generateNickname();
-      state.nickname = currentNickname;
-      saveState();
-
-      nicknameChip.textContent = `나의 닉네임: ${currentNickname}`;
-      updateStats();
-
-      showNotice("포근한 공간에 오신 걸 환영해요.");
-    }
-
     function defaultState(){
       return {
-        nickname: "",
-        stats: {
-          todayHugs: 0,
-          weekWarmth: 0
-        },
-        emotions: [],
-        reports: 0,
-        suspensions: 0,
-        rooms: {
-          friend: [],
-          comfort: [],
-          help: []
-        }
+        stats:{ todayHugs:0, weekWarmth:0 },
+        emotions:[],
+        entries:[],
+        currentCharacter:"둥글레차",
+        premium:false,
+        daily:{ date:getTodayKey(), count:0 }
       };
     }
 
@@ -1310,7 +777,13 @@ body{
       try{
         const saved = localStorage.getItem(STORAGE_KEY);
         if(saved){
-          return JSON.parse(saved);
+          const parsed = JSON.parse(saved);
+          return {
+            ...defaultState(),
+            ...parsed,
+            stats:{ ...defaultState().stats, ...(parsed.stats || {}) },
+            daily:{ ...defaultState().daily, ...(parsed.daily || {}) }
+          };
         }
       }catch(error){
         console.error(error);
@@ -1319,27 +792,44 @@ body{
     }
 
     function saveState(){
-      try{
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      }catch(error){
-        console.error(error);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function init(){
+      resetDailyIfNeeded();
+      renderCharacterTabs();
+      updateCharacterUI();
+      updateStats();
+      updateEmotionUI();
+      renderMessages();
+      showNotice("따뜻한 포옹에 오신 걸 환영해요.");
+    }
+
+    function getTodayKey(){
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const date = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${date}`;
+    }
+
+    function resetDailyIfNeeded(){
+      const todayKey = getTodayKey();
+      if(state.daily.date !== todayKey){
+        state.daily = { date:todayKey, count:0 };
+        saveState();
       }
     }
 
-    function generateNickname(){
-      return nicknamePool[Math.floor(Math.random() * nicknamePool.length)];
+    function remainingFreeCount(){
+      return Math.max(0, DAILY_LIMIT_FREE - state.daily.count);
     }
 
-    function regenerateNickname(){
-      let next = generateNickname();
-      while(next === currentNickname && nicknamePool.length > 1){
-        next = generateNickname();
-      }
-      currentNickname = next;
-      state.nickname = next;
-      nicknameChip.textContent = `나의 닉네임: ${currentNickname}`;
-      saveState();
-      showNotice(`새 닉네임은 ${currentNickname}예요.`);
+    function showApp(){
+      home.style.display = "none";
+      app.style.display = "grid";
+      setTimeout(() => msgInput.focus(), 120);
+      setTimeout(scrollBottom, 150);
     }
 
     function showNotice(text){
@@ -1351,94 +841,100 @@ body{
       }, 2400);
     }
 
-    function openRooms(){
-      home.style.display = "none";
-      appView.style.display = "none";
-      rooms.style.display = "block";
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    function updateStats(){
+      todayHugs.textContent = `${state.stats.todayHugs} 🫂`;
+      weekWarmth.textContent = `${state.stats.weekWarmth} hugs`;
+      freeCountText.textContent = `${remainingFreeCount()}회`;
     }
 
-    function openRoom(roomKey){
-      currentRoom = roomKey;
-      const info = roomConfig[roomKey];
-
-      rooms.style.display = "none";
-      home.style.display = "none";
-      appView.style.display = "grid";
-
-      chatRoomTitle.textContent = info.title;
-      chatRoomDesc.textContent = info.desc;
-      roomEmoji.textContent = info.emoji;
-
-      renderPresence(info);
-      renderRoles(info);
-      renderMessages(roomKey);
-
-      if(roomKey === "help"){
-        friendComfortInput.style.display = "none";
-        helpPanel.style.display = "block";
-      }else{
-        friendComfortInput.style.display = "block";
-        helpPanel.style.display = "none";
+    function updateEmotionUI(){
+      emotionList.innerHTML = "";
+      if(!state.emotions.length){
+        emotionSummary.textContent = "아직 기록이 없어요.";
+        return;
       }
-
-      if(state.rooms[roomKey].length === 0){
-        addSystemMessage(info.welcome, roomKey, true);
-      }
-
-      simulatePresenceEnter(info);
-      if(roomKey !== "help"){
-        msgInput.focus();
-      }
-
-      setTimeout(scrollBottom, 60);
-    }
-
-    function renderPresence(info){
-      presenceBar.innerHTML = "";
-      const userList = [currentNickname, ...info.systemUsers].slice(0, roomKeyMaxPeople(currentRoom));
-      userList.forEach(name => {
+      emotionSummary.textContent = `오늘의 마음: ${state.emotions[0]}`;
+      const uniq = [...new Set(state.emotions)].slice(0, 6);
+      uniq.forEach(emotion => {
         const chip = document.createElement("div");
-        chip.className = "presenceChip";
-        chip.textContent = name;
-        presenceBar.appendChild(chip);
+        chip.className = "emotionChip";
+        chip.textContent = emotion;
+        emotionList.appendChild(chip);
       });
     }
 
-    function roomKeyMaxPeople(roomKey){
-      if(roomKey === "friend") return 3;
-      if(roomKey === "comfort") return 3;
-      return 1;
+    function renderCharacterTabs(){
+      characterTabs.innerHTML = "";
+      characterList.innerHTML = "";
+
+      Object.entries(characters).forEach(([name, info]) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `characterBtn ${name === currentCharacter ? "active" : ""}`;
+        btn.textContent = `${info.emoji} ${name}${info.premium ? " · premium" : ""}`;
+        btn.addEventListener("click", () => selectCharacter(name));
+        characterTabs.appendChild(btn);
+
+        const chip = document.createElement("div");
+        chip.className = "characterChip";
+        chip.textContent = `${info.emoji} ${name} · ${info.short}`;
+        characterList.appendChild(chip);
+      });
     }
 
-    function renderRoles(info){
-      roleSelect.innerHTML = "";
-      currentRole = "";
-      roleSelect.style.display = "none";
+    function selectCharacter(name){
+      const target = characters[name];
+      if(target.premium && !state.premium){
+        showModal({
+          emoji: target.emoji,
+          title: `${name}는 프리미엄 캐릭터예요`,
+          text: "프리미엄에서는 모든 공감 스타일, 무제한 공감, 감정 기록 저장 확장을 사용할 수 있어요.",
+          actions:[
+            { label:"확인", className:"softBtn", onClick:() => {} }
+          ]
+        });
+        return;
+      }
+
+      currentCharacter = name;
+      state.currentCharacter = name;
+      saveState();
+      updateCharacterUI();
+      renderCharacterTabs();
+      addSystemMessage(`${name}의 다정함이 곁에 머물렀어요.`);
     }
 
-    function renderMessages(roomKey){
+    function updateCharacterUI(){
+      const info = characters[currentCharacter];
+      characterEmoji.textContent = info.emoji;
+      characterTitle.textContent = currentCharacter;
+      characterDesc.textContent = info.desc;
+    }
+
+    function renderMessages(){
       messages.innerHTML = "";
-      const list = state.rooms[roomKey] || [];
-      list.forEach(item => {
+      if(!state.entries.length){
+        addSystemMessage("여기서는 고치려 하지 않아도 괜찮아요. 그냥 적어도 괜찮아요.", false);
+        return;
+      }
+
+      state.entries.forEach(item => {
         if(item.type === "system"){
           appendSystemElement(item.text);
-        }else{
-          appendMessageElement(item);
+          return;
         }
+        appendMessageElement(item);
       });
       scrollBottom();
     }
 
-    function addSystemMessage(text, roomKey = currentRoom, save = true){
+    function addSystemMessage(text, save = true){
       appendSystemElement(text);
       if(save){
-        state.rooms[roomKey].push({
-          type:"system",
-          text
-        });
+        state.entries.push({ type:"system", text });
         saveState();
       }
+      scrollBottom();
     }
 
     function appendSystemElement(text){
@@ -1450,142 +946,58 @@ body{
 
     function appendMessageElement(item){
       const wrap = document.createElement("div");
-      wrap.className = `msgWrap ${item.who || "other"}`;
-      wrap.dataset.messageId = item.id;
+      wrap.className = `msgWrap ${item.who}`;
 
       const nick = document.createElement("div");
       nick.className = "nick";
-      nick.textContent = item.nick || (item.who === "me" ? currentNickname : "포근한 친구");
+      nick.textContent = item.nick;
 
       const msg = document.createElement("div");
       msg.className = "msg";
       msg.textContent = item.text;
 
-      const meta = document.createElement("div");
-      meta.className = "msgMeta";
-
-      const turnBadge = document.createElement("div");
-      turnBadge.className = "miniBadge";
-      turnBadge.textContent = `${item.turn || 1}번째 고민`;
-      meta.appendChild(turnBadge);
-
-      if(item.reactionSummary){
-        const summary = document.createElement("div");
-        summary.className = "miniBadge";
-        summary.textContent = item.reactionSummary;
-        meta.appendChild(summary);
-      }
-
-      const hugBar = document.createElement("div");
-      hugBar.className = "hugBar";
-
-      hugTypes.forEach(type => {
-        const btn = document.createElement("button");
-        btn.className = "hugMini";
-        btn.type = "button";
-        btn.textContent = `${type.emoji} ${type.label}`;
-        btn.addEventListener("click", () => handleHug(item.id, type));
-        hugBar.appendChild(btn);
-      });
-
-      addLongPressEvents(wrap, item);
-
       wrap.appendChild(nick);
       wrap.appendChild(msg);
-      wrap.appendChild(meta);
-      wrap.appendChild(hugBar);
+
+      if(item.who === "ai" && item.hugBar){
+        const hugBar = document.createElement("div");
+        hugBar.className = "hugBar";
+
+        hugTypes.forEach(type => {
+          const btn = document.createElement("button");
+          btn.className = "hugMini";
+          btn.type = "button";
+          btn.textContent = `${type.emoji} ${type.label}`;
+          btn.addEventListener("click", () => openHugPopup(type));
+          hugBar.appendChild(btn);
+        });
+
+        wrap.appendChild(hugBar);
+      }
+
+      if(item.meta){
+        const meta = document.createElement("div");
+        meta.className = "msgMeta";
+        item.meta.forEach(text => {
+          const chip = document.createElement("div");
+          chip.className = "miniBadge";
+          chip.textContent = text;
+          meta.appendChild(chip);
+        });
+        wrap.appendChild(meta);
+      }
+
       messages.appendChild(wrap);
     }
 
-    function addLongPressEvents(targetEl, item){
-      const start = (e) => {
-        if(e.target.closest("button")) return;
-
-        longPressTriggered = false;
-        targetEl.classList.add("longpressing");
-
-        clearTimeout(longPressTimer);
-        longPressTimer = setTimeout(() => {
-          longPressTriggered = true;
-          targetEl.classList.remove("longpressing");
-          openReportPopup(item);
-        }, LONG_PRESS_MS);
-      };
-
-      const cancel = () => {
-        clearTimeout(longPressTimer);
-        targetEl.classList.remove("longpressing");
-      };
-
-      targetEl.addEventListener("mousedown", start);
-      targetEl.addEventListener("touchstart", start, { passive: true });
-
-      targetEl.addEventListener("mouseup", cancel);
-      targetEl.addEventListener("mouseleave", cancel);
-      targetEl.addEventListener("touchend", cancel);
-      targetEl.addEventListener("touchcancel", cancel);
-
-      targetEl.addEventListener("contextmenu", (e) => {
-        e.preventDefault();
-      });
-
-      targetEl.addEventListener("click", (e) => {
-        if(longPressTriggered){
-          e.preventDefault();
-          e.stopPropagation();
-          longPressTriggered = false;
-        }
-      }, true);
-    }
-
-    function openReportPopup(item){
-      showModal({
-        emoji: "🚨",
-        title: "이 메시지를 신고할까요?",
-        text: `선택한 메시지:\n"${item.text}"`,
-        actions: [
-          {
-            label: "신고하기",
-            className: "dangerBtn",
-            onClick: () => reportMessage(item.id)
-          },
-          {
-            label: "취소",
-            className: "softBtn",
-            onClick: () => {}
-          }
-        ]
-      });
-    }
-
-    function addMessage(text, who = "me", nick = currentNickname){
-      const item = {
-        id: "m_" + Date.now() + "_" + Math.random().toString(16).slice(2),
-        type: "message",
-        text,
-        who,
-        nick,
-        turn: messageSeq++,
-        reactionSummary: "아직 받은 포옹 없음"
-      };
-
-      state.rooms[currentRoom].push(item);
+    function addEntry(item){
+      state.entries.push(item);
       saveState();
-      renderMessages(currentRoom);
-      scrollBottom();
-
-      setTimeout(() => autoWarmReaction(item.id, text), randomDelay(2800, 4200));
+      renderMessages();
     }
 
-   function scrollBottom(){
-  messages.scrollTop = messages.scrollHeight;
-  window.scrollTo({
-    top: document.body.scrollHeight,
-    behavior: "smooth"
-  });
-}
-    function randomDelay(min, max){
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+    function scrollBottom(){
+      messages.scrollTop = messages.scrollHeight;
     }
 
     function updateCharCount(){
@@ -1600,12 +1012,45 @@ body{
       return threatWords.some(word => text.includes(word));
     }
 
-    function showModal({
-      emoji = "🧸",
-      title = "따뜻한 반응",
-      text = "여기서는 괜찮아요.",
-      actions = []
-    }){
+    function detectEmotion(text){
+      for(const [label, keywords] of Object.entries(emotionKeywords)){
+        if(keywords.some(word => text.includes(word))){
+          return label;
+        }
+      }
+      return "흔들림";
+    }
+
+    function createEmpathy(text){
+      const info = characters[currentCharacter];
+      const base = info.templates[Math.floor(Math.random() * info.templates.length)];
+
+      if(text.includes("외로")) return `${base}\n외로운 마음이었겠구나.`;
+      if(text.includes("속상")) return `${base}\n그 마음이 아직 남아 있겠네.`;
+      if(text.includes("불안") || text.includes("무서")) return `${base}\n지금은 서두르지 않아도 괜찮아.`;
+      if(text.includes("지쳐") || text.includes("피곤")) return `${base}\n많이 소모된 하루였겠다.`;
+
+      return base;
+    }
+
+    function openHugPopup(hugType){
+      state.stats.todayHugs += 1;
+      state.stats.weekWarmth += 1;
+      saveState();
+      updateStats();
+      burstHearts(8);
+
+      showModal({
+        emoji:hugType.popupEmoji,
+        title:"따뜻한 반응",
+        text:hugType.message,
+        actions:[
+          { label:"고마워요", onClick:() => showNotice("따뜻함이 전해졌어요.") }
+        ]
+      });
+    }
+
+    function showModal({ emoji="🧸", title="따뜻한 반응", text="여기서는 괜찮아요.", actions=[] }){
       modalEmoji.textContent = emoji;
       modalTitle.textContent = title;
       modalText.textContent = text;
@@ -1640,30 +1085,24 @@ body{
       modal.setAttribute("aria-hidden", "true");
     }
 
-    function showSquirrelBlock(){
+    function showPremiumModal(){
       showModal({
-        emoji: "🐿️",
-        title: "조금 더 따뜻하게 말해볼까요?",
-        text: "괜찮아괜찮아.\n나쁜 말은 하지 말자.\n이 공간은 상처 주는 말을 쉬게 하는 곳이에요.",
-        actions: [
-          {
-            label: "다시 작성하기",
-            onClick: () => msgInput.focus()
-          }
+        emoji:"✨",
+        title:"프리미엄 안내",
+        text:"월 3,000~5,000원 구조로 생각해볼 수 있어요.\n\n- 모든 공감 캐릭터\n- 무제한 공감\n- 감정 기록 저장 확장\n- 감정 리포트\n- 힐링 메시지 카드",
+        actions:[
+          { label:"좋아요", className:"softBtn", onClick:() => {} }
         ]
       });
     }
 
-    function showLeaveBear(){
+    function showHelpGuide(){
       showModal({
-        emoji: "🧸",
-        title: "잘 가요",
-        text: "조심해서 가요.\n언제든 다시 쉬러 와도 괜찮아요.",
-        actions: [
-          {
-            label: "방 목록으로",
-            onClick: openRooms
-          }
+        emoji:"🆘",
+        title:"도움 연결 안내",
+        text:"혼자 감당하기 어려운 상황이라면 전문기관 연결이 먼저예요.\n\n1366 여성긴급전화\n117 학교폭력 신고센터\n112 경찰\n119 응급·구조",
+        actions:[
+          { label:"확인", className:"softBtn", onClick:() => {} }
         ]
       });
     }
@@ -1673,247 +1112,120 @@ body{
       heart.className = "heart";
       heart.textContent = ["🤎","💛","🧡","🤍","🫂"][Math.floor(Math.random() * 5)];
       heart.style.left = Math.random() * window.innerWidth + "px";
-      heart.style.top = (window.innerHeight - 100 - Math.random() * 120) + "px";
+      heart.style.top = (window.innerHeight - 120 - Math.random() * 120) + "px";
       document.body.appendChild(heart);
-
       setTimeout(() => heart.remove(), 2000);
     }
 
-    function burstHearts(count = 8){
+    function burstHearts(count=7){
       for(let i = 0; i < count; i++){
         setTimeout(createHeart, i * 120);
       }
     }
 
     function handleSend(){
+      resetDailyIfNeeded();
       const text = msgInput.value.trim();
       if(!text) return;
 
-      if(text.length > 50){
-        showNotice("고민은 50자 이내로 적어주세요.");
+      if(containsBlockedContent(text)){
+        showModal({
+          emoji:"🐿️",
+          title:"조금 더 따뜻하게 말해볼까요?",
+          text:"이 공간은 상처 주는 말을 쉬게 하는 곳이에요.",
+          actions:[
+            { label:"다시 작성하기", onClick:() => msgInput.focus() }
+          ]
+        });
         return;
       }
 
-      if(containsBlockedContent(text)){
-        showSquirrelBlock();
+      if(!state.premium && remainingFreeCount() <= 0){
+        showModal({
+          emoji:"🌙",
+          title:"오늘 무료 공감을 모두 사용했어요",
+          text:"내일 다시 10회가 열려요.\n프리미엄에서는 무제한 공감을 받을 수 있어요.",
+          actions:[
+            { label:"확인", className:"softBtn", onClick:() => {} }
+          ]
+        });
         return;
       }
 
       const emotion = detectEmotion(text);
-      if(emotion){
-        state.emotions.unshift(emotion);
-        state.emotions = state.emotions.slice(0, 8);
+      state.emotions.unshift(emotion);
+      state.emotions = state.emotions.slice(0, 12);
+
+      if(!state.premium){
+        state.daily.count += 1;
       }
 
-      addMessage(text, "me", currentNickname);
+      addEntry({
+        id:"m_" + Date.now(),
+        who:"me",
+        nick:"나",
+        text,
+        meta:[`감정: ${emotion}`, `${messageSeq++}번째 기록`]
+      });
+
+      const empathy = createEmpathy(text);
+      addEntry({
+        id:"a_" + Date.now(),
+        who:"ai",
+        nick:currentCharacter,
+        text:empathy,
+        hugBar:true,
+        meta:[characters[currentCharacter].short]
+      });
+
+      saveState();
       updateStats();
       updateEmotionUI();
+      burstHearts(5);
 
       if(containsThreatContent(text)){
         setTimeout(() => {
           showModal({
-            emoji: "🆘",
-            title: "도움이 필요해 보여요",
-            text: "혼자 감당하기 어려운 상황처럼 보여요.\n지금 공식 도움기관으로 연결할까요?",
-            actions: [
-              {
-                label: "예, 연결할게요",
-                onClick: () => openRoom("help")
-              },
-              {
-                label: "아니오",
-                onClick: () => showNotice("필요할 때 언제든 도움연결 방으로 갈 수 있어요.")
-              }
+            emoji:"🆘",
+            title:"도움이 먼저 필요해 보여요",
+            text:"혼자 감당하기 어려운 상황처럼 보여요.\n지금은 전문기관 연결을 먼저 생각해보면 좋겠어요.\n\n1366 · 117 · 112 · 119",
+            actions:[
+              { label:"확인", className:"softBtn", onClick:() => {} }
             ]
           });
-        }, 800);
+        }, 500);
       }
 
-   msgInput.value = "";
-updateCharCount();
-setTimeout(scrollBottom, 100);
+      msgInput.value = "";
+      updateCharCount();
+      setTimeout(scrollBottom, 80);
     }
 
-    function autoWarmReaction(messageId){
-      if(currentRoom === "help") return;
-
-      const available = currentRoom === "comfort"
-        ? [hugTypes[0], hugTypes[2]]
-        : [hugTypes[0], hugTypes[1], hugTypes[2]];
-
-      let picked = available[Math.floor(Math.random() * available.length)];
-      while(available.length > 1 && picked.id === lastAutoReply){
-        picked = available[Math.floor(Math.random() * available.length)];
-      }
-      lastAutoReply = picked.id;
-
-      applyReactionToMessage(messageId, picked, true);
-
-      if(currentRoom === "comfort"){
-        burstHearts(10);
-      }
-    }
-
-    function handleHug(messageId, hugType){
-      applyReactionToMessage(messageId, hugType, false);
-    }
-
-    function applyReactionToMessage(messageId, hugType, isAuto = false){
-      const target = state.rooms[currentRoom].find(item => item.id === messageId);
-      if(!target) return;
-
-      state.stats.todayHugs += 1;
-      state.stats.weekWarmth += 1;
-      target.reactionSummary = `${hugType.emoji} ${hugType.label}`;
+    function clearAllEntries(){
+      state.entries = [];
       saveState();
-      updateStats();
-      renderMessages(currentRoom);
-
-      const title = isAuto ? "포근한 반응이 도착했어요" : "누군가 당신을 안아주었어요";
-      burstHearts(7);
-
-      if(hugType.needsConfirm){
-        showModal({
-          emoji: hugType.popupEmoji,
-          title,
-          text: hugType.message,
-          actions: [
-            {
-              label: "예, 연결할게요",
-              onClick: () => openRoom("help")
-            },
-            {
-              label: "아니오",
-              onClick: () => showNotice("괜찮아요. 필요할 때 도움연결 방으로 갈 수 있어요.")
-            }
-          ]
-        });
-      }else{
-        showModal({
-          emoji: hugType.popupEmoji,
-          title,
-          text: hugType.message,
-          actions: [
-            {
-              label: "고마워요",
-              onClick: () => showNotice("따뜻함이 전해졌어요.")
-            }
-          ]
-        });
-      }
+      renderMessages();
+      showNotice("기록을 지웠어요.");
     }
 
-    function reportMessage(){
-      state.reports += 1;
-      saveState();
+    startBtn.addEventListener("click", showApp);
+    premiumBtn.addEventListener("click", showPremiumModal);
+    guideBtn.addEventListener("click", showHelpGuide);
+    clearBtn.addEventListener("click", clearAllEntries);
+    sendBtn.addEventListener("click", handleSend);
 
-      let text = "신고가 접수되었어요.\n운영 검토 대상에 추가할게요.";
-      if(state.reports >= 5){
-        text += "\n누적 5회 기준: 영구정지 대상";
-      }else if(state.reports >= 3){
-        text += "\n누적 3회 기준: 24시간 정지 대상";
-      }else{
-        text += "\n1회 기준: 경고 대상";
-      }
-
-      showModal({
-        emoji: "🚨",
-        title: "신고 접수",
-        text,
-        actions: [
-          {
-            label: "확인",
-            onClick: () => {}
-          }
-        ]
-      });
-    }
-
-    function clearCurrentRoom(){
-      state.rooms[currentRoom] = [];
-      saveState();
-      renderMessages(currentRoom);
-      addSystemMessage(roomConfig[currentRoom].welcome, currentRoom, true);
-      showNotice("이 방의 대화를 지웠어요.");
-    }
-
-    function detectEmotion(text){
-      for(const [label, keywords] of Object.entries(emotionKeywords)){
-        if(keywords.some(word => text.includes(word))){
-          return label;
-        }
-      }
-      return "흔들림";
-    }
-
-    function updateStats(){
-      todayHugs.textContent = `${state.stats.todayHugs} 🫂`;
-      weekWarmth.textContent = `${state.stats.weekWarmth} hugs`;
-      updateEmotionUI();
-    }
-
-    function updateEmotionUI(){
-      emotionList.innerHTML = "";
-
-      if(!state.emotions.length){
-        emotionSummary.textContent = "오늘의 마음: 아직 기록이 없어요.";
-        return;
-      }
-
-      emotionSummary.textContent = `오늘의 마음: ${state.emotions[0]}`;
-
-      const uniq = [...new Set(state.emotions)].slice(0, 6);
-      uniq.forEach(emotion => {
-        const chip = document.createElement("div");
-        chip.className = "emotionChip";
-        chip.textContent = emotion;
-        emotionList.appendChild(chip);
-      });
-    }
-    function simulatePresenceEnter(info){
-      if(info.title === "도움연결 방") return;
-      addSystemMessage(`${currentNickname}님 입장하셨습니다.`, currentRoom, true);
-
-      info.systemUsers.forEach((user, idx) => {
-        setTimeout(() => {
-          addSystemMessage(`${user}님 입장하셨습니다.`, currentRoom, true);
-          if(currentRoom === infoKeyFromTitle(info.title)){
-            renderMessages(currentRoom);
-          }
-        }, 200 * (idx + 1));
-      });
-    }
-
-    function infoKeyFromTitle(title){
-      return Object.keys(roomConfig).find(key => roomConfig[key].title === title);
-    }
-
-    function simulateDisconnectGrace(){
-      clearTimeout(disconnectTimer);
-      showNotice("연결이 잠시 불안정해도 5초 동안은 방이 유지돼요.");
-      disconnectTimer = setTimeout(() => {
-        showLeaveBear();
-      }, 5000);
-    }
-
-    startBtn.addEventListener("click", openRooms);
-    regenNickBtn.addEventListener("click", regenerateNickname);
-
-    roomEls.forEach(room => {
-      room.addEventListener("click", () => openRoom(room.dataset.room));
+    msgInput.addEventListener("input", () => {
+      updateCharCount();
+      setTimeout(scrollBottom, 80);
     });
+
     msgInput.addEventListener("focus", () => {
-  setTimeout(scrollBottom, 300);
-});
+      setTimeout(scrollBottom, 240);
+    });
 
-msgInput.addEventListener("click", () => {
-  setTimeout(scrollBottom, 300);
-});
-
-msgInput.addEventListener("input", () => {
-  updateCharCount();
-  setTimeout(scrollBottom, 100);
-});
+    msgInput.addEventListener("click", () => {
+      setTimeout(scrollBottom, 240);
+    });
 
     msgInput.addEventListener("keydown", (e) => {
       if(e.key === "Enter" && !e.shiftKey){
@@ -1922,42 +1234,24 @@ msgInput.addEventListener("input", () => {
       }
     });
 
-    sendBtn.addEventListener("click", handleSend);
-
     hugMyselfBtn.addEventListener("click", () => {
+      state.stats.todayHugs += 1;
+      state.stats.weekWarmth += 1;
+      saveState();
+      updateStats();
+      burstHearts(8);
       showModal({
-        emoji: "🫂",
-        title: "나에게도 포옹",
-        text: "오늘의 나도 안아줄게요.\n정말 애썼어요.",
-        actions: [
-          {
-            label: "고마워요",
-            onClick: () => {
-              state.stats.todayHugs += 1;
-              state.stats.weekWarmth += 1;
-              saveState();
-              updateStats();
-              burstHearts(8);
-            }
-          }
+        emoji:"🫂",
+        title:"나에게도 포옹",
+        text:"오늘의 나도 안아줄게요.\n정말 애썼어요.",
+        actions:[
+          { label:"고마워요", onClick:() => showNotice("오늘의 나를 다정하게 안아주었어요.") }
         ]
       });
     });
 
-    clearBtn.addEventListener("click", clearCurrentRoom);
-    leaveBtn.addEventListener("click", showLeaveBear);
-    backRoomsBtn.addEventListener("click", openRooms);
-
     modal.addEventListener("click", (e) => {
-      if(e.target === modal){
-        closeModal();
-      }
-    });
-
-    window.addEventListener("blur", simulateDisconnectGrace);
-
-    window.addEventListener("focus", () => {
-      clearTimeout(disconnectTimer);
+      if(e.target === modal) closeModal();
     });
   </script>
 </body>
