@@ -3,357 +3,184 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>따뜻한 포옹</title>
 
 <link href="https://fonts.googleapis.com/css2?family=MaruBuri:wght@400;700&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
-
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
 body{
-
 font-family:'Noto Sans KR',sans-serif;
-
 background:
 radial-gradient(circle at 20% 20%, #ffe7c8 0%, transparent 30%),
 radial-gradient(circle at 80% 10%, #ffd9a6 0%, transparent 30%),
 linear-gradient(180deg,#eadac6,#d9c6ae);
-
 min-height:100vh;
-
 display:flex;
 justify-content:center;
 align-items:center;
-
 color:#5c4033;
-
 }
 
 .container{
-
 width:900px;
 max-width:92vw;
-
-background:rgba(255,255,255,0.75);
-
-backdrop-filter:blur(10px);
-
-border-radius:30px;
-
-padding:40px;
-
+background:rgba(255,255,255,0.85);
+border-radius:28px;
+padding:35px;
 box-shadow:0 25px 60px rgba(0,0,0,0.15);
-
-animation:fadeIn .6s ease;
-
 }
 
 h1{
-
 font-family:'MaruBuri',serif;
-
-font-size:38px;
-
 text-align:center;
-
 margin-bottom:10px;
-
 }
 
 .subtitle{
-
 text-align:center;
-
+margin-bottom:30px;
 color:#7c5a44;
-
-margin-bottom:30px;
-
 }
 
-.visitor{
-
-text-align:center;
-
-font-size:14px;
-
-color:#8b6d54;
-
-margin-bottom:30px;
-
-}
-
-/* 방 카드 */
+/* 방 목록 */
 
 .rooms{
-
 display:flex;
 flex-direction:column;
-gap:20px;
-
+gap:18px;
 }
 
 .room{
-
 display:flex;
-
-align-items:center;
-
 justify-content:space-between;
-
-padding:24px;
-
-border-radius:26px;
-
+align-items:center;
+padding:22px;
+border-radius:22px;
 background:linear-gradient(
 180deg,
-rgba(255,248,238,.9),
-rgba(255,241,229,.8)
+rgba(255,248,238,.95),
+rgba(255,241,229,.9)
 );
-
-box-shadow:
-0 12px 25px rgba(120,80,40,0.12),
-inset 0 1px 0 rgba(255,255,255,0.7);
-
+box-shadow:0 12px 25px rgba(120,80,40,0.15);
 cursor:pointer;
-
 transition:all .25s ease;
-
 }
 
 .room:hover{
-
-transform:translateY(-6px) scale(1.01);
-
-box-shadow:0 22px 45px rgba(120,80,40,0.18);
-
+transform:translateY(-6px);
+box-shadow:0 22px 45px rgba(120,80,40,0.2);
 }
 
 .room-left{
-
 display:flex;
 align-items:center;
 gap:16px;
-
 }
 
-.icon{
-
-font-size:36px;
-
-}
+.icon{font-size:34px}
 
 .room-name{
-
 font-family:'MaruBuri',serif;
-
-font-size:24px;
-
+font-size:22px;
 }
 
 .room-desc{
-
 font-size:14px;
-
 color:#7c5a44;
-
 }
 
 .tag{
-
 background:#efd5b4;
-
-padding:8px 16px;
-
+padding:7px 14px;
 border-radius:999px;
-
 font-size:13px;
-
 }
 
-/* 채팅방 */
+/* 채팅 */
 
 .chat{
-
 display:none;
 flex-direction:column;
-gap:20px;
-
+gap:18px;
 }
 
 .chat-top{
-
 display:flex;
 justify-content:space-between;
 align-items:center;
-
 }
 
 .back{
-
-cursor:pointer;
-
 background:#efd5b4;
-
-padding:8px 16px;
-
+padding:6px 14px;
 border-radius:999px;
-
+cursor:pointer;
 }
 
 .messages{
-
-height:300px;
-
+height:280px;
 overflow:auto;
-
 background:#fff7ef;
-
-border-radius:20px;
-
-padding:15px;
-
+border-radius:16px;
+padding:12px;
 display:flex;
 flex-direction:column;
-gap:12px;
-
+gap:10px;
 }
 
 .msg{
-
-background:#fff;
-
-padding:12px 14px;
-
-border-radius:14px;
-
+background:white;
+padding:10px 12px;
+border-radius:12px;
 max-width:70%;
-
-box-shadow:0 5px 10px rgba(0,0,0,0.08);
-
 }
 
 .me{
-
 align-self:flex-end;
-
-background:#f5d6b4;
-
+background:#f4d6b5;
 }
 
 .input-area{
-
 display:flex;
 gap:10px;
-
 }
 
 input{
-
 flex:1;
-
-padding:12px;
-
+padding:10px;
 border:none;
-
-border-radius:14px;
-
-background:#fff;
-
+border-radius:10px;
+background:white;
 }
 
 button{
-
 border:none;
-
 background:#e9c8a3;
-
-padding:12px 18px;
-
-border-radius:14px;
-
+padding:10px 16px;
+border-radius:10px;
 cursor:pointer;
-
 }
 
 /* 팝업 */
 
 .popup{
-
 position:fixed;
-
 top:50%;
 left:50%;
-
 transform:translate(-50%,-50%);
-
 background:#fff8f0;
-
-padding:40px;
-
-border-radius:25px;
-
-box-shadow:0 25px 60px rgba(0,0,0,0.2);
-
+padding:35px;
+border-radius:20px;
+box-shadow:0 20px 50px rgba(0,0,0,0.25);
 display:none;
-
 text-align:center;
-
 }
 
 .popup-emoji{
-
 font-size:120px; /* 3배 크기 */
-
 margin-bottom:10px;
-
-}
-
-/* 곰돌이 */
-
-.floatingBear{
-
-position:fixed;
-
-bottom:30px;
-
-right:40px;
-
-font-size:70px;
-
-opacity:0.2;
-
-animation:floatBear 6s ease-in-out infinite;
-
-}
-
-@keyframes floatBear{
-
-0%{transform:translateY(0)}
-
-50%{transform:translateY(-15px)}
-
-100%{transform:translateY(0)}
-
-}
-
-@keyframes fadeIn{
-
-from{
-opacity:0;
-transform:translateY(20px);
-}
-
-to{
-opacity:1;
-transform:translateY(0);
-}
-
 }
 
 </style>
@@ -361,94 +188,64 @@ transform:translateY(0);
 
 <body>
 
-<div class="floatingBear">🧸</div>
-
 <div class="container">
 
 <h1>따뜻한 포옹</h1>
-
-<div class="subtitle">
-평가 없이, 비교 없이, 다정함만 머무는 공간
-</div>
-
-<div class="visitor">
-방문자 : <span id="counter">0</span>
-</div>
+<div class="subtitle">조언 없이 공감만 머무는 공간</div>
 
 <!-- 방 목록 -->
 
-<div class="rooms" id="rooms">
+<div id="rooms" class="rooms">
 
-<div class="room" onclick="enterRoom('친구의 방')">
-
+<div class="room" data-room="친구의 방">
 <div class="room-left">
 <div class="icon">🫂</div>
-
 <div>
 <div class="room-name">친구의 방</div>
-<div class="room-desc">동등한 입장에서 고민을 나누는 공간</div>
+<div class="room-desc">고민을 나누는 공간</div>
 </div>
-
 </div>
-
 <div class="tag">공감</div>
-
 </div>
 
-<div class="room" onclick="enterRoom('포근한 방')">
-
+<div class="room" data-room="포근한 방">
 <div class="room-left">
 <div class="icon">🧸</div>
-
 <div>
 <div class="room-name">포근한 방</div>
-<div class="room-desc">따뜻한 반응이 먼저 오는 공간</div>
+<div class="room-desc">따뜻한 반응이 오는 공간</div>
 </div>
-
 </div>
-
 <div class="tag">위로</div>
-
 </div>
 
-<div class="room" onclick="enterRoom('도움연결 방')">
-
+<div class="room" data-room="도움연결 방">
 <div class="room-left">
 <div class="icon">🆘</div>
-
 <div>
 <div class="room-name">도움연결 방</div>
-<div class="room-desc">기관과 연결되는 공간</div>
+<div class="room-desc">기관 연결</div>
 </div>
-
 </div>
-
 <div class="tag">연결</div>
-
 </div>
 
 </div>
 
 <!-- 채팅 -->
 
-<div class="chat" id="chat">
+<div id="chat" class="chat">
 
 <div class="chat-top">
-
 <div id="roomTitle"></div>
-
-<div class="back" onclick="leaveRoom()">나가기</div>
-
+<div class="back" id="backBtn">나가기</div>
 </div>
 
-<div class="messages" id="messages"></div>
+<div id="messages" class="messages"></div>
 
 <div class="input-area">
-
-<input id="msgInput" placeholder="마음을 적어보세요 (50자)" maxlength="50">
-
-<button onclick="sendMsg()">보내기</button>
-
+<input id="msgInput" maxlength="50" placeholder="마음을 적어보세요">
+<button id="sendBtn">보내기</button>
 </div>
 
 </div>
@@ -457,98 +254,62 @@ transform:translateY(0);
 
 <!-- 팝업 -->
 
-<div class="popup" id="popup">
-
+<div id="popup" class="popup">
 <div class="popup-emoji">🧸</div>
-
 <div>괜찮아요. 여기서는 쉬어도 돼요.</div>
-
 <br>
-
-<button onclick="closePopup()">닫기</button>
-
+<button id="closePopup">닫기</button>
 </div>
 
 <script>
 
-/* 방문자 카운터 */
+const rooms=document.querySelectorAll(".room");
+const chat=document.getElementById("chat");
+const roomsBox=document.getElementById("rooms");
+const roomTitle=document.getElementById("roomTitle");
+const backBtn=document.getElementById("backBtn");
 
-let count = localStorage.getItem("visitorCount");
+rooms.forEach(room=>{
+room.addEventListener("click",()=>{
+roomTitle.innerText=room.dataset.room;
+roomsBox.style.display="none";
+chat.style.display="flex";
+});
+});
 
-if(!count){
+backBtn.onclick=()=>{
+chat.style.display="none";
+roomsBox.style.display="flex";
+};
 
-count=1;
-
-}else{
-
-count=parseInt(count)+1;
-
-}
-
-localStorage.setItem("visitorCount",count);
-
-document.getElementById("counter").innerText=count;
-
-
-/* 방 입장 */
-
-function enterRoom(name){
-
-document.getElementById("rooms").style.display="none";
-
-document.getElementById("chat").style.display="flex";
-
-document.getElementById("roomTitle").innerText=name;
-
-}
-
-/* 방 나가기 */
-
-function leaveRoom(){
-
-document.getElementById("chat").style.display="none";
-
-document.getElementById("rooms").style.display="flex";
-
-}
-
-/* 메시지 */
-
-function sendMsg(){
-
+const sendBtn=document.getElementById("sendBtn");
 const input=document.getElementById("msgInput");
+const messages=document.getElementById("messages");
+
+sendBtn.onclick=()=>{
 
 const text=input.value.trim();
-
 if(!text)return;
 
-const box=document.createElement("div");
+const msg=document.createElement("div");
+msg.className="msg me";
+msg.innerText=text;
 
-box.className="msg me";
-
-box.innerText=text;
-
-document.getElementById("messages").appendChild(box);
+messages.appendChild(msg);
 
 input.value="";
 
 showPopup();
 
-}
-
-/* 팝업 */
+};
 
 function showPopup(){
-
 document.getElementById("popup").style.display="block";
-
 }
 
-function closePopup(){
-
+document.getElementById("closePopup").onclick=()=>{
 document.getElementById("popup").style.display="none";
-
-}
+};
 
 </script>
 
