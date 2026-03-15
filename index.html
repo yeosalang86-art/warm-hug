@@ -18,14 +18,27 @@ display:flex;
 flex-direction:column;
 align-items:center;
 color:#5b4b53;
+overflow:hidden;
+}
+
+/* CLOUD BORDER */
+
+body:before{
+content:"";
+position:fixed;
+inset:0;
+pointer-events:none;
+background:
+radial-gradient(circle at 40px 40px,#ffffff 35px,transparent 36px),
+radial-gradient(circle at calc(100% - 40px) 40px,#ffffff 35px,transparent 36px),
+radial-gradient(circle at 40px calc(100% - 40px),#ffffff 35px,transparent 36px),
+radial-gradient(circle at calc(100% - 40px) calc(100% - 40px),#ffffff 35px,transparent 36px);
 }
 
 header{
 font-size:36px;
 padding:24px;
 }
-
-/* HOME */
 
 #home{
 flex:1;
@@ -47,8 +60,7 @@ animation:idleBounce 2.2s infinite ease-in-out;
 100%{transform:translateY(0)}
 }
 
-.startBtn{
-margin-top:20px;
+button{
 padding:14px 26px;
 font-size:20px;
 border:none;
@@ -56,11 +68,10 @@ border-radius:30px;
 background:#ffd6e7;
 cursor:pointer;
 box-shadow:0 6px 16px rgba(0,0,0,0.08);
+font-family:'Gaegu';
 }
 
-.startBtn:hover{transform:scale(1.05)}
-
-/* ROOMS */
+button:hover{transform:scale(1.05)}
 
 #rooms{
 display:none;
@@ -71,7 +82,7 @@ max-width:600px;
 .room{
 background:white;
 padding:18px;
-border-radius:22px;
+border-radius:28px;
 margin:12px 0;
 box-shadow:0 6px 18px rgba(0,0,0,0.06);
 display:flex;
@@ -79,8 +90,6 @@ justify-content:space-between;
 font-size:20px;
 cursor:pointer;
 }
-
-/* CHAT */
 
 #chat{
 display:none;
@@ -98,10 +107,11 @@ overflow-y:auto;
 
 .msg{
 margin:10px 0;
-padding:12px 16px;
-border-radius:20px;
+padding:14px 18px;
+border-radius:26px;
 max-width:65%;
 font-size:18px;
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
 }
 
 .me{
@@ -125,22 +135,16 @@ border-top:1px solid #eee;
 flex:1;
 border:none;
 background:#f4f4f4;
-padding:10px;
-border-radius:20px;
+padding:12px;
+border-radius:24px;
 font-family:'Gaegu';
 font-size:16px;
 }
 
 #inputBar button{
 margin-left:10px;
-border:none;
-background:#ffd6e7;
-border-radius:20px;
-padding:10px 16px;
-cursor:pointer;
+border-radius:24px;
 }
-
-/* HUG POPUP */
 
 #hug{
 position:fixed;
@@ -181,14 +185,12 @@ animation:float 2s linear forwards;
 100%{opacity:0;transform:translateY(-180px)}
 }
 
-/* NOTICE */
-
 #notice{
 position:fixed;
 bottom:120px;
 background:white;
 padding:14px 20px;
-border-radius:16px;
+border-radius:20px;
 box-shadow:0 8px 20px rgba(0,0,0,0.15);
 display:none;
 }
@@ -201,8 +203,6 @@ display:none;
 <header>따뜻한 포옹</header>
 
 <div id="home">
-
-<!-- cute tea bear -->
 
 <svg class="heroBear" viewBox="0 0 200 200">
 
@@ -221,17 +221,15 @@ display:none;
 
 <path d="M92 112 Q100 120 108 112" stroke="#333" stroke-width="2" fill="none"/>
 
-<!-- mug -->
 <rect x="80" y="130" width="40" height="28" rx="10" fill="#ffe4ec"/>
 <path d="M120 138 Q140 140 120 150" stroke="#ffe4ec" stroke-width="6" fill="none"/>
 
-<!-- steam -->
 <path d="M92 128 Q95 118 90 110" stroke="#bbb" fill="none"/>
 <path d="M108 128 Q110 118 105 110" stroke="#bbb" fill="none"/>
 
 </svg>
 
-<button class="startBtn" onclick="enterRooms()">포옹 받으러 들어가기</button>
+<button onclick="enterRooms()">포옹 받으러 들어가기</button>
 
 </div>
 
@@ -279,11 +277,19 @@ display:none;
 
 <div id="notice"></div>
 
-<audio id="pop" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5e6b5f3b45.mp3"></audio>
+<!-- bubble pop sound -->
+<audio id="pop" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_2a1c2f2e4a.mp3"></audio>
+
+<!-- background music Bach -->
+<audio id="bgm" autoplay loop>
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4c0c8c2d2c.mp3">
+</audio>
 
 <script>
 
-let nickname="사용자"+Math.floor(Math.random()*1000)
+const names=["옥수수차","둥글레차","홍차","녹차"]
+
+let nickname=names[Math.floor(Math.random()*names.length)]
 
 function sound(){document.getElementById('pop').play()}
 
@@ -315,6 +321,8 @@ let input=document.getElementById('msg')
 let text=input.value
 
 if(text==='')return
+
+sound()
 
 let m=document.createElement('div')
 
