@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="description" content="따뜻한 포옹 - 조언 없이 공감만 머무는 익명 감정 쉼터" />
   <meta name="keywords" content="따뜻한 포옹, warmhug, 익명 위로, 감정 기록, 공감 쉼터" />
   <meta name="author" content="warmhug" />
@@ -25,15 +25,13 @@
       --line:rgba(96,68,49,.08);
       --shadow:0 18px 42px rgba(80,55,38,.12);
       --shadow-soft:0 10px 24px rgba(80,55,38,.08);
-      --white-glass:rgba(255,250,244,.72);
-      --white-strong:rgba(255,251,246,.94);
       --accent-1:#f9ddc0;
       --accent-2:#efc392;
       --accent-soft-1:#fbefe2;
       --accent-soft-2:#f3dcc1;
     }
 
-    *{ box-sizing:border-box; }
+    *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
     html, body{ margin:0; min-height:100%; }
     html{ scroll-behavior:smooth; }
 
@@ -43,7 +41,7 @@
       background:
         radial-gradient(circle at top left, #fff8ef, transparent 28%),
         linear-gradient(180deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
-      overflow-x:hidden;
+      overflow-x:auto;
       position:relative;
     }
 
@@ -70,8 +68,16 @@
       opacity:.7;
     }
 
+    .appShell{
+      width:100%;
+      min-height:100vh;
+      overflow-x:auto;
+      overflow-y:hidden;
+    }
+
     .frame{
       width:min(1160px, 96vw);
+      min-width:1160px; /* 모바일에서도 PC와 동일한 구조 유지 */
       min-height:95vh;
       margin:2.5vh auto;
       border-radius:36px;
@@ -183,12 +189,18 @@
       box-shadow:0 10px 22px rgba(115,79,52,.13), inset 0 1px 0 rgba(255,255,255,.5);
       transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease, filter .18s ease;
       pointer-events:auto;
+      position:relative;
+      z-index:5;
     }
 
     button:hover{
       transform:translateY(-2px);
       box-shadow:0 14px 28px rgba(115,79,52,.17), inset 0 1px 0 rgba(255,255,255,.5);
       filter:saturate(1.02);
+    }
+
+    button:active{
+      transform:translateY(0);
     }
 
     button:focus-visible,
@@ -216,6 +228,7 @@
 
     #app{
       min-height:78vh;
+      display:grid;
       grid-template-columns:320px 1fr;
     }
 
@@ -299,6 +312,7 @@
       font-size:30px;
       background:linear-gradient(180deg,#faf0e4,#f2dbc0);
       box-shadow:var(--shadow-soft);
+      flex-shrink:0;
     }
 
     .chatTitle{
@@ -360,6 +374,7 @@
       gap:13px;
       scroll-behavior:smooth;
       -webkit-overflow-scrolling:touch;
+      min-height:420px;
     }
 
     .systemMsg{
@@ -602,106 +617,131 @@
       }
     }
 
-    @media (max-width:980px){
-      #app{ grid-template-columns:1fr; }
-      .sidePanel{ display:none; }
+    /* 모바일에서도 PC 구조 유지 */
+    @media (max-width: 1160px){
+      .appShell{
+        overflow-x:auto;
+      }
+      .frame{
+        margin:0;
+        border-radius:0;
+        min-height:100vh;
+      }
     }
 
     @media (max-width:760px){
-      .frame{ width:100vw; min-height:100vh; margin:0; border-radius:0; }
-      header{ font-size:30px; padding-top:74px; }
-      .sub{ font-size:15px; }
-      .heroBear{ font-size:96px; }
-      .heroNote{ font-size:16px; border-radius:28px; }
-      .chatTitle{ font-size:21px; }
-      .msgWrap{ max-width:92%; }
-      #messages{ min-height:280px; }
-      .topLeftButtons{ top:12px; left:12px; }
-      .leftTopBtn{ min-width:104px; }
+      header{
+        font-size:30px;
+        padding-top:74px;
+      }
+      .sub{
+        font-size:15px;
+      }
+      .heroBear{
+        font-size:96px;
+      }
+      .heroNote{
+        font-size:16px;
+        border-radius:28px;
+      }
+      .chatTitle{
+        font-size:21px;
+      }
+      .msgWrap{
+        max-width:92%;
+      }
+      .topLeftButtons{
+        top:12px;
+        left:12px;
+      }
+      .leftTopBtn{
+        min-width:104px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="frame">
-    <div class="topLeftButtons">
-      <button id="menuBtn" class="softBtn leftTopBtn underlinedStrong" type="button">메뉴</button>
-      <button id="homeBtn" class="softBtn leftTopBtn" type="button">홈으로</button>
-    </div>
-
-    <header>따뜻한 포옹</header>
-    <div class="sub">조언 없이, 판단 없이, 공감만 머무는 익명 감정 쉼터</div>
-
-    <section id="home">
-      <div class="heroBear">🧸</div>
-      <div class="heroNote">
-        오늘 마음은 어떤가요?<br />
-        여기서는 고치려 하지 않아도 괜찮아요. 그냥 내려놓아도 괜찮아요.
+  <div class="appShell">
+    <div class="frame">
+      <div class="topLeftButtons">
+        <button id="menuBtn" class="softBtn leftTopBtn underlinedStrong" type="button">메뉴</button>
+        <button id="homeBtn" class="softBtn leftTopBtn" type="button">홈으로</button>
       </div>
-      <div class="cozyMood">☕ 조용한 밤 · 작은 숨 · 따뜻한 조명</div>
-      <div class="homeButtons">
-        <button id="startBtn" type="button">마음 내려놓기</button>
-        <button id="donateBtn" class="softBtn" type="button">후원하기</button>
-      </div>
-    </section>
 
-    <section id="app">
-      <aside class="sidePanel">
-        <div class="panelCard">
-          <div class="panelTitle">오늘 받은 포옹</div>
-          <div class="warmCount" id="todayHugs">0 🫂</div>
-          <div class="statLine">총 포옹 수 <strong id="weekWarmth">0 hugs</strong></div>
+      <header>따뜻한 포옹</header>
+      <div class="sub">조언 없이, 판단 없이, 공감만 머무는 익명 감정 쉼터</div>
+
+      <section id="home">
+        <div class="heroBear">🧸</div>
+        <div class="heroNote">
+          오늘 마음은 어떤가요?<br />
+          여기서는 고치려 하지 않아도 괜찮아요. 그냥 내려놓아도 괜찮아요.
         </div>
-
-        <div class="panelCard">
-          <div class="panelTitle">오늘의 마음</div>
-          <div class="statLine" id="emotionSummary">아직 기록이 없어요.</div>
-          <div class="emotionList" id="emotionList"></div>
+        <div class="cozyMood">☕ 조용한 밤 · 작은 숨 · 따뜻한 조명</div>
+        <div class="homeButtons">
+          <button id="startBtn" type="button">마음 내려놓기</button>
+          <button id="donateBtn" class="softBtn" type="button">후원하기</button>
         </div>
+      </section>
 
-        <div class="panelCard">
-          <div class="panelTitle">공감 스타일</div>
-          <div class="statLine">성격이 아니라, 다정함의 결을 고르는 방식이에요.</div>
-          <div class="characterList" id="characterList"></div>
-        </div>
-
-        <div class="panelCard">
-          <div class="panelTitle">개인 공간 안내</div>
-          <div class="statLine">- 이 공간은 나만의 기록용이에요</div>
-          <div class="statLine">- 다른 사람의 대화와 섞이지 않아요</div>
-          <div class="statLine">- 이 기기에서는 지난 온기가 그대로 남아요</div>
-        </div>
-      </aside>
-
-      <div class="mainPanel">
-        <div class="chatTop">
-          <div class="chatBearMini" id="characterEmoji">🍵</div>
-          <div>
-            <div class="chatTitle" id="characterTitle">둥글레차</div>
-            <div class="chatDesc" id="characterDesc">일상에서 지친 마음을 담백하게 안아주는 공감이에요.</div>
+      <section id="app">
+        <aside class="sidePanel">
+          <div class="panelCard">
+            <div class="panelTitle">오늘 받은 포옹</div>
+            <div class="warmCount" id="todayHugs">0 🫂</div>
+            <div class="statLine">총 포옹 수 <strong id="weekWarmth">0 hugs</strong></div>
           </div>
-          <div class="topAction">
-            <button id="clearBtn" class="softBtn" type="button">기록 지우기</button>
-            <button id="guideBtn" class="softBtn" type="button">도움 연결</button>
+
+          <div class="panelCard">
+            <div class="panelTitle">오늘의 마음</div>
+            <div class="statLine" id="emotionSummary">아직 기록이 없어요.</div>
+            <div class="emotionList" id="emotionList"></div>
           </div>
-        </div>
 
-        <div class="characterTabs" id="characterTabs"></div>
+          <div class="panelCard">
+            <div class="panelTitle">공감 스타일</div>
+            <div class="statLine">성격이 아니라, 다정함의 결을 고르는 방식이에요.</div>
+            <div class="characterList" id="characterList"></div>
+          </div>
 
-        <div id="messages" aria-live="polite"></div>
+          <div class="panelCard">
+            <div class="panelTitle">개인 공간 안내</div>
+            <div class="statLine">- 이 공간은 나만의 기록용이에요</div>
+            <div class="statLine">- 다른 사람의 대화와 섞이지 않아요</div>
+            <div class="statLine">- 이 기기에서는 지난 온기가 그대로 남아요</div>
+          </div>
+        </aside>
 
-        <div class="inputArea">
-          <textarea id="msg" maxlength="120" placeholder="오늘 마음을 적어보세요..." aria-label="마음 입력"></textarea>
-          <div class="inputBottom">
-            <div class="charCount"><span id="charCount">0</span> / 120</div>
-            <div class="inputBtns">
-              <button id="sendBtn" type="button">공감 받기</button>
-              <button id="emotionBtn" class="softBtn" type="button">감정 기록</button>
-              <button id="hugMyselfBtn" class="softBtn" type="button">나에게 포옹</button>
+        <div class="mainPanel">
+          <div class="chatTop">
+            <div class="chatBearMini" id="characterEmoji">🍵</div>
+            <div>
+              <div class="chatTitle" id="characterTitle">둥글레차</div>
+              <div class="chatDesc" id="characterDesc">일상에서 지친 마음을 담백하게 안아주는 공감이에요.</div>
+            </div>
+            <div class="topAction">
+              <button id="clearBtn" class="softBtn" type="button">기록 지우기</button>
+              <button id="guideBtn" class="softBtn" type="button">도움 연결</button>
+            </div>
+          </div>
+
+          <div class="characterTabs" id="characterTabs"></div>
+          <div id="messages" aria-live="polite"></div>
+
+          <div class="inputArea">
+            <textarea id="msg" maxlength="120" placeholder="오늘 마음을 적어보세요..." aria-label="마음 입력"></textarea>
+            <div class="inputBottom">
+              <div class="charCount"><span id="charCount">0</span> / 120</div>
+              <div class="inputBtns">
+                <button id="sendBtn" type="button">공감 받기</button>
+                <button id="emotionBtn" class="softBtn" type="button">감정 기록</button>
+                <button id="hugMyselfBtn" class="softBtn" type="button">나에게 포옹</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </div>
 
   <div id="modal" class="modalOverlay" aria-hidden="true">
@@ -715,27 +755,16 @@
 
   <div id="notice" aria-live="polite"></div>
 
-  <!--
-  =========================================
-  따뜻한 포옹 Warmhug
-  Original Creator: 여사랑
-  All Rights Reserved
-
-  이 코드는 제작자 여사랑의 창작물입니다.
-  무단 복제 / 재배포 / 상업적 사용을 금지합니다.
-  =========================================
-  -->
-
   <script>
     const STORAGE_KEY = "warmhug_private_diary_v3";
     const DONATION_BANK = "국민은행";
     const DONATION_ACCOUNT = "51840201642069";
-    const DONATION_HOLDER = "여사랑";
-    const SITE_CREATOR = "여사랑";
-    const SITE_SIGNATURE = "Warmhug Original by 여사랑";
+    const DONATION_HOLDER = "RANG";
+    const SITE_CREATOR = "RANG";
+    const SITE_SIGNATURE = "Warmhug Original by RANG";
 
     console.log(
-      "%cWarmhug - 따뜻한 포옹\nCreator: 여사랑\nUnauthorized copying prohibited.",
+      "%cWarmhug - 따뜻한 포옹\nCreator: RANG\nUnauthorized copying prohibited.",
       "color:#7a5842;font-size:14px;font-weight:bold;"
     );
 
@@ -949,7 +978,11 @@
     }
 
     function saveState(){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      try{
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }catch(error){
+        console.error("저장 실패:", error);
+      }
     }
 
     function getInitialMessageSeq(){
