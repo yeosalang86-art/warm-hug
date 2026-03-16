@@ -2,37 +2,16 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  />
-  <meta
-    name="description"
-    content="따뜻한 포옹 - 조언 없이 공감만 머무는 익명 감정 쉼터"
-  />
-  <meta
-    name="keywords"
-    content="따뜻한 포옹, warmhug, 익명 위로, 감정 기록, 공감 쉼터"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="따뜻한 포옹 - 조언 없이 공감만 머무는 익명 감정 쉼터" />
+  <meta name="keywords" content="따뜻한 포옹, warmhug, 익명 위로, 감정 기록, 공감 쉼터" />
   <meta name="author" content="warmhug" />
+  <meta name="google-site-verification" content="zVJYHhPfKUSfGslL9-qCuyFmVurIM8msktRbQeZrqEY" />
   <title>따뜻한 포옹 | Warmhug</title>
 
-  <meta
-    http-equiv="Content-Security-Policy"
-    content="
-      default-src 'self';
-      script-src 'self' 'unsafe-inline';
-      style-src 'self' 'unsafe-inline';
-      img-src 'self' data:;
-      font-src 'self' data:;
-      connect-src 'none';
-      object-src 'none';
-      base-uri 'self';
-      form-action 'self';
-      frame-ancestors 'self';
-      upgrade-insecure-requests;
-    "
-  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=MaruBuri:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <style>
     :root{
@@ -46,33 +25,20 @@
       --line:rgba(96,68,49,.08);
       --shadow:0 18px 42px rgba(80,55,38,.12);
       --shadow-soft:0 10px 24px rgba(80,55,38,.08);
+      --white-glass:rgba(255,250,244,.72);
+      --white-strong:rgba(255,251,246,.94);
       --accent-1:#f9ddc0;
       --accent-2:#efc392;
       --accent-soft-1:#fbefe2;
       --accent-soft-2:#f3dcc1;
     }
 
-    *{
-      box-sizing:border-box;
-      -webkit-tap-highlight-color:transparent;
-    }
-
-    html, body{
-      margin:0;
-      min-height:100%;
-    }
-
-    html{
-      scroll-behavior:smooth;
-    }
+    *{ box-sizing:border-box; }
+    html, body{ margin:0; min-height:100%; }
+    html{ scroll-behavior:smooth; }
 
     body{
-      font-family:
-        "Apple SD Gothic Neo",
-        "Pretendard",
-        "Malgun Gothic",
-        "Noto Sans KR",
-        sans-serif;
+      font-family:"Noto Sans KR", sans-serif;
       color:var(--brown-1);
       background:
         radial-gradient(circle at top left, #fff8ef, transparent 28%),
@@ -104,35 +70,17 @@
       opacity:.7;
     }
 
-    header,
-    .panelTitle,
-    .chatTitle,
-    .modalTitle{
-      font-family:
-        "Georgia",
-        "Times New Roman",
-        "Apple SD Gothic Neo",
-        serif;
-    }
-
-    .appShell{
-      width:100%;
-      min-height:100vh;
-      overflow-x:hidden;
-      overflow-y:visible;
-    }
-
     .frame{
-      width:min(1160px, 100%);
-      min-height:100vh;
-      margin:0 auto;
+      width:min(1160px, 96vw);
+      min-height:95vh;
+      margin:2.5vh auto;
       border-radius:36px;
       overflow:hidden;
       position:relative;
       background:linear-gradient(180deg, rgba(255,250,244,.62), rgba(255,246,239,.44));
       box-shadow:var(--shadow);
       border:1px solid rgba(255,255,255,.45);
-      backdrop-filter:blur(6px);
+      backdrop-filter: blur(6px);
     }
 
     .frame::before{
@@ -157,6 +105,7 @@
 
     header{
       text-align:center;
+      font-family:"MaruBuri", serif;
       font-size:34px;
       font-weight:700;
       padding:26px 24px 8px;
@@ -175,14 +124,10 @@
       z-index:2;
     }
 
-    section{
-      display:none;
-      position:relative;
-      z-index:2;
-    }
+    section{ display:none; position:relative; z-index:2; }
+    #home{ display:flex; }
 
     #home{
-      display:flex;
       min-height:78vh;
       flex-direction:column;
       align-items:center;
@@ -238,18 +183,12 @@
       box-shadow:0 10px 22px rgba(115,79,52,.13), inset 0 1px 0 rgba(255,255,255,.5);
       transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease, filter .18s ease;
       pointer-events:auto;
-      position:relative;
-      z-index:5;
     }
 
     button:hover{
       transform:translateY(-2px);
       box-shadow:0 14px 28px rgba(115,79,52,.17), inset 0 1px 0 rgba(255,255,255,.5);
       filter:saturate(1.02);
-    }
-
-    button:active{
-      transform:translateY(0);
     }
 
     button:focus-visible,
@@ -277,8 +216,7 @@
 
     #app{
       min-height:78vh;
-      display:grid;
-      grid-template-columns:320px minmax(0, 1fr);
+      grid-template-columns:320px 1fr;
     }
 
     .sidePanel{
@@ -286,7 +224,6 @@
       border-right:1px solid var(--line);
       background:rgba(255,249,241,.38);
       backdrop-filter:blur(8px);
-      min-width:0;
     }
 
     .panelCard{
@@ -299,6 +236,7 @@
     }
 
     .panelTitle{
+      font-family:"MaruBuri", serif;
       font-size:19px;
       font-weight:700;
       margin-bottom:10px;
@@ -361,10 +299,10 @@
       font-size:30px;
       background:linear-gradient(180deg,#faf0e4,#f2dbc0);
       box-shadow:var(--shadow-soft);
-      flex-shrink:0;
     }
 
     .chatTitle{
+      font-family:"MaruBuri", serif;
       font-size:24px;
       font-weight:700;
       color:var(--brown-1);
@@ -393,9 +331,7 @@
       scrollbar-width:none;
     }
 
-    .characterTabs::-webkit-scrollbar{
-      display:none;
-    }
+    .characterTabs::-webkit-scrollbar{ display:none; }
 
     .characterBtn{
       min-width:max-content;
@@ -424,7 +360,6 @@
       gap:13px;
       scroll-behavior:smooth;
       -webkit-overflow-scrolling:touch;
-      min-height:420px;
     }
 
     .systemMsg{
@@ -437,14 +372,13 @@
       box-shadow:0 8px 18px rgba(0,0,0,.05);
       border:1px solid rgba(255,255,255,.45);
       animation:fadeUp .45s ease both;
-      text-align:center;
     }
 
     .msgWrap{
       display:flex;
       flex-direction:column;
       gap:6px;
-      max-width:min(78%, 680px);
+      max-width:78%;
       animation:fadeUp .45s ease both;
     }
 
@@ -470,8 +404,7 @@
       font-size:16px;
       line-height:1.78;
       box-shadow:0 8px 18px rgba(76,48,28,.07);
-      word-break:break-word;
-      overflow-wrap:anywhere;
+      word-break:keep-all;
       white-space:pre-wrap;
       border:1px solid rgba(255,255,255,.42);
     }
@@ -540,15 +473,13 @@
       color:var(--brown-1);
       resize:none;
       min-height:98px;
-      max-height:180px;
+      max-height:160px;
       font-family:inherit;
       line-height:1.7;
       box-shadow:inset 0 2px 8px rgba(0,0,0,.04), 0 4px 12px rgba(95,60,34,.03);
     }
 
-    #msg::placeholder{
-      color:#b18a6a;
-    }
+    #msg::placeholder{ color:#b18a6a; }
 
     .inputBottom{
       display:flex;
@@ -583,7 +514,7 @@
     }
 
     .modalCard{
-      width:min(620px, 96vw);
+      width:min(620px,92vw);
       max-height:88vh;
       overflow:auto;
       background:linear-gradient(180deg,#fffaf4,#f8ead8);
@@ -603,6 +534,7 @@
     }
 
     .modalTitle{
+      font-family:"MaruBuri", serif;
       font-size:28px;
       font-weight:700;
       margin-bottom:8px;
@@ -670,281 +602,106 @@
       }
     }
 
-    @media (max-width: 1160px){
-      .frame{
-        width:100%;
-        margin:0;
-        border-radius:0;
-        min-height:100vh;
-        border-left:none;
-        border-right:none;
-      }
+    @media (max-width:980px){
+      #app{ grid-template-columns:1fr; }
+      .sidePanel{ display:none; }
     }
 
-    @media (max-width: 920px){
-      #app{
-        grid-template-columns:1fr;
-      }
-
-      .sidePanel{
-        border-right:none;
-        border-bottom:1px solid var(--line);
-        padding:14px;
-      }
-
-      .panelCard{
-        margin-bottom:12px;
-      }
-
-      .chatTop{
-        padding:14px;
-        align-items:flex-start;
-      }
-
-      .topAction{
-        margin-left:0;
-        width:100%;
-      }
-
-      .topAction button{
-        flex:1 1 auto;
-      }
-
-      .characterTabs{
-        padding:12px 14px 8px;
-      }
-
-      #messages{
-        padding:12px 14px 10px;
-        min-height:44vh;
-      }
-
-      .inputArea{
-        padding:12px 14px 14px;
-      }
-
-      .msgWrap{
-        max-width:100%;
-      }
-    }
-
-    @media (max-width: 760px){
-      header{
-        font-size:28px;
-        padding:80px 16px 8px;
-      }
-
-      .sub{
-        font-size:14px;
-        line-height:1.6;
-        padding:0 16px 8px;
-      }
-
-      #home{
-        padding:24px 16px 32px;
-        min-height:calc(100vh - 110px);
-      }
-
-      .heroBear{
-        font-size:82px;
-      }
-
-      .heroNote{
-        font-size:15px;
-        line-height:1.75;
-        padding:18px 18px;
-        border-radius:22px;
-      }
-
-      .homeButtons{
-        width:100%;
-        flex-direction:column;
-      }
-
-      .homeButtons button{
-        width:100%;
-      }
-
-      .topLeftButtons{
-        top:12px;
-        left:12px;
-        right:12px;
-        flex-direction:row;
-        gap:8px;
-      }
-
-      .leftTopBtn{
-        min-width:0;
-        flex:1 1 0;
-        text-align:center;
-      }
-
-      .chatBearMini{
-        width:52px;
-        height:52px;
-        font-size:28px;
-        border-radius:18px;
-      }
-
-      .chatTitle{
-        font-size:20px;
-      }
-
-      .chatDesc{
-        font-size:14px;
-      }
-
-      .msg{
-        font-size:15px;
-        padding:14px 16px;
-        line-height:1.7;
-      }
-
-      .inputBottom{
-        flex-direction:column;
-        align-items:stretch;
-      }
-
-      .inputBtns{
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:8px;
-      }
-
-      .inputBtns button:first-child{
-        grid-column:1 / -1;
-      }
-
-      .modalCard{
-        width:min(96vw, 620px);
-        padding:22px 18px;
-        border-radius:24px;
-      }
-
-      .modalTitle{
-        font-size:24px;
-      }
-
-      .modalText{
-        font-size:15px;
-        line-height:1.75;
-      }
-
-      #notice{
-        bottom:18px;
-        font-size:14px;
-        padding:12px 16px;
-      }
-    }
-
-    @media (max-width: 420px){
-      .panelTitle{
-        font-size:17px;
-      }
-
-      .warmCount{
-        font-size:26px;
-      }
-
-      .characterBtn{
-        font-size:13px;
-        padding:9px 12px;
-      }
-
-      button{
-        font-size:15px;
-        padding:12px 18px;
-      }
-
-      #msg{
-        min-height:88px;
-        font-size:15px;
-      }
+    @media (max-width:760px){
+      .frame{ width:100vw; min-height:100vh; margin:0; border-radius:0; }
+      header{ font-size:30px; padding-top:74px; }
+      .sub{ font-size:15px; }
+      .heroBear{ font-size:96px; }
+      .heroNote{ font-size:16px; border-radius:28px; }
+      .chatTitle{ font-size:21px; }
+      .msgWrap{ max-width:92%; }
+      #messages{ min-height:280px; }
+      .topLeftButtons{ top:12px; left:12px; }
+      .leftTopBtn{ min-width:104px; }
     }
   </style>
 </head>
 <body>
-  <div class="appShell">
-    <div class="frame">
-      <div class="topLeftButtons">
-        <button id="menuBtn" class="softBtn leftTopBtn underlinedStrong" type="button">메뉴</button>
-        <button id="homeBtn" class="softBtn leftTopBtn" type="button">홈으로</button>
-      </div>
-
-      <header>따뜻한 포옹</header>
-      <div class="sub">조언 없이, 판단 없이, 공감만 머무는 익명 감정 쉼터</div>
-
-      <section id="home">
-        <div class="heroBear">🧸</div>
-        <div class="heroNote">
-          오늘 마음은 어떤가요?<br />
-          여기서는 고치려 하지 않아도 괜찮아요. 그냥 내려놓아도 괜찮아요.
-        </div>
-        <div class="cozyMood">☕ 조용한 밤 · 작은 숨 · 따뜻한 조명</div>
-        <div class="homeButtons">
-          <button id="startBtn" type="button">마음 내려놓기</button>
-          <button id="donateBtn" class="softBtn" type="button">후원하기</button>
-        </div>
-      </section>
-
-      <section id="app">
-        <aside class="sidePanel">
-          <div class="panelCard">
-            <div class="panelTitle">오늘 받은 포옹</div>
-            <div class="warmCount" id="todayHugs">0 🫂</div>
-            <div class="statLine">총 포옹 수 <strong id="weekWarmth">0 hugs</strong></div>
-          </div>
-
-          <div class="panelCard">
-            <div class="panelTitle">오늘의 마음</div>
-            <div class="statLine" id="emotionSummary">아직 기록이 없어요.</div>
-            <div class="emotionList" id="emotionList"></div>
-          </div>
-
-          <div class="panelCard">
-            <div class="panelTitle">공감 스타일</div>
-            <div class="statLine">성격이 아니라, 다정함의 결을 고르는 방식이에요.</div>
-            <div class="characterList" id="characterList"></div>
-          </div>
-
-          <div class="panelCard">
-            <div class="panelTitle">개인 공간 안내</div>
-            <div class="statLine">- 기록은 서버로 전송되지 않고 이 브라우저에만 저장돼요</div>
-            <div class="statLine">- 외부 통신 기능은 차단되어 있어요</div>
-            <div class="statLine">- 같은 기기와 같은 브라우저에서만 지난 기록을 다시 볼 수 있어요</div>
-          </div>
-        </aside>
-
-        <div class="mainPanel">
-          <div class="chatTop">
-            <div class="chatBearMini" id="characterEmoji">🍵</div>
-            <div>
-              <div class="chatTitle" id="characterTitle">둥글레차</div>
-              <div class="chatDesc" id="characterDesc">일상에서 지친 마음을 담백하게 안아주는 공감이에요.</div>
-            </div>
-            <div class="topAction">
-              <button id="clearBtn" class="softBtn" type="button">기록 지우기</button>
-              <button id="guideBtn" class="softBtn" type="button">도움 연결</button>
-            </div>
-          </div>
-
-          <div class="characterTabs" id="characterTabs"></div>
-          <div id="messages" aria-live="polite"></div>
-
-          <div class="inputArea">
-            <textarea id="msg" maxlength="120" placeholder="오늘 마음을 적어보세요..." aria-label="마음 입력"></textarea>
-            <div class="inputBottom">
-              <div class="charCount"><span id="charCount">0</span> / 120</div>
-              <div class="inputBtns">
-                <button id="sendBtn" type="button">공감 받기</button>
-                <button id="emotionBtn" class="softBtn" type="button">감정 기록</button>
-                <button id="hugMyselfBtn" class="softBtn" type="button">나에게 포옹</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+  <div class="frame">
+    <div class="topLeftButtons">
+      <button id="menuBtn" class="softBtn leftTopBtn underlinedStrong" type="button">메뉴</button>
+      <button id="homeBtn" class="softBtn leftTopBtn" type="button">홈으로</button>
     </div>
+
+    <header>따뜻한 포옹</header>
+    <div class="sub">조언 없이, 판단 없이, 공감만 머무는 익명 감정 쉼터</div>
+
+    <section id="home">
+      <div class="heroBear">🧸</div>
+      <div class="heroNote">
+        오늘 마음은 어떤가요?<br />
+        여기서는 고치려 하지 않아도 괜찮아요. 그냥 내려놓아도 괜찮아요.
+      </div>
+      <div class="cozyMood">☕ 조용한 밤 · 작은 숨 · 따뜻한 조명</div>
+      <div class="homeButtons">
+        <button id="startBtn" type="button">마음 내려놓기</button>
+        <button id="donateBtn" class="softBtn" type="button">후원하기</button>
+      </div>
+    </section>
+
+    <section id="app">
+      <aside class="sidePanel">
+        <div class="panelCard">
+          <div class="panelTitle">오늘 받은 포옹</div>
+          <div class="warmCount" id="todayHugs">0 🫂</div>
+          <div class="statLine">총 포옹 수 <strong id="weekWarmth">0 hugs</strong></div>
+        </div>
+
+        <div class="panelCard">
+          <div class="panelTitle">오늘의 마음</div>
+          <div class="statLine" id="emotionSummary">아직 기록이 없어요.</div>
+          <div class="emotionList" id="emotionList"></div>
+        </div>
+
+        <div class="panelCard">
+          <div class="panelTitle">공감 스타일</div>
+          <div class="statLine">성격이 아니라, 다정함의 결을 고르는 방식이에요.</div>
+          <div class="characterList" id="characterList"></div>
+        </div>
+
+        <div class="panelCard">
+          <div class="panelTitle">개인 공간 안내</div>
+          <div class="statLine">- 이 공간은 나만의 기록용이에요</div>
+          <div class="statLine">- 다른 사람의 대화와 섞이지 않아요</div>
+          <div class="statLine">- 이 기기에서는 지난 온기가 그대로 남아요</div>
+        </div>
+      </aside>
+
+      <div class="mainPanel">
+        <div class="chatTop">
+          <div class="chatBearMini" id="characterEmoji">🍵</div>
+          <div>
+            <div class="chatTitle" id="characterTitle">둥글레차</div>
+            <div class="chatDesc" id="characterDesc">일상에서 지친 마음을 담백하게 안아주는 공감이에요.</div>
+          </div>
+          <div class="topAction">
+            <button id="clearBtn" class="softBtn" type="button">기록 지우기</button>
+            <button id="guideBtn" class="softBtn" type="button">도움 연결</button>
+          </div>
+        </div>
+
+        <div class="characterTabs" id="characterTabs"></div>
+
+        <div id="messages" aria-live="polite"></div>
+
+        <div class="inputArea">
+          <textarea id="msg" maxlength="120" placeholder="오늘 마음을 적어보세요..." aria-label="마음 입력"></textarea>
+          <div class="inputBottom">
+            <div class="charCount"><span id="charCount">0</span> / 120</div>
+            <div class="inputBtns">
+              <button id="sendBtn" type="button">공감 받기</button>
+              <button id="emotionBtn" class="softBtn" type="button">감정 기록</button>
+              <button id="hugMyselfBtn" class="softBtn" type="button">나에게 포옹</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 
   <div id="modal" class="modalOverlay" aria-hidden="true">
@@ -958,62 +715,29 @@
 
   <div id="notice" aria-live="polite"></div>
 
+  <!--
+  =========================================
+  따뜻한 포옹 Warmhug
+  Original Creator: 여사랑
+  All Rights Reserved
+
+  이 코드는 제작자 여사랑의 창작물입니다.
+  무단 복제 / 재배포 / 상업적 사용을 금지합니다.
+  =========================================
+  -->
+
   <script>
-    const STORAGE_KEY = "warmhug_private_diary_v4";
+    const STORAGE_KEY = "warmhug_private_diary_v3";
     const DONATION_BANK = "국민은행";
     const DONATION_ACCOUNT = "51840201642069";
-    const DONATION_HOLDER = "RANG";
-    const SITE_CREATOR = "RANG";
-    const SITE_SIGNATURE = "Warmhug Original by RANG";
-    const PRIVACY_MODE = {
-      localOnly: true,
-      networkBlocked: true,
-      externalStorage: false
-    };
+    const DONATION_HOLDER = "여사랑";
+    const SITE_CREATOR = "여사랑";
+    const SITE_SIGNATURE = "Warmhug Original by 여사랑";
 
     console.log(
-      "%cWarmhug - 따뜻한 포옹\nCreator: RANG\nLocal-only mode enabled.\nExternal network blocked.",
+      "%cWarmhug - 따뜻한 포옹\nCreator: 여사랑\nUnauthorized copying prohibited.",
       "color:#7a5842;font-size:14px;font-weight:bold;"
     );
-
-    (function enforcePrivacyMode(){
-      const blocked = () => {
-        throw new Error("Privacy mode: external network access is blocked.");
-      };
-
-      try {
-        if (typeof window.fetch === "function") {
-          window.fetch = blocked;
-        }
-
-        if (typeof XMLHttpRequest !== "undefined") {
-          XMLHttpRequest.prototype.open = blocked;
-          XMLHttpRequest.prototype.send = blocked;
-        }
-
-        if (typeof WebSocket !== "undefined") {
-          window.WebSocket = function(){
-            blocked();
-          };
-        }
-
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon = function(){
-            return false;
-          };
-        }
-      } catch (error) {
-        console.warn("Privacy mode patch error:", error);
-      }
-
-      console.info(
-        "[Warmhug Privacy Mode]\n" +
-        "- server upload: disabled\n" +
-        "- external network APIs: blocked\n" +
-        "- storage: localStorage only\n" +
-        "- current session privacy mode:", PRIVACY_MODE
-      );
-    })();
 
     const characters = {
       둥글레차: {
@@ -1021,12 +745,11 @@
         desc: "일상에서 지친 마음을 담백하게 안아주는 공감이에요.",
         short: "일상 위로형",
         templates: [
-          "오늘 마음이 꽤 오래 서 있었던 것 같아.",
-          "조용히 삼켜낸 순간들이 있었겠구나.",
-          "쉽게 지나갈 수 있는 하루는 아니었겠네.",
-          "말보다 먼저 지친 기분이 들었을 것 같아.",
-          "아무렇지 않은 척하기에도 벅찼겠구나.",
-          "하루가 유난히 길게 느껴졌을 것 같아."
+          "그랬구나.\n많이 힘들었겠다.",
+          "그 마음으로 여기까지 왔구나.\n조금 내려놓아도 괜찮아.",
+          "쉽지 않은 하루였겠네.\n여기서는 잠깐 쉬어도 괜찮아.",
+          "그렇게 느꼈구나.\n충분히 그럴 수 있어.",
+          "오늘 하루가 마음을 조금 많이 데려갔구나.\n여기서는 무리하지 않아도 괜찮아."
         ]
       },
       홍차: {
@@ -1034,12 +757,11 @@
         desc: "조금 더 단단하고 또렷하게 마음을 받쳐주는 공감이에요.",
         short: "단단한 공감형",
         templates: [
-          "그 시간을 지나온 것만으로도 이미 많은 걸 해낸 거야.",
-          "버티는 데에도 분명 큰 힘이 들었겠구나.",
-          "무너지지 않으려는 마음이 오래 일하고 있었네.",
-          "겉으로 조용했어도 안에서는 많이 흔들렸을 것 같아.",
-          "견디는 쪽을 택해야 했던 순간이 있었겠지.",
-          "애써 중심을 붙잡고 있었던 마음이 느껴져."
+          "그 일을 겪고도 여기까지 온 거네.\n쉽지 않았겠다.",
+          "무너지지 않으려 애쓴 마음이 느껴져.\n정말 애썼어.",
+          "그 상황 속에서 버티고 있었구나.\n그것만으로도 충분해.",
+          "견디는 동안 많이 지쳤겠다.\n지금은 조금 기대도 괜찮아.",
+          "애써 단단해지려 했던 시간이 있었구나.\n그 노력만으로도 이미 충분히 귀해."
         ]
       },
       캐모마일차: {
@@ -1047,38 +769,19 @@
         desc: "불안하거나 예민한 마음을 천천히 눕혀주는 공감이에요.",
         short: "불안 완화형",
         templates: [
-          "마음이 계속 깨어 있어서 쉽게 쉬지 못했겠구나.",
-          "긴장이 오래 남아 있었던 하루처럼 보여.",
-          "조금만 건드려도 마음이 움찔했을 것 같아.",
-          "불안이 잔물결처럼 계속 번졌겠네.",
-          "가만히 있어도 안쪽이 분주했을 것 같아.",
-          "마음이 자꾸 앞서 달려가던 시간도 있었겠구나."
+          "지금 마음이 많이 흔들리는 것 같아.\n여기서는 천천히 해도 괜찮아.",
+          "긴장된 마음으로 오래 버텼구나.\n조금 숨을 고르고 있어도 괜찮아.",
+          "불안한 밤 같은 마음이었겠네.\n지금 이 순간만큼은 조용해져도 괜찮아.",
+          "많이 조마조마했겠다.\n여기서는 서두르지 않아도 괜찮아.",
+          "마음이 자꾸 깨어나는 밤 같았겠구나.\n조금 느리게 숨 쉬어도 괜찮아."
         ]
       }
     };
 
     const hugTypes = [
-      {
-        id:"ok",
-        label:"조금은 가벼워지길",
-        emoji:"🤍",
-        popupEmoji:"🧸",
-        message:"지금 당장 다 풀리지 않아도,\n마음 한켠은 조금 덜 무거워지길 바랄게요."
-      },
-      {
-        id:"pain",
-        label:"많이 아팠겠어요",
-        emoji:"🫂",
-        popupEmoji:"🫂",
-        message:"버틴다는 말로 다 담기지 않을 만큼,\n마음이 아팠던 시간이 있었겠지요."
-      },
-      {
-        id:"hold",
-        label:"여기까지 온 당신",
-        emoji:"💛",
-        popupEmoji:"🐻",
-        message:"쉽지 않았을 텐데 여기까지 왔네요.\n그 사실만으로도 충분히 귀해요."
-      }
+      { id:"ok", label:"괜찮아질 거예요", emoji:"🤍", popupEmoji:"🧸", message:"괜찮아질 거예요.\n여기서는 잠깐 기대어도 괜찮아요." },
+      { id:"pain", label:"많이 아팠죠", emoji:"🫂", popupEmoji:"🫂", message:"많이 아팠죠.\n이제 잠깐 여기서 쉬어요." },
+      { id:"hold", label:"잘 버텼어요", emoji:"💛", popupEmoji:"🐻", message:"잘 버텼어요.\n지금까지도 충분히 애써왔어요." }
     ];
 
     const blockedWords = ["죽어","병신","멍청","꺼져","씨발","시발","좆","강간","살인"];
@@ -1246,11 +949,7 @@
     }
 
     function saveState(){
-      try{
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      }catch(error){
-        console.error("저장 실패:", error);
-      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
     function getInitialMessageSeq(){
@@ -1266,15 +965,6 @@
       renderMessages();
       updateCharCount();
       showNotice("따뜻한 포옹에 오신 걸 환영해요.");
-
-      if(!state.entries.length){
-        state.entries.push({
-          type:"system",
-          text:"🔒 이 공간의 기록은 서버로 전송되지 않고, 현재 브라우저에만 저장돼요."
-        });
-        saveState();
-        renderMessages();
-      }
     }
 
     function showApp(){
@@ -1517,85 +1207,25 @@
       return topLabel;
     }
 
-    function randomPick(arr){
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
-
     function createEmpathy(text){
       const info = characters[currentCharacter];
-      const intro = randomPick(info.templates);
-
-      const commonClosers = [
-        "여기서는 결론을 내리지 않아도 돼.",
-        "지금 이 마음을 바로 정리하지 않아도 괜찮아.",
-        "조금 흐트러진 채로 있어도 이상하지 않아.",
-        "말이 매끈하지 않아도 마음은 충분히 전해졌어.",
-        "오늘의 마음을 억지로 밝게 만들지 않아도 돼.",
-        "지금은 해결보다 머물 자리가 먼저 필요할 수도 있어."
+      const intro = info.templates[Math.floor(Math.random() * info.templates.length)];
+      const closers = [
+        "여기서는 조금 천천히 있어도 괜찮아.",
+        "지금 바로 정리되지 않아도 괜찮아.",
+        "말이 다 되지 않아도 마음은 충분히 전해졌어.",
+        "조금만 쉬어가도 괜찮아.",
+        "여기서는 애써 밝아지지 않아도 괜찮아."
       ];
+      const closer = closers[Math.floor(Math.random() * closers.length)];
 
-      const emotionSpecific = [
-        {
-          test: /외로|혼자|쓸쓸|고립/,
-          lines: [
-            "곁이 비어 있는 느낌이 유난히 크게 다가왔겠구나.",
-            "아무도 닿지 않는 자리처럼 느껴졌을 수도 있겠다.",
-            "혼자 남겨진 기분이 마음을 오래 붙들었겠네."
-          ]
-        },
-        {
-          test: /속상|상처|서운|섭섭/,
-          lines: [
-            "마음 한쪽에 남은 자국이 아직 선명한 것 같아.",
-            "쉽게 넘길 수 없는 장면이 안쪽에 남아 있겠구나.",
-            "작아 보여도 깊게 남는 일이 있었던 것 같아."
-          ]
-        },
-        {
-          test: /불안|무서|걱정|초조|긴장/,
-          lines: [
-            "마음이 자꾸 다음 일을 먼저 대비하고 있었겠네.",
-            "가만히 있어도 안심이 쉽게 오지 않았을 것 같아.",
-            "몸보다 마음이 먼저 경계하고 있었던 시간 같아."
-          ]
-        },
-        {
-          test: /지쳐|피곤|버겁|소진|녹초|힘들/,
-          lines: [
-            "기운이 천천히 빠져나간 하루였을 것 같아.",
-            "해야 하는 마음과 버거운 마음이 함께 있었겠네.",
-            "조금만 더 버티자는 마음으로 지나왔을 수도 있겠다."
-          ]
-        },
-        {
-          test: /공허|멍|무감각|텅 빈|붕 뜬/,
-          lines: [
-            "마음이 또렷하게 잡히지 않는 시간도 있었겠구나.",
-            "무언가 빠져나간 뒤의 정적 같은 기분이 남아 있었겠네.",
-            "감정이 없는 게 아니라 너무 멀어진 것처럼 느껴질 수도 있어."
-          ]
-        },
-        {
-          test: /화나|짜증|억울|분하|답답|열받|빡쳐/,
-          lines: [
-            "안에서 맺힌 것이 쉽게 풀리지 않았겠구나.",
-            "참아야 해서 더 답답했던 순간이 있었을 것 같아.",
-            "꺼내지 못한 마음이 안쪽에서 오래 부딪혔겠네."
-          ]
-        }
-      ];
+      if(text.includes("외로")) return `${intro}\n외로운 시간이 길었겠구나.\n${closer}`;
+      if(text.includes("속상")) return `${intro}\n마음에 남은 자리가 아직 아프겠네.\n${closer}`;
+      if(text.includes("불안") || text.includes("무서")) return `${intro}\n지금은 서두르지 않아도 괜찮아.\n${closer}`;
+      if(text.includes("지쳐") || text.includes("피곤")) return `${intro}\n많이 소모된 하루였겠다.\n${closer}`;
+      if(text.includes("공허") || text.includes("멍")) return `${intro}\n텅 빈 듯한 시간이었겠네.\n${closer}`;
 
-      const matched = emotionSpecific.find(item => item.test.test(text));
-      const middle = matched ? randomPick(matched.lines) : randomPick([
-        "그 마음이 여기까지 오느라 꽤 애썼겠구나.",
-        "말로 다 꺼내기 어려운 결이 분명 있었을 것 같아.",
-        "혼자 안쪽에서 오래 붙들고 있었던 무게가 있었겠네.",
-        "지나간 일인데도 마음은 아직 거기에 남아 있을 수 있어."
-      ]);
-
-      const closer = randomPick(commonClosers);
-
-      return `${intro}\n${middle}\n${closer}`;
+      return `${intro}\n${closer}`;
     }
 
     function openHugPopup(hugType){
@@ -1680,11 +1310,7 @@
         emoji:"🤎",
         title:"후원하기",
         text:
-`따뜻한 포옹을 응원해주셔서 감사합니다.
-
-${DONATION_BANK}
-${DONATION_ACCOUNT}
-예금주: ${DONATION_HOLDER}`,
+`따뜻한 포옹을 응원해주셔서 감사합니다.\n\n${DONATION_BANK}\n${DONATION_ACCOUNT}\n예금주: ${DONATION_HOLDER}`,
         actions:[
           {
             label:"계좌번호 복사",
@@ -1920,18 +1546,6 @@ ${DONATION_ACCOUNT}
           { label:"감정 기록", className:"softBtn", onClick:showEmotionHistory },
           { label:"오늘 받은 포옹", className:"softBtn", onClick:showTodayHugsInfo },
           { label:"총 포옹 수", className:"softBtn", onClick:showTotalHugsInfo },
-          {
-            label:"개인공간 안내",
-            className:"softBtn",
-            onClick:() => showModal({
-              emoji:"🔒",
-              title:"개인공간 안내",
-              text:"이 공간의 기록은 서버로 전송되지 않고 현재 브라우저에만 저장돼요.\n외부 통신 기능은 차단되어 있어요.\n같은 기기와 같은 브라우저에서만 기록을 다시 볼 수 있어요.",
-              actions:[
-                { label:"확인", className:"softBtn", onClick:() => {} }
-              ]
-            })
-          },
           { label:"닫기", className:"softBtn", onClick:() => {} }
         ]
       });
@@ -1977,7 +1591,6 @@ ${DONATION_ACCOUNT}
         title:"나에게도 포옹",
         text:"오늘의 나도 안아줄게요.\n정말 애썼어요.",
         actions:[
-          
           { label:"고마워요", onClick:() => showNotice("오늘의 나를 다정하게 안아주었어요.") }
         ]
       });
