@@ -1066,7 +1066,7 @@ body{
 
         <div id="messages" aria-live="polite"></div>
 
-      <div id="friendComfortInput" class="inputArea">
+    <div id="friendComfortInput" class="inputArea">
   <div class="roleSelect" id="roleSelect"></div>
   <textarea id="msg" maxlength="50" placeholder="마음을 50자 이내로 적어보세요..." aria-label="고민 입력"></textarea>
   <div class="inputBottom">
@@ -1643,8 +1643,7 @@ const donateBtn = document.getElementById("donateBtn");
       modal.style.display = "none";
       modal.setAttribute("aria-hidden", "true");
     }
-
-   function showSquirrelBlock(){
+function showSquirrelBlock(){
   showModal({
     emoji: "🐿️",
     title: "조금 더 따뜻하게 말해볼까요?",
@@ -1704,52 +1703,6 @@ function showDonationGuide(){
     ]
   });
 }
-function showDonationGuide(){
-  showModal({
-    emoji: "🤎",
-    title: "후원하기",
-    text: "따뜻한 포옹을 응원해주셔서 감사합니다.\n\n국민은행\n51840201642069\n예금주: 여사랑",
-    actions: [
-      {
-        label: "닫기",
-        className: "softBtn",
-        onClick: () => {}
-      }
-    ]
-  });
-}
-  showModal({
-    emoji: "💛",
-    title: "지금의 감정을 골라주세요",
-    text: "가장 가까운 마음을 눌러 기록할 수 있어요.",
-    actions: emotions.map(item => ({
-      label: `${item.emoji} ${item.label}`,
-      className: "softBtn",
-      onClick: () => saveEmotionRecord(item.label, item.emoji)
-    }))
-  });
-}
-
-function saveEmotionRecord(label, emoji){
-  state.emotions.unshift(label);
-  state.emotions = state.emotions.slice(0, 8);
-  saveState();
-  updateEmotionUI();
-  showNotice(`${emoji} ${label} 감정을 기록했어요.`);
-}
-      showModal({
-        emoji: "🐿️",
-        title: "조금 더 따뜻하게 말해볼까요?",
-        text: "괜찮아괜찮아.\n나쁜 말은 하지 말자.\n이 공간은 상처 주는 말을 쉬게 하는 곳이에요.",
-        actions: [
-          {
-            label: "다시 작성하기",
-            onClick: () => msgInput.focus()
-          }
-        ]
-      });
-    }
-
     function showLeaveBear(){
       showModal({
         emoji: "🧸",
