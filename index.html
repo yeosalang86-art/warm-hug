@@ -1215,6 +1215,22 @@ body{
   <div id="notice" aria-live="polite"></div>
 
   <script>
+    function showHomePopup(){
+  showModal({
+    emoji:"🏠",
+    title:"홈",
+    text:`확인하고 싶은 항목을 골라주세요.\n
+감정 기록: ${state.emotions.length ? formatEmotionLabel(state.emotions[0]) : "아직 기록이 없어요."}
+오늘 받은 포옹: ${state.stats.todayHugs}회
+총 포옹 수: ${state.stats.weekWarmth}회`,
+    actions:[
+      { label:"감정 기록 보기", className:"softBtn", onClick:showEmotionHistory },
+      { label:"오늘 받은 포옹", className:"softBtn", onClick:showTodayHugsInfo },
+      { label:"총 포옹 수", className:"softBtn", onClick:showTotalHugsInfo },
+      { label:"홈으로 이동", className:"softBtn", onClick:goHome }
+    ]
+  });
+}
     const STORAGE_KEY = "warm_hug_big_service_v1";
 
     const nicknamePool = [
@@ -1612,7 +1628,7 @@ function init(){
         btn.className = "hugMini";
         btn.type = "button";
         btn.textContent = `${type.emoji} ${type.label}`;
-        btn.addEventListener("click", () => handleHug(item.id, type));
+      homeBtn.addEventListener("click", showHomePopup);
         hugBar.appendChild(btn);
       });
 
