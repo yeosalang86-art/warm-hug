@@ -34,6 +34,56 @@
   color:var(--brown-2);
   line-height:1.7;
 }
+    .homeSummaryCard{
+  width:min(760px, 92vw);
+  background:rgba(255,250,243,.92);
+  border:1px solid rgba(255,255,255,.55);
+  box-shadow:var(--shadow-soft);
+  border-radius:28px;
+  padding:20px;
+}
+
+.homeSummaryTitle{
+  font-family:"MaruBuri", serif;
+  font-size:22px;
+  font-weight:700;
+  color:var(--brown-1);
+  margin-bottom:14px;
+}
+
+.homeSummaryGrid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:12px;
+}
+
+.homeSummaryItem{
+  background:rgba(255,251,246,.92);
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:20px;
+  padding:14px 12px;
+  box-shadow:var(--shadow-soft);
+}
+
+.homeSummaryLabel{
+  font-size:13px;
+  color:var(--brown-3);
+  margin-bottom:8px;
+}
+
+.homeSummaryValue{
+  font-size:16px;
+  font-weight:700;
+  color:var(--brown-1);
+  line-height:1.5;
+  word-break:keep-all;
+}
+
+@media (max-width:760px){
+  .homeSummaryGrid{
+    grid-template-columns:1fr;
+  }
+}
  .msg{
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
@@ -171,7 +221,7 @@ body{
       z-index:2;
     }
 
-    ##home, #rooms, #appView{
+   #home, #rooms, #appView{
   display:none;
   flex-direction:row;
 }
@@ -976,7 +1026,26 @@ body{
     작성한 내용은 다른 사람에게 보이지 않고,<br>
     이 기기의 브라우저에만 저장돼요.
   </div>
+<div class="homeSummaryCard">
+  <div class="homeSummaryTitle">오늘의 기록</div>
 
+  <div class="homeSummaryGrid">
+    <div class="homeSummaryItem">
+      <div class="homeSummaryLabel">감정 기록</div>
+      <div class="homeSummaryValue" id="homeEmotionSummary">아직 기록이 없어요.</div>
+    </div>
+
+    <div class="homeSummaryItem">
+      <div class="homeSummaryLabel">오늘 받은 포옹</div>
+      <div class="homeSummaryValue" id="homeTodayHugs">0 🫂</div>
+    </div>
+
+    <div class="homeSummaryItem">
+      <div class="homeSummaryLabel">총 포옹 수</div>
+      <div class="homeSummaryValue" id="homeTotalHugs">0 hugs</div>
+    </div>
+  </div>
+</div>
   <div class="homeButtons">
     <button id="startBtn" type="button">시작하기</button>
     <button id="donateBtn" class="softBtn" type="button">후원하기</button>
@@ -1153,23 +1222,75 @@ body{
     ];
 
     const roomConfig = {
-      comfort: {
-        title: "포근한 방",
-        emoji: "🧸",
-        desc: "말보다 먼저 포근함이 도착하는 공간이에요.",
-        roles: [],
-        welcome: "포근한 방에 들어왔어요.",
-        systemUsers: ["하얀곰", "갈색곰"]
-      },
-     help: {
-  title: "도움연결 방",
-  emoji: "🆘",
-  desc: "혼자 감당하기 어렵다면, 공식 기관과 연결되는 길을 보여드릴게요.",
-  roles: [],
-  welcome: "",
-  systemUsers: []
-},
-    const hugTypes = [
+  comfort: {
+    title: "포근한 방",
+    emoji: "🧸",
+    desc: "말보다 먼저 포근함이 도착하는 공간이에요.",
+    roles: [],
+    welcome: "포근한 방에 들어왔어요.",
+    systemUsers: ["하얀곰", "갈색곰"]
+  },
+  help: {
+    title: "도움연결 방",
+    emoji: "🆘",
+    desc: "혼자 감당하기 어렵다면, 공식 기관과 연결되는 길을 보여드릴게요.",
+    roles: [],
+    welcome: "",
+    systemUsers: []
+  }
+};
+
+const hugTypes = [
+  {
+    id: "ok",
+    label: "괜찮아질 거예요",
+    emoji: "🤍",
+    popupEmoji: "🧸",
+    message: "괜찮아질 거예요.\n여기서는 잠깐 기대어도 괜찮아요."
+  },
+  {
+    id: "hold",
+    label: "잘 될 거예요",
+    emoji: "💛",
+    popupEmoji: "🐻",
+    message: "잘 될 거예요.\n지금까지도 충분히 잘 버텨왔어요."
+  },
+  {
+    id: "pain",
+    label: "많이 아팠죠? 이제 괜찮아요",
+    emoji: "🧡",
+    popupEmoji: "🫂",
+    message: "많이 아팠죠?\n이제 잠깐 여기서 쉬어요."
+  },
+  {
+    id: "help",
+    label: "도움이 필요해보여요",
+    emoji: "🚨",
+    popupEmoji: "🆘",
+    message: "혼자 감당하기 힘들어 보여요.\n전문기관과 연결해볼까요?",
+    needsConfirm: true
+  }
+];
+    const hugTypes = [const roomConfig = {
+  comfort: {
+    title: "포근한 방",
+    emoji: "🧸",
+    desc: "말보다 먼저 포근함이 도착하는 공간이에요.",
+    roles: [],
+    welcome: "포근한 방에 들어왔어요.",
+    systemUsers: ["하얀곰", "갈색곰"]
+  },
+  help: {
+    title: "도움연결 방",
+    emoji: "🆘",
+    desc: "혼자 감당하기 어렵다면, 공식 기관과 연결되는 길을 보여드릴게요.",
+    roles: [],
+    welcome: "",
+    systemUsers: []
+  }
+};
+
+const hugTypes = [
       {
         id: "ok",
         label: "괜찮아질 거예요",
@@ -1242,8 +1363,11 @@ const donateBtn = document.getElementById("donateBtn");
     const backRoomsBtn = document.getElementById("backRoomsBtn");
     const todayHugs = document.getElementById("todayHugs");
     const weekWarmth = document.getElementById("weekWarmth");
-    const emotionSummary = document.getElementById("emotionSummary");
-    const emotionList = document.getElementById("emotionList");
+  const emotionSummary = document.getElementById("emotionSummary");
+const emotionList = document.getElementById("emotionList");
+const homeEmotionSummary = document.getElementById("homeEmotionSummary");
+const homeTodayHugs = document.getElementById("homeTodayHugs");
+const homeTotalHugs = document.getElementById("homeTotalHugs");
     const friendComfortInput = document.getElementById("friendComfortInput");
     const helpPanel = document.getElementById("helpPanel");
     const bgm = document.getElementById("bgm");
@@ -1268,14 +1392,27 @@ const donateBtn = document.getElementById("donateBtn");
     const state = loadState();
 
     init();
+function init(){
+  currentNickname = state.nickname || generateNickname();
+  state.nickname = currentNickname;
+  saveState();
 
-    function init(){
-      currentNickname = state.nickname || generateNickname();
-      state.nickname = currentNickname;
-      saveState();
+  nicknameChip.textContent = `나의 닉네임: ${currentNickname}`;
+  updateStats();
+  updateHomeSummary();
 
-      nicknameChip.textContent = `나의 닉네임: ${currentNickname}`;
-      updateStats();
+  showNotice("포근한 공간에 오신 걸 환영해요.");
+}
+      function updateHomeSummary(){
+  homeTodayHugs.textContent = `${state.stats.todayHugs} 🫂`;
+  homeTotalHugs.textContent = `${state.stats.weekWarmth} hugs`;
+
+  if(!state.emotions.length){
+    homeEmotionSummary.textContent = "아직 기록이 없어요.";
+  }else{
+    homeEmotionSummary.textContent = state.emotions[0];
+  }
+}
 
       showNotice("포근한 공간에 오신 걸 환영해요.");
     }
@@ -1697,9 +1834,12 @@ function showDonationGuide(){
         text: "조심해서 가요.\n언제든 다시 쉬러 와도 괜찮아요.",
         actions: [
           {
-            label: "방 목록으로",
-            onClick: openRooms
-          }
+  label: "방 목록으로",
+  onClick: () => {
+    resetCurrentRoomChat(currentRoom);
+    openRooms();
+  }
+}
         ]
       });
     }
@@ -1864,15 +2004,17 @@ setTimeout(scrollBottom, 100);
         ]
       });
     }
-
-    function clearCurrentRoom(){
-      state.rooms[currentRoom] = [];
-      saveState();
-      renderMessages(currentRoom);
-      addSystemMessage(roomConfig[currentRoom].welcome, currentRoom, true);
-      showNotice("이 방의 대화를 지웠어요.");
-    }
-
+function resetCurrentRoomChat(roomKey){
+  state.rooms[roomKey] = [];
+  saveState();
+}
+       function clearCurrentRoom(){
+  state.rooms[currentRoom] = [];
+  saveState();
+  renderMessages(currentRoom);
+  addSystemMessage(roomConfig[currentRoom].welcome, currentRoom, true);
+  showNotice("이 방의 대화를 지웠어요.");
+}
     function detectEmotion(text){
       for(const [label, keywords] of Object.entries(emotionKeywords)){
         if(keywords.some(word => text.includes(word))){
@@ -1882,12 +2024,12 @@ setTimeout(scrollBottom, 100);
       return "흔들림";
     }
 
-    function updateStats(){
-      todayHugs.textContent = `${state.stats.todayHugs} 🫂`;
-      weekWarmth.textContent = `${state.stats.weekWarmth} hugs`;
-      updateEmotionUI();
-    }
-
+   function updateStats(){
+  todayHugs.textContent = `${state.stats.todayHugs} 🫂`;
+  weekWarmth.textContent = `${state.stats.weekWarmth} hugs`;
+  updateEmotionUI();
+  updateHomeSummary();
+}
     function updateEmotionUI(){
       emotionList.innerHTML = "";
 
@@ -1895,7 +2037,27 @@ setTimeout(scrollBottom, 100);
         emotionSummary.textContent = "오늘의 마음: 아직 기록이 없어요.";
         return;
       }
+      function updateEmotionUI(){
+  emotionList.innerHTML = "";
 
+  if(!state.emotions.length){
+    emotionSummary.textContent = "오늘의 마음: 아직 기록이 없어요.";
+    updateHomeSummary();
+    return;
+  }
+
+  emotionSummary.textContent = `오늘의 마음: ${state.emotions[0]}`;
+
+  const uniq = [...new Set(state.emotions)].slice(0, 6);
+  uniq.forEach(emotion => {
+    const chip = document.createElement("div");
+    chip.className = "emotionChip";
+    chip.textContent = emotion;
+    emotionList.appendChild(chip);
+  });
+
+  updateHomeSummary();
+}
       emotionSummary.textContent = `오늘의 마음: ${state.emotions[0]}`;
 
       const uniq = [...new Set(state.emotions)].slice(0, 6);
@@ -1983,7 +2145,7 @@ donateBtn.addEventListener("click", showDonationGuide);
 
     clearBtn.addEventListener("click", clearCurrentRoom);
     leaveBtn.addEventListener("click", showLeaveBear);
-    backRoomsBtn.addEventListener("click", openRooms);
+    backRoomsBtn.addEventListener("click", () => {   resetCurrentRoomChat(currentRoom);   openRooms(); });
 
     modal.addEventListener("click", (e) => {
       if(e.target === modal){
