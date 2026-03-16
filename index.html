@@ -175,6 +175,35 @@
       grid-template-columns:320px minmax(0, 1fr);
     }
 
+    .languagePicker{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+      margin-bottom:4px;
+    }
+
+    .languageTitle{
+      font-size:15px;
+      color:var(--brown-3);
+    }
+
+    .languageButtons{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+
+    .langBtn{
+      min-width:92px;
+    }
+
+    .langBtn.active{
+      background:linear-gradient(180deg, var(--accent-1), var(--accent-2));
+      color:var(--brown-1);
+    }
+
     .heroBear{
       font-size:120px;
       line-height:1;
@@ -968,8 +997,26 @@
     }
 
     @media (max-width: 920px){
+      .frame{
+        overflow-x:hidden;
+      }
+
+      #home,
+      #app{
+        width:100%;
+      }
+
       #app{
         grid-template-columns:1fr;
+      }
+
+      .sidePanel,
+      .mainPanel,
+      .chatTop,
+      .inputArea,
+      .panelCard,
+      .heroNote{
+        max-width:100%;
       }
 
       .sidePanel{
@@ -1012,9 +1059,22 @@
       .msgWrap{
         max-width:100%;
       }
+
+      .topLeftButtons{
+        z-index:40;
+      }
     }
 
     @media (max-width: 760px){
+      body{
+        overflow-x:hidden;
+      }
+
+      .frame{
+        width:100%;
+        min-width:0;
+      }
+
       header{
         font-size:28px;
         padding:80px 16px 8px;
@@ -1036,15 +1096,33 @@
       }
 
       .heroNote{
+        width:100%;
+        max-width:100%;
         font-size:15px;
         line-height:1.75;
         padding:18px;
         border-radius:22px;
       }
 
+      .languageButtons{
+        width:100%;
+        display:grid;
+        grid-template-columns:1fr 1fr 1fr;
+        gap:8px;
+      }
+
+      .langBtn{
+        min-width:0;
+        width:100%;
+        padding:11px 10px;
+        font-size:14px;
+      }
+
       .homeButtons{
         width:100%;
-        flex-direction:column;
+        display:grid;
+        grid-template-columns:1fr;
+        gap:8px;
       }
 
       .homeButtons button{
@@ -1080,10 +1158,36 @@
         font-size:14px;
       }
 
+      .chatTop{
+        gap:10px;
+      }
+
+      .topAction{
+        width:100%;
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:8px;
+      }
+
+      .topAction button{
+        width:100%;
+        margin:0;
+      }
+
+      .characterTabs{
+        width:100%;
+      }
+
       .msg{
         font-size:15px;
         padding:14px 16px;
         line-height:1.7;
+        width:auto;
+        max-width:100%;
+      }
+
+      #messages{
+        min-height:42vh;
       }
 
       .inputBottom{
@@ -1092,6 +1196,7 @@
       }
 
       .inputBtns{
+        width:100%;
         display:grid;
         grid-template-columns:1fr 1fr;
         gap:8px;
@@ -1123,34 +1228,74 @@
       }
 
       .musicControl{
-        right:10px;
+        width:calc(100% - 20px);
         left:10px;
+        right:10px;
+        bottom:10px;
         justify-content:center;
+      }
+
+      .musicStatus{
+        font-size:12px;
       }
     }
 
-    @media (max-width: 420px){
-      .panelTitle{
-        font-size:17px;
+    @media (max-width: 480px){
+      header{
+        font-size:24px;
       }
 
-      .warmCount{
-        font-size:26px;
-      }
-
-      .characterBtn{
+      .sub{
         font-size:13px;
-        padding:9px 12px;
       }
 
-      button{
-        font-size:15px;
-        padding:12px 18px;
+      .heroBear{
+        font-size:72px;
+      }
+
+      .heroNote{
+        font-size:14px;
+        line-height:1.7;
+        padding:16px;
+      }
+
+      .chatTitle{
+        font-size:18px;
+      }
+
+      .chatDesc{
+        font-size:13px;
+      }
+
+      .panelTitle{
+        font-size:16px;
+      }
+
+      .statLine,
+      .charCount{
+        font-size:13px;
+      }
+
+      .msg{
+        font-size:14px;
+        line-height:1.65;
       }
 
       #msg{
-        min-height:88px;
-        font-size:15px;
+        font-size:14px;
+        min-height:84px;
+      }
+
+      .modalCard{
+        padding:18px 14px;
+      }
+
+      .modalTitle{
+        font-size:22px;
+      }
+
+      .modalText{
+        font-size:14px;
       }
     }
   </style>
@@ -1168,15 +1313,27 @@
       </div>
 
       <header>따뜻한 포옹</header>
-      <div class="sub">조언 없이, 판단 없이, 공감만 머무는 익명 감정 쉼터</div>
+      <div class="sub" id="siteSub">조언 없이, 판단 없이, 공감만 머무는 익명 감정 쉼터</div>
 
       <section id="home">
+        <div class="languagePicker" id="languagePicker">
+          <div class="languageTitle" id="languageTitle">언어를 선택해주세요</div>
+          <div class="languageButtons">
+            <button id="langKoBtn" class="softBtn langBtn active" type="button">한국어</button>
+            <button id="langEnBtn" class="softBtn langBtn" type="button">English</button>
+            <button id="langZhBtn" class="softBtn langBtn" type="button">中文</button>
+          </div>
+        </div>
+
         <div class="heroBear">🧸</div>
-        <div class="heroNote">
+
+        <div class="heroNote" id="homeHeroNote">
           오늘 마음은 어떤가요?<br />
           여기서는 고치려 하지 않아도 괜찮아요. 그냥 내려놓아도 괜찮아요.
         </div>
-        <div class="cozyMood">☕ 조용한 밤 · 작은 숨 · 따뜻한 조명</div>
+
+        <div class="cozyMood" id="homeCozyMood">☕ 조용한 밤 · 작은 숨 · 따뜻한 조명</div>
+
         <div class="homeButtons">
           <button id="startBtn" type="button">마음 내려놓기</button>
           <button id="donateBtn" class="softBtn" type="button">후원하기</button>
@@ -1186,28 +1343,28 @@
       <section id="app">
         <aside class="sidePanel">
           <div class="panelCard">
-            <div class="panelTitle">오늘 받은 포옹</div>
+            <div class="panelTitle" id="todayHugsTitle">오늘 받은 포옹</div>
             <div class="warmCount" id="todayHugs">0 🫂</div>
-            <div class="statLine">총 포옹 수 <strong id="weekWarmth">0 hugs</strong></div>
+            <div class="statLine"><span id="totalHugsLabel">총 포옹 수</span> <strong id="weekWarmth">0 hugs</strong></div>
           </div>
 
           <div class="panelCard">
-            <div class="panelTitle">오늘의 마음</div>
+            <div class="panelTitle" id="todayEmotionTitle">오늘의 마음</div>
             <div class="statLine" id="emotionSummary">아직 기록이 없어요.</div>
             <div class="emotionList" id="emotionList"></div>
           </div>
 
           <div class="panelCard">
-            <div class="panelTitle">공감 스타일</div>
-            <div class="statLine">성격이 아니라, 다정함의 결을 고르는 방식이에요.</div>
+            <div class="panelTitle" id="empathyStyleTitle">공감 스타일</div>
+            <div class="statLine" id="empathyStyleDesc">성격이 아니라, 다정함의 결을 고르는 방식이에요.</div>
             <div class="characterList" id="characterList"></div>
           </div>
 
           <div class="panelCard">
-            <div class="panelTitle">개인 공간 안내</div>
-            <div class="statLine">- 기록은 이 브라우저에만 저장돼요</div>
-            <div class="statLine">- 같은 기기와 같은 브라우저에서만 다시 볼 수 있어요</div>
-            <div class="statLine">- 기록 지우기를 누르면 저장된 내용도 함께 정리돼요</div>
+            <div class="panelTitle" id="privateGuideTitle">개인 공간 안내</div>
+            <div class="statLine" id="privateGuideLine1">- 기록은 이 브라우저에만 저장돼요</div>
+            <div class="statLine" id="privateGuideLine2">- 같은 기기와 같은 브라우저에서만 다시 볼 수 있어요</div>
+            <div class="statLine" id="privateGuideLine3">- 기록 지우기를 누르면 저장된 내용도 함께 정리돼요</div>
           </div>
         </aside>
 
@@ -1260,77 +1417,419 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "warmhug_private_diary_v5";
+    const STORAGE_KEY = "warmhug_private_diary_v6";
     const MUSIC_PREF_KEY = "warmhug_bgm_enabled_v1";
+    const LANGUAGE_KEY = "warmhug_language_v1";
     const DONATION_BANK = "국민은행";
     const DONATION_ACCOUNT = "51840201642069";
     const DONATION_HOLDER = "RANG";
 
+    let currentLanguage = localStorage.getItem(LANGUAGE_KEY) || "ko";
+
+    const i18n = {
+      ko: {
+        languageTitle: "언어를 선택해주세요",
+        siteSub: "조언 없이, 판단 없이, 공감만 머무는 익명 감정 쉼터",
+        homeHeroNote: "오늘 마음은 어떤가요?\n여기서는 고치려 하지 않아도 괜찮아요. 그냥 내려놓아도 괜찮아요.",
+        homeCozyMood: "☕ 조용한 밤 · 작은 숨 · 따뜻한 조명",
+        startBtn: "마음 내려놓기",
+        donateBtn: "후원하기",
+        clearBtn: "기록 지우기",
+        guideBtn: "도움 연결",
+        sendBtn: "공감 받기",
+        emotionBtn: "감정 기록",
+        hugMyselfBtn: "나에게 포옹",
+        inputPlaceholder: "오늘 마음을 적어보세요...",
+        todayHugsTitle: "오늘 받은 포옹",
+        totalHugsLabel: "총 포옹 수",
+        todayEmotionTitle: "오늘의 마음",
+        empathyStyleTitle: "공감 스타일",
+        empathyStyleDesc: "성격이 아니라, 다정함의 결을 고르는 방식이에요.",
+        privateGuideTitle: "개인 공간 안내",
+        privateGuideLine1: "- 기록은 이 브라우저에만 저장돼요",
+        privateGuideLine2: "- 같은 기기와 같은 브라우저에서만 다시 볼 수 있어요",
+        privateGuideLine3: "- 기록 지우기를 누르면 저장된 내용도 함께 정리돼요",
+        welcome: "따뜻한 포옹에 오신 걸 환영해요.",
+        noEmotion: "아직 기록이 없어요.",
+        emotionPrefix: "오늘의 마음: ",
+        totalHugsUnit: "hugs",
+        privateSystem: "🔒 이 공간의 기록은 현재 브라우저에만 조용히 남아요.",
+        inputAria: "마음 입력",
+        menuBtn: "메뉴",
+        homeBtn: "홈으로",
+        musicOn: "음악 켜기",
+        musicOff: "음악 끄기",
+        musicWaiting: "배경음악 대기중",
+        musicPlaying: "배경음악 재생중",
+        musicNeedTouch: "브라우저 정책상 버튼을 눌러야 재생돼요",
+        musicMissing: "music.wav.wav 파일을 찾지 못했어요",
+        emotionRecorded: "감정을 기록했어요.",
+        thanks: "고마워요",
+        confirm: "확인",
+        close: "닫기",
+        menuTitle: "메뉴",
+        menuText: "확인하고 싶은 항목을 골라주세요.",
+        emotionHistory: "감정 기록",
+        todayHugsInfo: "오늘 받은 포옹",
+        totalHugsInfo: "총 포옹 수",
+        helpTitle: "도움 연결",
+        helpText: "필요한 기관을 골라 바로 이동할 수 있어요.",
+        donationTitle: "후원하기",
+        donationThanks: "따뜻한 포옹을 응원해주셔서 감사합니다.",
+        copyAccount: "계좌번호 복사",
+        copied: "계좌번호를 복사했어요.",
+        copyFailed: "복사에 실패했어요. 직접 길게 눌러 복사해주세요.",
+        emotionPickTitle: "지금의 감정을 골라주세요",
+        emotionPickText: "가장 가까운 마음을 눌러 기록할 수 있어요.",
+        todayHugsText: (n) => `오늘 받은 포옹은 ${n}회예요.\n오늘의 나를 안아준 횟수도 포함돼요.`,
+        totalHugsText: (n) => `지금까지 받은 전체 포옹 수는 ${n}회예요.\n차곡차곡 쌓인 다정함이에요.`,
+        clearTitle: "어느 범위를 지울까요?",
+        clearText: "대화만 지울 수도 있고, 이 공간의 기록을 모두 정리할 수도 있어요.",
+        clearChatOnly: "대화만 지우기",
+        clearAll: "전체 기록 지우기",
+        cancel: "취소",
+        chatCleared: "대화를 지웠어요.",
+        allCleared: "전체 기록을 지웠어요.",
+        rewriteWarmly: "조금 더 따뜻하게 말해볼까요?",
+        rewriteWarmlyText: "이 공간은 상처 주는 말을 쉬게 하는 곳이에요.",
+        rewriteAction: "다시 작성하기",
+        bearHugTitle: "따뜻한 포옹",
+        hugTransferred: "따뜻함이 전해졌어요.",
+        selfHugTitle: "나에게도 포옹",
+        selfHugText: "오늘의 나도 조용히 안아줄게요.\n여기까지 온 것만으로도 충분히 귀해요.",
+        selfHugNotice: "오늘의 나를 다정하게 안아주었어요.",
+        urgentTitle: "지금은 도움 연결이 먼저 필요해 보여요",
+        urgentText: "혼자 감당하기 너무 버거운 마음처럼 느껴져요.\n가능하면 지금 바로 가까운 도움과 연결되어 주세요.",
+        openHelp: "도움 연결 열기",
+        okayNow: "지금은 괜찮아요",
+        concernNotice: "필요하면 도움 연결 버튼도 조용히 열어볼 수 있어요.",
+        donateClose: "닫기"
+      },
+      en: {
+        languageTitle: "Choose your language",
+        siteSub: "An anonymous emotional resting place where only empathy stays, without advice or judgment",
+        homeHeroNote: "How is your heart today?\nYou do not need to fix anything here. You may simply set it down.",
+        homeCozyMood: "☕ quiet night · small breath · warm light",
+        startBtn: "Set down your heart",
+        donateBtn: "Donate",
+        clearBtn: "Clear records",
+        guideBtn: "Get help",
+        sendBtn: "Receive empathy",
+        emotionBtn: "Log emotion",
+        hugMyselfBtn: "Hug myself",
+        inputPlaceholder: "Write how you feel today...",
+        todayHugsTitle: "Hugs received today",
+        totalHugsLabel: "Total hugs",
+        todayEmotionTitle: "Today's feelings",
+        empathyStyleTitle: "Empathy style",
+        empathyStyleDesc: "Not personality, but the tone of gentleness you want beside you.",
+        privateGuideTitle: "Private space guide",
+        privateGuideLine1: "- Your records stay only in this browser",
+        privateGuideLine2: "- You can revisit them only on the same device and browser",
+        privateGuideLine3: "- If you clear records, saved content is removed together",
+        welcome: "Welcome to Warm Hug.",
+        noEmotion: "No records yet.",
+        emotionPrefix: "Today's feelings: ",
+        totalHugsUnit: "hugs",
+        privateSystem: "🔒 Records in this space stay quietly inside this browser only.",
+        inputAria: "emotion input",
+        menuBtn: "Menu",
+        homeBtn: "Home",
+        musicOn: "Play music",
+        musicOff: "Stop music",
+        musicWaiting: "Background music waiting",
+        musicPlaying: "Background music playing",
+        musicNeedTouch: "Your browser requires a tap before audio can play",
+        musicMissing: "Could not find music.wav.wav",
+        emotionRecorded: "Emotion recorded.",
+        thanks: "Thank you",
+        confirm: "OK",
+        close: "Close",
+        menuTitle: "Menu",
+        menuText: "Choose what you want to check.",
+        emotionHistory: "Emotion log",
+        todayHugsInfo: "Hugs received today",
+        totalHugsInfo: "Total hugs",
+        helpTitle: "Get help",
+        helpText: "Choose a service to open right away.",
+        donationTitle: "Donate",
+        donationThanks: "Thank you for supporting Warm Hug.",
+        copyAccount: "Copy account number",
+        copied: "The account number has been copied.",
+        copyFailed: "Copy failed. Please long-press and copy it manually.",
+        emotionPickTitle: "Choose your current feeling",
+        emotionPickText: "You can record the feeling closest to you.",
+        todayHugsText: (n) => `You received ${n} hugs today.\nThis includes the hugs you gave yourself.`,
+        totalHugsText: (n) => `You have received ${n} hugs in total.\nA quiet collection of warmth.`,
+        clearTitle: "What would you like to clear?",
+        clearText: "You can clear only the conversation or erase all saved records in this space.",
+        clearChatOnly: "Clear chat only",
+        clearAll: "Clear all records",
+        cancel: "Cancel",
+        chatCleared: "The chat has been cleared.",
+        allCleared: "All records have been cleared.",
+        rewriteWarmly: "Could you say it a little more gently?",
+        rewriteWarmlyText: "This is a place where hurtful words are allowed to rest.",
+        rewriteAction: "Write again",
+        bearHugTitle: "Warm hug",
+        hugTransferred: "The warmth reached you.",
+        selfHugTitle: "A hug for myself",
+        selfHugText: "I will quietly hug today's you too.\nIt is already precious that you made it here.",
+        selfHugNotice: "You gently hugged today's self.",
+        urgentTitle: "It seems more important to connect you with help right now",
+        urgentText: "It feels like this may be too heavy to carry alone.\nIf possible, please connect with nearby help right away.",
+        openHelp: "Open help",
+        okayNow: "I'm okay for now",
+        concernNotice: "If you need it, you can quietly open the help button too.",
+        donateClose: "Close"
+      },
+      zh: {
+        languageTitle: "请选择语言",
+        siteSub: "一个没有建议、没有评判、只停留共鸣的匿名情绪休息处",
+        homeHeroNote: "今天的心情怎么样？\n在这里，你不必急着修复自己。只是放下来，也可以。",
+        homeCozyMood: "☕ 安静的夜晚 · 轻轻的呼吸 · 温暖的灯光",
+        startBtn: "放下心事",
+        donateBtn: "赞助",
+        clearBtn: "清空记录",
+        guideBtn: "帮助连接",
+        sendBtn: "获得共鸣",
+        emotionBtn: "记录情绪",
+        hugMyselfBtn: "给自己一个拥抱",
+        inputPlaceholder: "写下你今天的心情...",
+        todayHugsTitle: "今天收到的拥抱",
+        totalHugsLabel: "总拥抱数",
+        todayEmotionTitle: "今天的心情",
+        empathyStyleTitle: "共鸣风格",
+        empathyStyleDesc: "这不是性格测试，而是选择一种温柔陪伴你的方式。",
+        privateGuideTitle: "私人空间说明",
+        privateGuideLine1: "- 记录只保存在这个浏览器里",
+        privateGuideLine2: "- 只有在同一设备和同一浏览器中才能再次看到",
+        privateGuideLine3: "- 点击清空记录后，保存内容也会一起删除",
+        welcome: "欢迎来到温暖拥抱。",
+        noEmotion: "还没有记录。",
+        emotionPrefix: "今天的心情：",
+        totalHugsUnit: "hugs",
+        privateSystem: "🔒 这个空间里的记录只会安静地保存在当前浏览器中。",
+        inputAria: "情绪输入",
+        menuBtn: "菜单",
+        homeBtn: "回到首页",
+        musicOn: "打开音乐",
+        musicOff: "关闭音乐",
+        musicWaiting: "背景音乐等待中",
+        musicPlaying: "背景音乐播放中",
+        musicNeedTouch: "受浏览器限制，需要先点击后才能播放",
+        musicMissing: "找不到 music.wav.wav 文件",
+        emotionRecorded: "情绪已记录。",
+        thanks: "谢谢",
+        confirm: "确认",
+        close: "关闭",
+        menuTitle: "菜单",
+        menuText: "请选择你想查看的项目。",
+        emotionHistory: "情绪记录",
+        todayHugsInfo: "今天收到的拥抱",
+        totalHugsInfo: "总拥抱数",
+        helpTitle: "帮助连接",
+        helpText: "请选择需要打开的机构。",
+        donationTitle: "赞助",
+        donationThanks: "感谢你支持温暖拥抱。",
+        copyAccount: "复制账号",
+        copied: "账号已复制。",
+        copyFailed: "复制失败。请长按后手动复制。",
+        emotionPickTitle: "请选择你现在的情绪",
+        emotionPickText: "你可以记录最接近此刻的心情。",
+        todayHugsText: (n) => `今天你收到了 ${n} 次拥抱。\n其中也包括你给自己的拥抱。`,
+        totalHugsText: (n) => `到现在为止你一共收到了 ${n} 次拥抱。\n这些温柔都静静积累着。`,
+        clearTitle: "你想清除哪一部分？",
+        clearText: "你可以只清除对话，也可以清除这个空间里的全部记录。",
+        clearChatOnly: "只清除对话",
+        clearAll: "清除全部记录",
+        cancel: "取消",
+        chatCleared: "对话已清除。",
+        allCleared: "全部记录已清除。",
+        rewriteWarmly: "可以再温柔一点吗？",
+        rewriteWarmlyText: "这里是让伤人的话先停下来休息的地方。",
+        rewriteAction: "重新输入",
+        bearHugTitle: "温暖的拥抱",
+        hugTransferred: "温暖已经传达到了。",
+        selfHugTitle: "给自己一个拥抱",
+        selfHugText: "我也会安静地抱一抱今天的你。\n能走到这里，已经很珍贵了。",
+        selfHugNotice: "你温柔地拥抱了今天的自己。",
+        urgentTitle: "现在看起来更需要先连接到帮助",
+        urgentText: "这份心情似乎已经太沉重，不适合独自承担。\n如果可以，请尽快联系身边可获得的帮助。",
+        openHelp: "打开帮助",
+        okayNow: "我现在还好",
+        concernNotice: "如果你需要，也可以安静地打开帮助按钮。",
+        donateClose: "关闭"
+      }
+    };
+
     const characters = {
       둥글레차: {
         emoji: "🍵",
-        desc: "일상에서 지친 마음을 담백하게 안아주는 공감이에요.",
-        short: "일상 위로형",
-        templates: [
-          "오늘 마음이 꽤 오래 서 있었던 것 같아.",
-          "조용히 삼켜낸 순간들이 있었겠구나.",
-          "쉽게 지나갈 수 있는 하루는 아니었겠네.",
-          "말보다 먼저 지친 기분이 들었을 것 같아.",
-          "아무렇지 않은 척하기에도 벅찼겠구나.",
-          "하루가 유난히 길게 느껴졌을 것 같아."
-        ]
+        desc: {
+          ko: "일상에서 지친 마음을 담백하게 안아주는 공감이에요.",
+          en: "A calm, simple empathy that gently holds your tired daily heart.",
+          zh: "一种朴素而安静的共鸣，轻轻抱住日常里疲惫的心。"
+        },
+        short: {
+          ko: "일상 위로형",
+          en: "Daily comfort",
+          zh: "日常安慰型"
+        },
+        templates: {
+          ko: [
+            "오늘 마음이 꽤 오래 서 있었던 것 같아.",
+            "조용히 삼켜낸 순간들이 있었겠구나.",
+            "쉽게 지나갈 수 있는 하루는 아니었겠네."
+          ],
+          en: [
+            "Your heart seems to have been standing through a long day.",
+            "There must have been moments you quietly swallowed.",
+            "This does not seem like a day that could pass easily."
+          ],
+          zh: [
+            "今天你的心好像站了很久。",
+            "一定有一些时刻，你只是安静地咽下去了。",
+            "这似乎不是轻易就能过去的一天。"
+          ]
+        }
       },
       홍차: {
         emoji: "☕",
-        desc: "조금 더 단단하고 또렷하게 마음을 받쳐주는 공감이에요.",
-        short: "단단한 공감형",
-        templates: [
-          "그 시간을 지나온 것만으로도 이미 많은 걸 해낸 거야.",
-          "버티는 데에도 분명 큰 힘이 들었겠구나.",
-          "무너지지 않으려는 마음이 오래 일하고 있었네.",
-          "겉으로 조용했어도 안에서는 많이 흔들렸을 것 같아.",
-          "견디는 쪽을 택해야 했던 순간이 있었겠지.",
-          "애써 중심을 붙잡고 있었던 마음이 느껴져."
-        ]
+        desc: {
+          ko: "조금 더 단단하고 또렷하게 마음을 받쳐주는 공감이에요.",
+          en: "A steadier, clearer empathy that supports your heart more firmly.",
+          zh: "一种更坚定、更清晰地托住你内心的共鸣。"
+        },
+        short: {
+          ko: "단단한 공감형",
+          en: "Steady empathy",
+          zh: "坚定共鸣型"
+        },
+        templates: {
+          ko: [
+            "그 시간을 지나온 것만으로도 이미 많은 걸 해낸 거야.",
+            "버티는 데에도 분명 큰 힘이 들었겠구나.",
+            "애써 중심을 붙잡고 있었던 마음이 느껴져."
+          ],
+          en: [
+            "You have already done a lot simply by coming through that time.",
+            "Even enduring it must have taken real strength.",
+            "I can feel the part of you that kept trying to hold your center."
+          ],
+          zh: [
+            "仅仅是走过那段时间，你已经做了很多。",
+            "光是撑着走下去，就一定花了很大的力气。",
+            "我能感觉到你一直在努力稳住自己。"
+          ]
+        }
       },
       캐모마일차: {
         emoji: "🌼",
-        desc: "불안하거나 예민한 마음을 천천히 눕혀주는 공감이에요.",
-        short: "불안 완화형",
-        templates: [
-          "마음이 계속 깨어 있어서 쉽게 쉬지 못했겠구나.",
-          "긴장이 오래 남아 있었던 하루처럼 보여.",
-          "조금만 건드려도 마음이 움찔했을 것 같아.",
-          "불안이 잔물결처럼 계속 번졌겠네.",
-          "가만히 있어도 안쪽이 분주했을 것 같아.",
-          "마음이 자꾸 앞서 달려가던 시간도 있었겠구나."
-        ]
+        desc: {
+          ko: "불안하거나 예민한 마음을 천천히 눕혀주는 공감이에요.",
+          en: "A soft empathy that gently lays down an anxious or sensitive heart.",
+          zh: "一种会慢慢安放焦虑与敏感内心的温柔共鸣。"
+        },
+        short: {
+          ko: "불안 완화형",
+          en: "Calming empathy",
+          zh: "安抚焦虑型"
+        },
+        templates: {
+          ko: [
+            "마음이 계속 깨어 있어서 쉽게 쉬지 못했겠구나.",
+            "긴장이 오래 남아 있었던 하루처럼 보여.",
+            "불안이 잔물결처럼 계속 번졌겠네."
+          ],
+          en: [
+            "Your heart seems to have stayed awake without much rest.",
+            "It feels like tension lingered through the day.",
+            "The anxiety may have spread in soft waves."
+          ],
+          zh: [
+            "你的心好像一直醒着，没能真正休息。",
+            "这像是紧张感持续了很久的一天。",
+            "那份不安也许像细小的波纹一样一直扩散着。"
+          ]
+        }
       }
     };
 
     const hugTypes = [
       {
         id:"ok",
-        label:"조금은 가벼워지길",
+        label: { ko:"조금은 가벼워지길", en:"A little lighter", zh:"愿你轻一些" },
         emoji:"🤍",
         popupEmoji:"__BEAR_HUG__",
-        message:"지금 당장 다 풀리지 않아도,\n마음 한켠은 조금 덜 무거워지길 바랄게요."
+        message: {
+          ko:"지금 당장 다 풀리지 않아도,\n마음 한켠은 조금 덜 무거워지길 바랄게요.",
+          en:"Even if everything does not loosen right away,\nI hope one corner of your heart feels a little lighter.",
+          zh:"就算现在还不能立刻放下全部，\n也希望你心里的某个角落能稍微轻一点。"
+        }
       },
       {
         id:"pain",
-        label:"많이 아팠겠어요",
+        label: { ko:"많이 아팠겠어요", en:"That must have hurt", zh:"一定很痛吧" },
         emoji:"🫂",
         popupEmoji:"__BEAR_HUG__",
-        message:"버틴다는 말로 다 담기지 않을 만큼,\n마음이 아팠던 시간이 있었겠지요."
+        message: {
+          ko:"버틴다는 말로 다 담기지 않을 만큼,\n마음이 아팠던 시간이 있었겠지요.",
+          en:"There must have been moments when your heart hurt more\nthan the word 'endure' can ever hold.",
+          zh:"一定有一些时候，你心里的痛，\n已经不是“撑着”两个字能装下的了。"
+        }
       },
       {
         id:"hold",
-        label:"여기까지 온 당신",
+        label: { ko:"여기까지 온 당신", en:"You made it here", zh:"走到这里的你" },
         emoji:"💛",
         popupEmoji:"__BEAR_HUG_GOLD__",
-        message:"쉽지 않았을 텐데 여기까지 왔네요.\n그 사실만으로도 충분히 귀해요."
+        message: {
+          ko:"쉽지 않았을 텐데 여기까지 왔네요.\n그 사실만으로도 충분히 귀해요.",
+          en:"It could not have been easy, and yet you made it here.\nThat alone is already precious.",
+          zh:"一定不容易，可你还是走到了这里。\n仅仅这一点，就已经很珍贵。"
+        }
       }
     ];
+
+    const emotionLabels = {
+      ko: [
+        { emoji:"😊", label:"평온" },
+        { emoji:"😢", label:"슬픔" },
+        { emoji:"😟", label:"불안" },
+        { emoji:"😴", label:"지침" },
+        { emoji:"😡", label:"분노" },
+        { emoji:"🥹", label:"울컥" },
+        { emoji:"🤍", label:"위로 필요" },
+        { emoji:"🌫️", label:"멍함" },
+        { emoji:"🌱", label:"안정" },
+        { emoji:"🫂", label:"포옹 받고 싶음" }
+      ],
+      en: [
+        { emoji:"😊", label:"Calm" },
+        { emoji:"😢", label:"Sadness" },
+        { emoji:"😟", label:"Anxiety" },
+        { emoji:"😴", label:"Exhaustion" },
+        { emoji:"😡", label:"Anger" },
+        { emoji:"🥹", label:"Tearful" },
+        { emoji:"🤍", label:"Need comfort" },
+        { emoji:"🌫️", label:"Numbness" },
+        { emoji:"🌱", label:"Stability" },
+        { emoji:"🫂", label:"Need a hug" }
+      ],
+      zh: [
+        { emoji:"😊", label:"平静" },
+        { emoji:"😢", label:"悲伤" },
+        { emoji:"😟", label:"不安" },
+        { emoji:"😴", label:"疲惫" },
+        { emoji:"😡", label:"愤怒" },
+        { emoji:"🥹", label:"想哭" },
+        { emoji:"🤍", label:"需要安慰" },
+        { emoji:"🌫️", label:"发空" },
+        { emoji:"🌱", label:"稳定" },
+        { emoji:"🫂", label:"想被拥抱" }
+      ]
+    };
 
     const blockedWords = ["죽어","병신","멍청","꺼져","씨발","시발","좆","강간","살인"];
     const urgentThreatWords = ["죽고 싶","자살","사라지고 싶","없어지고 싶","폭행","성폭행","납치","칼"];
@@ -1423,14 +1922,36 @@
     };
 
     const emotionDisplayMap = {
-      불안: "마음이 흔들리는 밤",
-      슬픔: "조용히 젖은 마음",
-      분노: "답답하게 맺힌 마음",
-      지침: "많이 지친 하루",
-      위로필요: "포옹이 필요한 마음",
-      관계: "사람 사이에서 다친 마음",
-      멍함: "텅 비어버린 마음",
-      평온: "조금 잠잠해진 마음"
+      ko: {
+        불안: "마음이 흔들리는 밤",
+        슬픔: "조용히 젖은 마음",
+        분노: "답답하게 맺힌 마음",
+        지침: "많이 지친 하루",
+        위로필요: "포옹이 필요한 마음",
+        관계: "사람 사이에서 다친 마음",
+        멍함: "텅 비어버린 마음",
+        평온: "조금 잠잠해진 마음"
+      },
+      en: {
+        불안: "a trembling night inside",
+        슬픔: "a quietly soaked heart",
+        분노: "a tightly knotted heart",
+        지침: "a very tired day",
+        위로필요: "a heart needing comfort",
+        관계: "a heart hurt among people",
+        멍함: "a hollow drifting heart",
+        평온: "a slightly calmer heart"
+      },
+      zh: {
+        불안: "摇晃的夜晚之心",
+        슬픔: "静静湿透的心",
+        분노: "闷闷打结的心",
+        지침: "非常疲惫的一天",
+        위로필요: "需要拥抱的心",
+        관계: "在人际中受伤的心",
+        멍함: "空空发呆的心",
+        평온: "稍微平静下来的心"
+      }
     };
 
     const home = document.getElementById("home");
@@ -1466,6 +1987,23 @@
     const musicToggleBtn = document.getElementById("musicToggleBtn");
     const musicStatus = document.getElementById("musicStatus");
 
+    const languageTitle = document.getElementById("languageTitle");
+    const langKoBtn = document.getElementById("langKoBtn");
+    const langEnBtn = document.getElementById("langEnBtn");
+    const langZhBtn = document.getElementById("langZhBtn");
+    const siteSub = document.getElementById("siteSub");
+    const homeHeroNote = document.getElementById("homeHeroNote");
+    const homeCozyMood = document.getElementById("homeCozyMood");
+    const todayHugsTitle = document.getElementById("todayHugsTitle");
+    const totalHugsLabel = document.getElementById("totalHugsLabel");
+    const todayEmotionTitle = document.getElementById("todayEmotionTitle");
+    const empathyStyleTitle = document.getElementById("empathyStyleTitle");
+    const empathyStyleDesc = document.getElementById("empathyStyleDesc");
+    const privateGuideTitle = document.getElementById("privateGuideTitle");
+    const privateGuideLine1 = document.getElementById("privateGuideLine1");
+    const privateGuideLine2 = document.getElementById("privateGuideLine2");
+    const privateGuideLine3 = document.getElementById("privateGuideLine3");
+
     const state = loadState();
     let currentCharacter = state.currentCharacter || "둥글레차";
     let messageSeq = getInitialMessageSeq();
@@ -1473,6 +2011,10 @@
     let userActivatedAudio = false;
 
     init();
+
+    function t(){
+      return i18n[currentLanguage] || i18n.ko;
+    }
 
     function defaultState(){
       return {
@@ -1513,7 +2055,61 @@
       return count + 1;
     }
 
+    function setLanguage(lang){
+      currentLanguage = lang;
+      localStorage.setItem(LANGUAGE_KEY, lang);
+      applyLanguage();
+      renderCharacterTabs();
+      updateCharacterUI();
+      updateEmotionUI();
+      updateStats();
+      renderMessages();
+    }
+
+    function updateLanguageButtons(){
+      [langKoBtn, langEnBtn, langZhBtn].forEach(btn => btn.classList.remove("active"));
+      if(currentLanguage === "ko") langKoBtn.classList.add("active");
+      if(currentLanguage === "en") langEnBtn.classList.add("active");
+      if(currentLanguage === "zh") langZhBtn.classList.add("active");
+    }
+
+    function applyLanguage(){
+      const dict = t();
+
+      languageTitle.textContent = dict.languageTitle;
+      siteSub.textContent = dict.siteSub;
+      homeHeroNote.innerHTML = dict.homeHeroNote.replace(/\n/g, "<br />");
+      homeCozyMood.textContent = dict.homeCozyMood;
+
+      startBtn.textContent = dict.startBtn;
+      donateBtn.textContent = dict.donateBtn;
+      clearBtn.textContent = dict.clearBtn;
+      guideBtn.textContent = dict.guideBtn;
+      sendBtn.textContent = dict.sendBtn;
+      emotionBtn.textContent = dict.emotionBtn;
+      hugMyselfBtn.textContent = dict.hugMyselfBtn;
+      menuBtn.textContent = dict.menuBtn;
+      homeBtn.textContent = dict.homeBtn;
+
+      msgInput.placeholder = dict.inputPlaceholder;
+      msgInput.setAttribute("aria-label", dict.inputAria);
+
+      todayHugsTitle.textContent = dict.todayHugsTitle;
+      totalHugsLabel.textContent = dict.totalHugsLabel;
+      todayEmotionTitle.textContent = dict.todayEmotionTitle;
+      empathyStyleTitle.textContent = dict.empathyStyleTitle;
+      empathyStyleDesc.textContent = dict.empathyStyleDesc;
+      privateGuideTitle.textContent = dict.privateGuideTitle;
+      privateGuideLine1.textContent = dict.privateGuideLine1;
+      privateGuideLine2.textContent = dict.privateGuideLine2;
+      privateGuideLine3.textContent = dict.privateGuideLine3;
+
+      updateMusicUI(!bgm.paused);
+      updateLanguageButtons();
+    }
+
     function init(){
+      applyLanguage();
       renderCharacterTabs();
       updateCharacterUI();
       updateStats();
@@ -1521,12 +2117,12 @@
       renderMessages();
       updateCharCount();
       initMusic();
-      showNotice("따뜻한 포옹에 오신 걸 환영해요.");
+      showNotice(t().welcome);
 
       if(!state.entries.length){
         state.entries.push({
           type:"system",
-          text:"🔒 이 공간의 기록은 현재 브라우저에만 조용히 남아요."
+          text:t().privateSystem
         });
         saveState();
         renderMessages();
@@ -1536,23 +2132,16 @@
     function initMusic(){
       const enabled = localStorage.getItem(MUSIC_PREF_KEY) === "true";
       updateMusicUI(enabled);
-
       bgm.volume = 0.42;
 
       if(enabled){
         attemptPlayMusic();
       }
 
-      bgm.addEventListener("play", () => {
-        updateMusicUI(true);
-      });
-
-      bgm.addEventListener("pause", () => {
-        updateMusicUI(false);
-      });
-
+      bgm.addEventListener("play", () => updateMusicUI(true));
+      bgm.addEventListener("pause", () => updateMusicUI(false));
       bgm.addEventListener("error", () => {
-        musicStatus.textContent = "music.wav.wav 파일을 찾지 못했어요";
+        musicStatus.textContent = t().musicMissing;
       });
     }
 
@@ -1564,824 +2153,10 @@
         updateMusicUI(true);
       }catch(error){
         updateMusicUI(false);
-        musicStatus.textContent = "브라우저 정책상 버튼을 눌러야 재생돼요";
+        musicStatus.textContent = t().musicNeedTouch;
       }
     }
 
     function updateMusicUI(isPlaying){
-      musicToggleBtn.textContent = isPlaying ? "음악 끄기" : "음악 켜기";
-      musicStatus.textContent = isPlaying ? "배경음악 재생중" : "배경음악 대기중";
-    }
-
-    function toggleMusic(){
-      if(bgm.paused){
-        attemptPlayMusic();
-      }else{
-        bgm.pause();
-        localStorage.setItem(MUSIC_PREF_KEY, "false");
-        updateMusicUI(false);
-      }
-    }
-
-    function unlockAudioOnce(){
-      if(userActivatedAudio) return;
-      if(localStorage.getItem(MUSIC_PREF_KEY) === "true"){
-        attemptPlayMusic();
-      }
-      userActivatedAudio = true;
-    }
-
-    function showApp(){
-      home.style.display = "none";
-      app.style.display = "grid";
-      setTimeout(() => msgInput.focus(), 120);
-      setTimeout(scrollBottom, 150);
-    }
-
-    function goHome(){
-      app.style.display = "none";
-      home.style.display = "flex";
-      window.scrollTo({ top:0, behavior:"smooth" });
-    }
-
-    function showNotice(text){
-      notice.textContent = text;
-      notice.style.display = "block";
-      clearTimeout(showNotice.timer);
-      showNotice.timer = setTimeout(() => {
-        notice.style.display = "none";
-      }, 2400);
-    }
-
-    function updateStats(){
-      todayHugs.textContent = `${state.stats.todayHugs} 🫂`;
-      weekWarmth.textContent = `${state.stats.weekWarmth} hugs`;
-    }
-
-    function formatEmotionLabel(label){
-      if(!label) return label;
-      if(label.includes(" · ")){
-        return label.split(" · ").map(item => emotionDisplayMap[item] || item).join(" · ");
-      }
-      return emotionDisplayMap[label] || label;
-    }
-
-    function updateEmotionUI(){
-      emotionList.innerHTML = "";
-      if(!state.emotions.length){
-        emotionSummary.textContent = "아직 기록이 없어요.";
-        return;
-      }
-      emotionSummary.textContent = `오늘의 마음: ${formatEmotionLabel(state.emotions[0])}`;
-      const uniq = [...new Set(state.emotions)].slice(0, 6);
-      uniq.forEach(emotion => {
-        const chip = document.createElement("div");
-        chip.className = "emotionChip";
-        chip.textContent = formatEmotionLabel(emotion);
-        emotionList.appendChild(chip);
-      });
-    }
-
-    function renderCharacterTabs(){
-      characterTabs.innerHTML = "";
-      characterList.innerHTML = "";
-
-      Object.entries(characters).forEach(([name, info]) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = `characterBtn ${name === currentCharacter ? "active" : ""}`;
-        btn.textContent = `${info.emoji} ${name}`;
-        btn.addEventListener("click", () => selectCharacter(name));
-        characterTabs.appendChild(btn);
-
-        const chip = document.createElement("div");
-        chip.className = "characterChip";
-        chip.textContent = `${info.emoji} ${name} · ${info.short}`;
-        characterList.appendChild(chip);
-      });
-    }
-
-    function selectCharacter(name){
-      currentCharacter = name;
-      state.currentCharacter = name;
-      saveState();
-      updateCharacterUI();
-      renderCharacterTabs();
-      addSystemMessage(`${name}의 다정함이 곁에 머물렀어요.`);
-    }
-
-    function updateCharacterUI(){
-      const info = characters[currentCharacter];
-      characterEmoji.textContent = info.emoji;
-      characterTitle.textContent = currentCharacter;
-      characterDesc.textContent = info.desc;
-    }
-
-    function renderMessages(){
-      messages.innerHTML = "";
-      if(!state.entries.length){
-        appendSystemElement("조용히 두고 가도 괜찮아요. 이곳은 당신의 마음을 급하게 정리하지 않아요.");
-        return;
-      }
-
-      state.entries.forEach(item => {
-        if(item.type === "system"){
-          appendSystemElement(item.text);
-        }else{
-          appendMessageElement(item);
-        }
-      });
-      scrollBottom();
-    }
-
-    function addSystemMessage(text, save = true){
-      if(save){
-        state.entries.push({ type:"system", text });
-        saveState();
-      }
-      renderMessages();
-    }
-
-    function appendSystemElement(text){
-      const el = document.createElement("div");
-      el.className = "systemMsg";
-      el.textContent = text;
-      messages.appendChild(el);
-    }
-
-    function appendMessageElement(item){
-      const wrap = document.createElement("div");
-      wrap.className = `msgWrap ${item.who}`;
-
-      const nick = document.createElement("div");
-      nick.className = "nick";
-      nick.textContent = item.nick;
-
-      const msg = document.createElement("div");
-      msg.className = "msg";
-      msg.textContent = item.text;
-
-      wrap.appendChild(nick);
-      wrap.appendChild(msg);
-
-      if(item.who === "ai" && item.hugBar){
-        const hugBar = document.createElement("div");
-        hugBar.className = "hugBar";
-
-        hugTypes.forEach(type => {
-          const btn = document.createElement("button");
-          btn.className = "hugMini";
-          btn.type = "button";
-          btn.textContent = `${type.emoji} ${type.label}`;
-          btn.addEventListener("click", () => openHugPopup(type));
-          hugBar.appendChild(btn);
-        });
-
-        wrap.appendChild(hugBar);
-      }
-
-      if(item.meta){
-        const meta = document.createElement("div");
-        meta.className = "msgMeta";
-        item.meta.forEach(text => {
-          const chip = document.createElement("div");
-          chip.className = "miniBadge";
-          chip.textContent = text;
-          meta.appendChild(chip);
-        });
-        wrap.appendChild(meta);
-      }
-
-      messages.appendChild(wrap);
-    }
-
-    function addEntry(item){
-      state.entries.push(item);
-      saveState();
-      renderMessages();
-    }
-
-    function scrollBottom(){
-      messages.scrollTop = messages.scrollHeight;
-    }
-
-    function updateCharCount(){
-      charCount.textContent = msgInput.value.length;
-    }
-
-    function containsBlockedContent(text){
-      return blockedWords.some(word => text.includes(word));
-    }
-
-    function containsUrgentThreatContent(text){
-      return urgentThreatWords.some(word => text.includes(word));
-    }
-
-    function containsConcernContent(text){
-      return concernWords.some(word => text.includes(word));
-    }
-
-    function normalizeText(text){
-      return text.replace(/\s+/g, " ").trim().toLowerCase();
-    }
-
-    function detectEmotion(text){
-      const normalized = normalizeText(text);
-      const scores = {};
-
-      Object.keys(emotionPatterns).forEach(label => {
-        scores[label] = 0;
-      });
-
-      for(const [label, patterns] of Object.entries(emotionPatterns)){
-        for(const item of patterns){
-          if(normalized.includes(item.word.toLowerCase())){
-            scores[label] += item.score;
-          }
-        }
-      }
-
-      if(/너무|정말|진짜|엄청|계속|자꾸/.test(normalized)){
-        const currentTop = Object.keys(scores).sort((a, b) => scores[b] - scores[a])[0];
-        if(currentTop) scores[currentTop] += 1;
-      }
-
-      if(/안 괜찮|괜찮지 않|하나도 안 괜찮/.test(normalized)){
-        scores["위로필요"] += 3;
-        scores["평온"] = Math.max(0, scores["평온"] - 3);
-      }
-
-      if(/죽고 싶|사라지고 싶|없어지고 싶/.test(normalized)){
-        scores["위로필요"] += 5;
-        scores["지침"] += 3;
-      }
-
-      const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-      const [topLabel, topScore] = sorted[0];
-      const [, secondScore] = sorted[1] || ["", 0];
-
-      if(topScore === 0){
-        return "말로 다 못한 마음";
-      }
-
-      if(topScore > 0 && secondScore > 0 && topScore - secondScore <= 1){
-        return `${sorted[0][0]} · ${sorted[1][0]}`;
-      }
-
-      return topLabel;
-    }
-
-    function randomPick(arr){
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    function createEmpathy(text){
-      const info = characters[currentCharacter];
-      const intro = randomPick(info.templates);
-
-      const commonClosers = [
-        "여기서는 결론을 내리지 않아도 돼.",
-        "지금 이 마음을 바로 정리하지 않아도 괜찮아.",
-        "조금 흐트러진 채로 있어도 이상하지 않아.",
-        "말이 매끈하지 않아도 마음은 충분히 전해졌어.",
-        "오늘의 마음을 억지로 밝게 만들지 않아도 돼.",
-        "지금은 해결보다 머물 자리가 먼저 필요할 수도 있어."
-      ];
-
-      const emotionSpecific = [
-        {
-          test: /외로|혼자|쓸쓸|고립/,
-          lines: [
-            "곁이 비어 있는 느낌이 유난히 크게 다가왔겠구나.",
-            "아무도 닿지 않는 자리처럼 느껴졌을 수도 있겠다.",
-            "혼자 남겨진 기분이 마음을 오래 붙들었겠네."
-          ]
-        },
-        {
-          test: /속상|상처|서운|섭섭/,
-          lines: [
-            "마음 한쪽에 남은 자국이 아직 선명한 것 같아.",
-            "쉽게 넘길 수 없는 장면이 안쪽에 남아 있겠구나.",
-            "작아 보여도 깊게 남는 일이 있었던 것 같아."
-          ]
-        },
-        {
-          test: /불안|무서|걱정|초조|긴장/,
-          lines: [
-            "마음이 자꾸 다음 일을 먼저 대비하고 있었겠네.",
-            "가만히 있어도 안심이 쉽게 오지 않았을 것 같아.",
-            "몸보다 마음이 먼저 경계하고 있었던 시간 같아."
-          ]
-        },
-        {
-          test: /지쳐|피곤|버겁|소진|녹초|힘들/,
-          lines: [
-            "기운이 천천히 빠져나간 하루였을 것 같아.",
-            "해야 하는 마음과 버거운 마음이 함께 있었겠네.",
-            "조금만 더 버티자는 마음으로 지나왔을 수도 있겠다."
-          ]
-        },
-        {
-          test: /공허|멍|무감각|텅 빈|붕 뜬/,
-          lines: [
-            "마음이 또렷하게 잡히지 않는 시간도 있었겠구나.",
-            "무언가 빠져나간 뒤의 정적 같은 기분이 남아 있었겠네.",
-            "감정이 없는 게 아니라 너무 멀어진 것처럼 느껴질 수도 있어."
-          ]
-        },
-        {
-          test: /화나|짜증|억울|분하|답답|열받|빡쳐/,
-          lines: [
-            "안에서 맺힌 것이 쉽게 풀리지 않았겠구나.",
-            "참아야 해서 더 답답했던 순간이 있었을 것 같아.",
-            "꺼내지 못한 마음이 안쪽에서 오래 부딪혔겠네."
-          ]
-        }
-      ];
-
-      const matched = emotionSpecific.find(item => item.test.test(text));
-      const middle = matched ? randomPick(matched.lines) : randomPick([
-        "그 마음이 여기까지 오느라 꽤 애썼겠구나.",
-        "말로 다 꺼내기 어려운 결이 분명 있었을 것 같아.",
-        "혼자 안쪽에서 오래 붙들고 있었던 무게가 있었겠네.",
-        "지나간 일인데도 마음은 아직 거기에 남아 있을 수 있어."
-      ]);
-
-      const closer = randomPick(commonClosers);
-      return `${intro}\n${middle}\n${closer}`;
-    }
-
-    function getBearHugAnimation(heart = "🤍"){
-      return `
-        <div class="hugScene" aria-hidden="true">
-          <div class="hugGlow"></div>
-          <div class="spark s1">✦</div>
-          <div class="spark s2">✦</div>
-          <div class="spark s3">·</div>
-          <div class="spark s4">·</div>
-
-          <div class="hugBear">
-            <div class="bearHead">
-              <div class="bearEar left"></div>
-              <div class="bearEar right"></div>
-
-              <div class="bearFace">
-                <div class="bearEye left"></div>
-                <div class="bearEye right"></div>
-                <div class="bearSnout">
-                  <div class="bearNose"></div>
-                  <div class="bearSmile"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="bearBody">
-              <div class="bearBelly"></div>
-            </div>
-
-            <div class="hugHeart">${heart}</div>
-
-            <div class="bearArm left">
-              <div class="bearPaw"></div>
-            </div>
-            <div class="bearArm right">
-              <div class="bearPaw"></div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function openHugPopup(hugType){
-      state.stats.todayHugs += 1;
-      state.stats.weekWarmth += 1;
-      saveState();
-      updateStats();
-      burstHearts(8);
-
-      showModal({
-        emoji:hugType.popupEmoji,
-        title:"따뜻한 포옹",
-        text:hugType.message,
-        actions:[
-          { label:"고마워요", onClick:() => showNotice("따뜻함이 전해졌어요.") }
-        ]
-      });
-    }
-
-    function showModal({ emoji="🧸", title="따뜻한 반응", text="여기서는 괜찮아요.", actions=[] }){
-      lastFocusedElement = document.activeElement;
-
-      if(emoji === "__BEAR_HUG__"){
-        modalEmoji.innerHTML = getBearHugAnimation("🤍");
-      }else if(emoji === "__BEAR_HUG_GOLD__"){
-        modalEmoji.innerHTML = getBearHugAnimation("💛");
-      }else{
-        modalEmoji.textContent = emoji;
-      }
-
-      modalTitle.textContent = title;
-      modalText.textContent = text;
-      modalActions.innerHTML = "";
-
-      if(actions.length){
-        actions.forEach((action, index) => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.textContent = action.label;
-          if(action.className) btn.className = action.className;
-          btn.onclick = () => {
-            closeModal();
-            setTimeout(() => {
-              if(action.onClick) action.onClick();
-            }, 10);
-          };
-          modalActions.appendChild(btn);
-
-          if(index === 0){
-            setTimeout(() => btn.focus(), 30);
-          }
-        });
-      }else{
-        const ok = document.createElement("button");
-        ok.type = "button";
-        ok.textContent = "닫기";
-        ok.onclick = closeModal;
-        modalActions.appendChild(ok);
-        setTimeout(() => ok.focus(), 30);
-      }
-
-      modal.style.display = "flex";
-      modal.setAttribute("aria-hidden", "false");
-    }
-
-    function closeModal(){
-      modal.style.display = "none";
-      modal.setAttribute("aria-hidden", "true");
-      if(lastFocusedElement && typeof lastFocusedElement.focus === "function"){
-        lastFocusedElement.focus();
-      }
-    }
-
-    function showHelpGuide(){
-      showModal({
-        emoji:"🆘",
-        title:"도움 연결",
-        text:"필요한 기관을 골라 바로 이동할 수 있어요.",
-        actions:[
-          { label:"1366 홈페이지", className:"softBtn", onClick:() => window.open("https://www.women1366.kr/", "_blank", "noopener") },
-          { label:"117 홈페이지", className:"softBtn", onClick:() => window.open("https://www.safe182.go.kr/", "_blank", "noopener") },
-          { label:"112 바로가기", className:"softBtn", onClick:() => window.open("https://www.112.go.kr/", "_blank", "noopener") },
-          { label:"119 바로가기", className:"softBtn", onClick:() => window.open("https://www.119.go.kr/", "_blank", "noopener") }
-        ]
-      });
-    }
-
-    function showDonationGuide(){
-      showModal({
-        emoji:"🤎",
-        title:"후원하기",
-        text:
-`따뜻한 포옹을 응원해주셔서 감사합니다.
-
-${DONATION_BANK}
-${DONATION_ACCOUNT}
-예금주: ${DONATION_HOLDER}`,
-        actions:[
-          {
-            label:"계좌번호 복사",
-            className:"softBtn",
-            onClick: async () => {
-              try{
-                await navigator.clipboard.writeText(DONATION_ACCOUNT);
-                showNotice("계좌번호를 복사했어요.");
-              }catch(error){
-                showNotice("복사에 실패했어요. 직접 길게 눌러 복사해주세요.");
-              }
-            }
-          },
-          {
-            label:"닫기",
-            className:"softBtn",
-            onClick:() => {}
-          }
-        ]
-      });
-    }
-
-    function showEmotionPicker(){
-      const emotions = [
-        { emoji:"😊", label:"평온" },
-        { emoji:"😢", label:"슬픔" },
-        { emoji:"😟", label:"불안" },
-        { emoji:"😴", label:"지침" },
-        { emoji:"😡", label:"분노" },
-        { emoji:"🥹", label:"울컥" },
-        { emoji:"🤍", label:"위로 필요" },
-        { emoji:"🌫️", label:"멍함" },
-        { emoji:"🌱", label:"안정" },
-        { emoji:"🫂", label:"포옹 받고 싶음" }
-      ];
-
-      showModal({
-        emoji:"💛",
-        title:"지금의 감정을 골라주세요",
-        text:"가장 가까운 마음을 눌러 기록할 수 있어요.",
-        actions: emotions.map(item => ({
-          label: `${item.emoji} ${item.label}`,
-          className: "softBtn",
-          onClick: () => saveEmotionRecord(item.label, item.emoji)
-        }))
-      });
-    }
-
-    function saveEmotionRecord(label, emoji){
-      state.emotions.unshift(label);
-      state.emotions = state.emotions.slice(0, 12);
-      state.entries.push({
-        type:"system",
-        text:`${emoji} 오늘의 감정이 "${label}"으로 기록되었어요.`
-      });
-      saveState();
-      updateEmotionUI();
-      renderMessages();
-      showNotice(`${emoji} ${label} 감정을 기록했어요.`);
-    }
-
-    function showEmotionHistory(){
-      const lines = state.emotions.length
-        ? [...new Set(state.emotions)].slice(0, 10).map((emotion, index) => `${index + 1}. ${formatEmotionLabel(emotion)}`).join("\n")
-        : "아직 기록된 감정이 없어요.";
-
-      showModal({
-        emoji:"💛",
-        title:"감정 기록",
-        text:`지금까지 기록한 감정을 볼 수 있어요.\n\n${lines}`,
-        actions:[
-          { label:"확인", className:"softBtn", onClick:() => {} }
-        ]
-      });
-    }
-
-    function showTodayHugsInfo(){
-      showModal({
-        emoji:"🫂",
-        title:"오늘 받은 포옹",
-        text:`오늘 받은 포옹은 ${state.stats.todayHugs}회예요.\n오늘의 나를 안아준 횟수도 포함돼요.`,
-        actions:[
-          { label:"확인", className:"softBtn", onClick:() => {} }
-        ]
-      });
-    }
-
-    function showTotalHugsInfo(){
-      showModal({
-        emoji:"🤎",
-        title:"총 포옹 수",
-        text:`지금까지 받은 전체 포옹 수는 ${state.stats.weekWarmth}회예요.\n차곡차곡 쌓인 다정함이에요.`,
-        actions:[
-          { label:"확인", className:"softBtn", onClick:() => {} }
-        ]
-      });
-    }
-
-    function createHeart(){
-      const heart = document.createElement("div");
-      heart.className = "heart";
-      heart.textContent = ["🤎","💛","🧡","🤍","🫂"][Math.floor(Math.random() * 5)];
-      heart.style.left = Math.random() * window.innerWidth + "px";
-      heart.style.top = (window.innerHeight - 120 - Math.random() * 120) + "px";
-      document.body.appendChild(heart);
-      setTimeout(() => heart.remove(), 2000);
-    }
-
-    function burstHearts(count=7){
-      for(let i = 0; i < count; i++){
-        setTimeout(createHeart, i * 120);
-      }
-    }
-
-    function handleSend(){
-      const text = msgInput.value.trim();
-      if(!text) return;
-
-      if(containsBlockedContent(text)){
-        showModal({
-          emoji:"🐿️",
-          title:"조금 더 따뜻하게 말해볼까요?",
-          text:"이 공간은 상처 주는 말을 쉬게 하는 곳이에요.",
-          actions:[
-            { label:"다시 작성하기", onClick:() => msgInput.focus() }
-          ]
-        });
-        return;
-      }
-
-      const emotion = detectEmotion(text);
-      const displayEmotion = formatEmotionLabel(emotion);
-      state.emotions.unshift(emotion);
-      state.emotions = state.emotions.slice(0, 12);
-
-      addEntry({
-        id:"m_" + Date.now(),
-        who:"me",
-        nick:"나",
-        text,
-        meta:[`오늘의 마음: ${displayEmotion}`, `${messageSeq++}번째 남긴 마음`]
-      });
-
-      const empathy = createEmpathy(text);
-      addEntry({
-        id:"a_" + Date.now() + "_ai",
-        who:"ai",
-        nick:currentCharacter,
-        text:empathy,
-        hugBar:true,
-        meta:[characters[currentCharacter].short]
-      });
-
-      saveState();
-      updateStats();
-      updateEmotionUI();
-      burstHearts(5);
-
-      if(containsUrgentThreatContent(text)){
-        setTimeout(() => {
-          showModal({
-            emoji:"🆘",
-            title:"지금은 도움 연결이 먼저 필요해 보여요",
-            text:"혼자 감당하기 너무 버거운 마음처럼 느껴져요.\n가능하면 지금 바로 가까운 도움과 연결되어 주세요.",
-            actions:[
-              { label:"도움 연결 열기", className:"softBtn", onClick:showHelpGuide },
-              { label:"지금은 괜찮아요", className:"softBtn", onClick:() => {} }
-            ]
-          });
-        }, 500);
-      } else if(containsConcernContent(text)){
-        setTimeout(() => {
-          showNotice("필요하면 도움 연결 버튼도 조용히 열어볼 수 있어요.");
-        }, 500);
-      }
-
-      msgInput.value = "";
-      updateCharCount();
-      setTimeout(scrollBottom, 80);
-    }
-
-    function clearAllEntries(){
-      showModal({
-        emoji:"🧹",
-        title:"어느 범위를 지울까요?",
-        text:"대화만 지울 수도 있고, 이 공간의 기록을 모두 정리할 수도 있어요.",
-        actions:[
-          {
-            label:"대화만 지우기",
-            className:"softBtn",
-            onClick:() => {
-              state.entries = [];
-              saveState();
-              renderMessages();
-              showNotice("대화를 지웠어요.");
-            }
-          },
-          {
-            label:"전체 기록 지우기",
-            className:"softBtn",
-            onClick:() => {
-              localStorage.removeItem(STORAGE_KEY);
-              const freshState = defaultState();
-              state.stats = freshState.stats;
-              state.emotions = freshState.emotions;
-              state.entries = freshState.entries;
-              state.currentCharacter = freshState.currentCharacter;
-              currentCharacter = state.currentCharacter;
-              messageSeq = 1;
-              updateCharacterUI();
-              updateStats();
-              updateEmotionUI();
-              renderCharacterTabs();
-              renderMessages();
-              showNotice("전체 기록을 지웠어요.");
-            }
-          },
-          {
-            label:"취소",
-            className:"softBtn",
-            onClick:() => {}
-          }
-        ]
-      });
-    }
-
-    function showMenuGuide(){
-      showModal({
-        emoji:"📚",
-        title:"메뉴",
-        text:"확인하고 싶은 항목을 골라주세요.",
-        actions:[
-          { label:"감정 기록", className:"softBtn", onClick:showEmotionHistory },
-          { label:"오늘 받은 포옹", className:"softBtn", onClick:showTodayHugsInfo },
-          { label:"총 포옹 수", className:"softBtn", onClick:showTotalHugsInfo },
-          { label:"닫기", className:"softBtn", onClick:() => {} }
-        ]
-      });
-    }
-
-    startBtn.addEventListener("click", () => {
-      unlockAudioOnce();
-      showApp();
-    });
-
-    donateBtn.addEventListener("click", () => {
-      unlockAudioOnce();
-      showDonationGuide();
-    });
-
-    guideBtn.addEventListener("click", () => {
-      unlockAudioOnce();
-      showHelpGuide();
-    });
-
-    clearBtn.addEventListener("click", () => {
-      unlockAudioOnce();
-      clearAllEntries();
-    });
-
-    menuBtn.addEventListener("click", () => {
-      unlockAudioOnce();
-      showMenuGuide();
-    });
-
-    homeBtn.addEventListener("click", () => {
-      unlockAudioOnce();
-      goHome();
-    });
-
-    sendBtn.addEventListener("click", () => {
-      unlockAudioOnce();
-      handleSend();
-    });
-
-    emotionBtn.addEventListener("click", () => {
-      unlockAudioOnce();
-      showEmotionPicker();
-    });
-
-    musicToggleBtn.addEventListener("click", () => {
-      unlockAudioOnce();
-      toggleMusic();
-    });
-
-    msgInput.addEventListener("input", () => {
-      updateCharCount();
-      setTimeout(scrollBottom, 80);
-    });
-
-    msgInput.addEventListener("focus", () => {
-      unlockAudioOnce();
-      setTimeout(scrollBottom, 240);
-    });
-
-    msgInput.addEventListener("click", () => {
-      unlockAudioOnce();
-      setTimeout(scrollBottom, 240);
-    });
-
-    msgInput.addEventListener("keydown", (e) => {
-      if(e.key === "Enter" && !e.shiftKey){
-        e.preventDefault();
-        handleSend();
-      }
-    });
-
-    hugMyselfBtn.addEventListener("click", () => {
-      unlockAudioOnce();
-      state.stats.todayHugs += 1;
-      state.stats.weekWarmth += 1;
-      saveState();
-      updateStats();
-      burstHearts(8);
-      showModal({
-        emoji:"__BEAR_HUG_GOLD__",
-        title:"나에게도 포옹",
-        text:"오늘의 나도 조용히 안아줄게요.\n여기까지 온 것만으로도 충분히 귀해요.",
-        actions:[
-          { label:"고마워요", onClick:() => showNotice("오늘의 나를 다정하게 안아주었어요.") }
-        ]
-      });
-    });
-
-    modal.addEventListener("click", (e) => {
-      if(e.target === modal) closeModal();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if(e.key === "Escape" && modal.style.display === "flex"){
-        closeModal();
-      }
-    });
-
-    document.addEventListener("pointerdown", unlockAudioOnce, { once:false });
-  </script>
-</body>
-</html>
+      musicToggleBtn.textContent = isPlaying ? t().musicOff : t().musicOn;
+      musicStatus.textContent = isPlaying ? t().musicPlaying : t().musicWaiting;
