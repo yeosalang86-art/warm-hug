@@ -684,305 +684,11 @@
       white-space:nowrap;
     }
 
-    .hugScene{
-      position:relative;
-      width:180px;
-      height:150px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      animation:bearFloat 4.8s ease-in-out infinite;
-    }
-
-    .hugGlow{
-      position:absolute;
-      width:130px;
-      height:130px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(255,224,186,.52) 0%, rgba(255,224,186,.2) 42%, rgba(255,224,186,0) 72%);
-      filter:blur(4px);
-      animation:glowPulse 3.6s ease-in-out infinite;
-    }
-
-    .hugBear{
-      position:relative;
-      width:132px;
-      height:132px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .bearHead{
-      position:absolute;
-      top:6px;
-      width:92px;
-      height:84px;
-      background:linear-gradient(180deg,#e9c29d,#d8ab81);
-      border-radius:46px 46px 42px 42px;
-      box-shadow:
-        0 10px 20px rgba(114,76,46,.14),
-        inset 0 2px 0 rgba(255,255,255,.28);
-      z-index:3;
-    }
-
-    .bearEar{
-      position:absolute;
-      top:-8px;
-      width:24px;
-      height:24px;
-      background:linear-gradient(180deg,#dfb088,#c89266);
-      border-radius:50%;
-      z-index:2;
-    }
-
-    .bearEar.left{ left:12px; }
-    .bearEar.right{ right:12px; }
-
-    .bearEar::after{
-      content:"";
-      position:absolute;
-      inset:6px;
-      border-radius:50%;
-      background:rgba(143,88,58,.28);
-    }
-
-    .bearFace{
-      position:absolute;
-      inset:0;
-    }
-
-    .bearEye{
-      position:absolute;
-      top:34px;
-      width:14px;
-      height:8px;
-      border-bottom:3px solid #5b4030;
-      border-radius:0 0 14px 14px;
-      animation:softBlink 4.2s ease-in-out infinite;
-      transform-origin:center;
-    }
-
-    .bearEye.left{ left:24px; }
-    .bearEye.right{ right:24px; }
-
-    .bearSnout{
-      position:absolute;
-      left:50%;
-      top:40px;
-      transform:translateX(-50%);
-      width:30px;
-      height:22px;
-      background:#f6eadc;
-      border-radius:50%;
-    }
-
-    .bearNose{
-      position:absolute;
-      left:50%;
-      top:5px;
-      transform:translateX(-50%);
-      width:10px;
-      height:8px;
-      background:#674737;
-      border-radius:50% 50% 60% 60%;
-    }
-
-    .bearSmile{
-      position:absolute;
-      left:50%;
-      top:12px;
-      transform:translateX(-50%);
-      width:14px;
-      height:8px;
-      border-bottom:2px solid #7a5541;
-      border-radius:0 0 10px 10px;
-    }
-
-    .bearBody{
-      position:absolute;
-      bottom:10px;
-      width:98px;
-      height:78px;
-      background:linear-gradient(180deg,#e6bb94,#cf9b70);
-      border-radius:42px 42px 34px 34px;
-      box-shadow:
-        0 10px 20px rgba(114,76,46,.12),
-        inset 0 2px 0 rgba(255,255,255,.2);
-      z-index:1;
-    }
-
-    .bearBelly{
-      position:absolute;
-      left:50%;
-      top:18px;
-      transform:translateX(-50%);
-      width:44px;
-      height:34px;
-      border-radius:50%;
-      background:rgba(255,244,232,.78);
-    }
-
-    .bearArm{
-      position:absolute;
-      top:70px;
-      width:42px;
-      height:24px;
-      background:linear-gradient(180deg,#e1b289,#c98f63);
-      border-radius:18px;
-      z-index:5;
-      box-shadow:0 5px 10px rgba(114,76,46,.10);
-    }
-
-    .bearArm.left{
-      left:16px;
-      transform-origin:90% 50%;
-      animation:hugLeftArm 3.2s cubic-bezier(.45,.05,.3,1) infinite;
-    }
-
-    .bearArm.right{
-      right:16px;
-      transform-origin:10% 50%;
-      animation:hugRightArm 3.2s cubic-bezier(.45,.05,.3,1) infinite;
-    }
-
-    .bearPaw{
-      position:absolute;
-      top:4px;
-      width:16px;
-      height:16px;
-      border-radius:50%;
-      background:rgba(255,245,235,.76);
-    }
-
-    .bearArm.left .bearPaw{ right:4px; }
-    .bearArm.right .bearPaw{ left:4px; }
-
-    .hugHeart{
-      position:absolute;
-      top:76px;
-      left:50%;
-      transform:translateX(-50%);
-      font-size:26px;
-      z-index:4;
-      filter:drop-shadow(0 4px 10px rgba(255,188,126,.28));
-      animation:heartBeat 2.4s ease-in-out infinite;
-    }
-
-    .spark{
-      position:absolute;
-      font-size:14px;
-      opacity:0;
-      animation:sparkle 3.6s ease-in-out infinite;
-    }
-
-    .spark.s1{ left:24px; top:54px; animation-delay:.1s; }
-    .spark.s2{ right:24px; top:50px; animation-delay:.9s; }
-    .spark.s3{ left:38px; top:96px; animation-delay:1.4s; }
-    .spark.s4{ right:36px; top:98px; animation-delay:2.1s; }
+  y:2.1s; }
 
     @keyframes float{
       0%{ transform:translateY(0) scale(1); opacity:1; }
       100%{ transform:translateY(-160px) scale(1.24); opacity:0; }
-    }
-
-    @keyframes idle{
-      0%,100%{ transform:translateY(0); }
-      50%{ transform:translateY(-8px); }
-    }
-
-    @keyframes fadeUp{
-      from{
-        opacity:0;
-        transform:translateY(10px);
-      }
-      to{
-        opacity:1;
-        transform:translateY(0);
-      }
-    }
-
-    @keyframes bearFloat{
-      0%,100%{ transform:translateY(0); }
-      50%{ transform:translateY(-5px); }
-    }
-
-    @keyframes glowPulse{
-      0%,100%{
-        transform:scale(1);
-        opacity:.72;
-      }
-      50%{
-        transform:scale(1.08);
-        opacity:1;
-      }
-    }
-
-    @keyframes softBlink{
-      0%, 82%, 100%{
-        transform:scaleY(1);
-        opacity:1;
-      }
-      86%, 90%{
-        transform:scaleY(.18);
-        opacity:.95;
-      }
-    }
-
-    @keyframes hugLeftArm{
-      0%,100%{
-        transform:rotate(0deg) translateX(0);
-      }
-      50%{
-        transform:rotate(-18deg) translateX(6px) translateY(2px);
-      }
-    }
-
-    @keyframes hugRightArm{
-      0%,100%{
-        transform:rotate(0deg) translateX(0);
-      }
-      50%{
-        transform:rotate(18deg) translateX(-6px) translateY(2px);
-      }
-    }
-
-    @keyframes heartBeat{
-      0%,100%{
-        transform:translateX(-50%) scale(1);
-        opacity:.92;
-      }
-      25%{
-        transform:translateX(-50%) scale(1.06);
-        opacity:1;
-      }
-      50%{
-        transform:translateX(-50%) scale(1.18);
-        opacity:1;
-      }
-      75%{
-        transform:translateX(-50%) scale(1.05);
-        opacity:.98;
-      }
-    }
-
-    @keyframes sparkle{
-      0%,100%{
-        opacity:0;
-        transform:translateY(0) scale(.8);
-      }
-      25%{
-        opacity:.65;
-        transform:translateY(-4px) scale(1);
-      }
-      50%{
-        opacity:1;
-        transform:translateY(-8px) scale(1.08);
-      }
-      75%{
-        opacity:.35;
-        transform:translateY(-12px) scale(.92);
-      }
     }
 
     @media (max-width: 1160px){
@@ -1783,7 +1489,7 @@
           zh:"愿你轻一点"
         },
         emoji:"🤍",
-        popupEmoji:"__BEAR_HUG__",
+        popupEmoji:popupEmoji:"🧸" popupEmoji:"🫂" popupEmoji:"💛",
         message: {
           ko:"지금 당장 다 풀리지 않아도,\n마음 한켠은 조금 덜 무거워지길 바랄게요.",
           en:"Even if everything does not loosen right away,\nI hope one corner of your heart feels a little less heavy.",
@@ -1798,7 +1504,7 @@
           zh:"一定很疼吧"
         },
         emoji:"🫂",
-        popupEmoji:"__BEAR_HUG__",
+        popupEmoji:popupEmoji:"🧸" popupEmoji:"🫂" popupEmoji:"💛",
         message: {
           ko:"버틴다는 말로 다 담기지 않을 만큼,\n마음이 아팠던 시간이 있었겠지요.",
           en:"There must have been a time when your heart hurt more than the word endurance can hold.",
@@ -1813,7 +1519,7 @@
           zh:"你走到了这里"
         },
         emoji:"💛",
-        popupEmoji:"__BEAR_HUG_GOLD__",
+        popupemoji:"🧸",
         message: {
           ko:"쉽지 않았을 텐데 여기까지 왔네요.\n그 사실만으로도 충분히 귀해요.",
           en:"It could not have been easy, yet you still came this far.\nThat alone is already precious.",
@@ -2434,47 +2140,6 @@
       return `${intro}\n${middle}\n${closer}`;
     }
 
-    function getBearHugAnimation(heart = "🤍"){
-      return `
-        <div class="hugScene" aria-hidden="true">
-          <div class="hugGlow"></div>
-          <div class="spark s1">✦</div>
-          <div class="spark s2">✦</div>
-          <div class="spark s3">·</div>
-          <div class="spark s4">·</div>
-
-          <div class="hugBear">
-            <div class="bearHead">
-              <div class="bearEar left"></div>
-              <div class="bearEar right"></div>
-
-              <div class="bearFace">
-                <div class="bearEye left"></div>
-                <div class="bearEye right"></div>
-                <div class="bearSnout">
-                  <div class="bearNose"></div>
-                  <div class="bearSmile"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="bearBody">
-              <div class="bearBelly"></div>
-            </div>
-
-            <div class="hugHeart">${heart}</div>
-
-            <div class="bearArm left">
-              <div class="bearPaw"></div>
-            </div>
-            <div class="bearArm right">
-              <div class="bearPaw"></div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
     function openHugPopup(hugType){
       state.stats.todayHugs += 1;
       state.stats.weekWarmth += 1;
@@ -2495,7 +2160,7 @@
     function showModal({ emoji="🧸", title="", text="", actions=[] }){
       lastFocusedElement = document.activeElement;
 
-      if(emoji === "__BEAR_HUG__"){
+      if(emoji === popupEmoji:"🧸" popupEmoji:"🫂" popupEmoji:"💛"){
         modalEmoji.innerHTML = getBearHugAnimation("🤍");
       }else if(emoji === "__BEAR_HUG_GOLD__"){
         modalEmoji.innerHTML = getBearHugAnimation("💛");
@@ -2884,7 +2549,7 @@
       updateStats();
       burstHearts(8);
       showModal({
-        emoji:"__BEAR_HUG_GOLD__",
+        emoji:"🧸",
         title:t().selfHugTitle,
         text:t().selfHugText,
         actions:[
