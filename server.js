@@ -9,7 +9,7 @@ const app = express();
 const PORT = 3000;
 
 // 반드시 길고 복잡하게 바꾸세요
-const JWT_SECRET = "CHANGE_THIS_TO_A_LONG_RANDOM_SECRET_KEY_123456789";
+const JWT_SECRET = "CHANGE_THIS_TO_A_LONG_RANDOM_SECRET_KEY_pururusepopandab0502;
 
 // 실제 운영 시 아이디/비밀번호 바꾸세요
 const OWNER_USERNAME = "owner";
