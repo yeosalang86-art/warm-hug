@@ -1230,23 +1230,23 @@
 
       return `${intro}\n${closer}`;
     }
+function openHugPopup(hugType){
+  state.stats.todayHugs += 1;
+  state.stats.weekWarmth += 1;
+  saveState();
+  updateStats();
 
-    function openHugPopup(hugType){
-      state.stats.todayHugs += 1;
-      state.stats.weekWarmth += 1;
-      saveState();
-      updateStats();
-      burstHearts(8);
+  burstHearts(3);
 
-      showModal({
-        emoji:hugType.popupEmoji,
-        title:"따뜻한 반응",
-        text:hugType.message,
-        actions:[
-          { label:"고마워요", onClick:() => showNotice("따뜻함이 전해졌어요.") }
-        ]
-      });
-    }
+  showModal({
+    emoji: hugType.popupEmoji,
+    title: hugType.label,
+    text: hugType.message,
+    actions:[
+      { label:"고마워요", onClick:() => showNotice("따뜻함이 전해졌어요.") }
+    ]
+  });
+}
 
     function showModal({ emoji="🧸", title="따뜻한 반응", text="여기서는 괜찮아요.", actions=[] }){
       lastFocusedElement = document.activeElement;
