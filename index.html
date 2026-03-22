@@ -888,7 +888,6 @@
     const home = document.getElementById("home");
     const app = document.getElementById("app");
     const startBtn = document.getElementById("startBtn");
-    const donateBtn = document.getElementById("donateBtn");
     const guideBtn = document.getElementById("guideBtn");
     const clearBtn = document.getElementById("clearBtn");
     const menuBtn = document.getElementById("menuBtn");
@@ -1318,33 +1317,6 @@ function openHugPopup(hugType){
       });
     }
 
-    function showDonationGuide(){
-      showModal({
-        emoji:"🤎",
-        title:"후원하기",
-        text:
-`따뜻한 포옹을 응원해주셔서 감사합니다.\n\n${DONATION_BANK}\n${DONATION_ACCOUNT}\n예금주: ${DONATION_HOLDER}`,
-        actions:[
-          {
-            label:"계좌번호 복사",
-            className:"softBtn",
-            onClick: async () => {
-              try{
-                await navigator.clipboard.writeText(DONATION_ACCOUNT);
-                showNotice("계좌번호를 복사했어요.");
-              }catch(error){
-                showNotice("복사에 실패했어요. 직접 길게 눌러 복사해주세요.");
-              }
-            }
-          },
-          {
-            label:"닫기",
-            className:"softBtn",
-            onClick:() => {}
-          }
-        ]
-      });
-    }
 
     function showEmotionPicker(){
       const emotions = [
@@ -1571,7 +1543,6 @@ if(currentCharacter === "둥글레차"){
     }
 
     startBtn.addEventListener("click", showApp);
-    donateBtn.addEventListener("click", showDonationGuide);
     guideBtn.addEventListener("click", showHelpGuide);
     clearBtn.addEventListener("click", clearAllEntries);
     menuBtn.addEventListener("click", showMenuGuide);
