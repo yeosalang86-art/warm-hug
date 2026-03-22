@@ -991,7 +991,13 @@
         notice.style.display = "none";
       }, 2400);
     }
-   function showDunggeulleHugPopup(){
+  function showDunggeulleHugPopup(){
+  state.stats.todayHugs += 1;
+  state.stats.weekWarmth += 1;
+  saveState();
+  updateStats();
+  burstHearts(3);
+
   showModal({
     emoji: "🫂",
     title: "많이 아팠죠",
@@ -1431,9 +1437,7 @@ function openHugPopup(hugType){
       }
 
       const emotion = detectEmotion(text);
-      const displayEmotion = formatEmotionLabel(emotion);
-      state.emotions.unshift(emotion);
-      state.emotions = state.emotions.slice(0, 12);
+const displayEmotion = formatEmotionLabel(emotion);
 
       addEntry({
         id:"m_" + Date.now(),
